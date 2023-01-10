@@ -1,8 +1,8 @@
 package simulation.jss.analysis;
 
 import ec.multiobjective.MultiObjectiveFitness;
-import simulation.jss.jobshop.Objective;
-import simulation.jss.jobshop.SchedulingSet;
+import simulation.definition.Objective;
+import simulation.definition.SchedulingSet;
 import simulation.rules.rule.AbstractRule;
 import simulation.rules.rule.RuleType;
 import simulation.rules.rule.operation.basic.*;

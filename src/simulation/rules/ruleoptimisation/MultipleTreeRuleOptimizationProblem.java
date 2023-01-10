@@ -7,7 +7,7 @@ import ec.EvolutionState;
 import ec.Individual;
 import ec.gp.GPIndividual;
 import ec.util.Parameter;
-import simulation.jss.jobshop.Objective;
+import simulation.definition.Objective;
 import simulation.rules.rule.RuleType;
 import simulation.rules.rule.operation.evolved.GPRule;
 import simulation.rules.ruleevaluation.AbstractEvaluationModel;

@@ -1,9 +1,9 @@
 package simulation.jss.gp.terminal;
 
 import org.apache.commons.lang3.math.NumberUtils;
-import simulation.jss.jobshop.OperationOption;
-import simulation.jss.jobshop.WorkCenter;
-import simulation.jss.simulation.state.SystemState;
+import simulation.definition.OperationOption;
+import simulation.definition.WorkCenter;
+import simulation.definition.logic.state.SystemState;
 
 import java.util.*;
 

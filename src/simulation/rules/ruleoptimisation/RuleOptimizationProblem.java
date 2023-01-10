@@ -8,7 +8,7 @@ import ec.simple.SimpleProblemForm;
 import ec.util.Parameter;
 import simulation.rules.rule.RuleType;
 import simulation.rules.ruleevaluation.AbstractEvaluationModel;
-import simulation.jss.jobshop.Objective;
+import simulation.definition.Objective;
 import simulation.rules.rule.operation.evolved.GPRule;
 
 import java.util.ArrayList;

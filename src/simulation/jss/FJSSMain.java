@@ -1,23 +1,23 @@
 package simulation.jss;
 
 import ec.multiobjective.MultiObjectiveFitness;
-import simulation.jss.jobshop.*;
+import simulation.definition.*;
 import simulation.rules.rule.AbstractRule;
 import simulation.rules.rule.RuleType;
 import simulation.rules.rule.operation.basic.*;
 import simulation.rules.rule.operation.evolved.GPRule;
 import simulation.rules.rule.operation.weighted.*;
 import simulation.rules.rule.workcenter.basic.*;
-import simulation.jss.simulation.DynamicSimulation;
-import simulation.jss.simulation.Simulation;
-import simulation.jss.simulation.StaticSimulation;
+import simulation.definition.logic.DynamicSimulation;
+import simulation.definition.logic.Simulation;
+import simulation.definition.logic.StaticSimulation;
 
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 
 import static simulation.jss.helper.GridResultCleaner.roundMakespan;
-import static simulation.jss.jobshop.Objective.*;
+import static simulation.definition.Objective.*;
 
 /**
  * The main program of job shop scheduling, for basic testing.

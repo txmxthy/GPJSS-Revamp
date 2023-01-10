@@ -3,7 +3,7 @@ package simulation.rules.ruleevaluation;
 import ec.EvolutionState;
 import ec.Fitness;
 import ec.util.Parameter;
-import simulation.jss.jobshop.Objective;
+import simulation.definition.Objective;
 import simulation.rules.rule.AbstractRule;
 
 import java.util.ArrayList;

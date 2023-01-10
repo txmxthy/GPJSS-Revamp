@@ -11,10 +11,10 @@ import ec.EvolutionState;
 import ec.Fitness;
 import ec.multiobjective.MultiObjectiveFitness;
 import ec.util.Parameter;
-import simulation.jss.jobshop.Objective;
-import simulation.jss.jobshop.WorkCenter;
+import simulation.definition.Objective;
+import simulation.definition.WorkCenter;
 import simulation.rules.rule.AbstractRule;
-import simulation.jss.simulation.Simulation;
+import simulation.definition.logic.Simulation;
 
 public class nSumMultipleTreeMultipleRuleEvaluationModel extends MultipleRuleEvaluationModel{
 

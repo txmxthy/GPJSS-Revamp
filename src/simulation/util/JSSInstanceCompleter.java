@@ -1,6 +1,6 @@
 package simulation.util;
 
-import simulation.jss.jobshop.StaticInstance;
+import simulation.definition.StaticInstance;
 
 import java.io.BufferedReader;
 import java.io.File;

@@ -1,10 +1,10 @@
 package simulation.rules.rule.operation.weighted;
 
-import simulation.jss.jobshop.OperationOption;
-import simulation.jss.jobshop.WorkCenter;
+import simulation.definition.OperationOption;
+import simulation.definition.WorkCenter;
 import simulation.rules.rule.AbstractRule;
 import simulation.rules.rule.RuleType;
-import simulation.jss.simulation.state.SystemState;
+import simulation.definition.logic.state.SystemState;
 
 /**
  * Created by YiMei on 27/09/16.

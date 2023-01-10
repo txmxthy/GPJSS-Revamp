@@ -6,11 +6,11 @@ import simulation.jss.feature.ignore.Ignorer;
 import simulation.jss.gp.CalcPriorityProblem;
 import simulation.jss.gp.data.DoubleData;
 import simulation.jss.gp.GPNodeComparator;
-import simulation.jss.jobshop.OperationOption;
-import simulation.jss.jobshop.WorkCenter;
+import simulation.definition.OperationOption;
+import simulation.definition.WorkCenter;
 import simulation.rules.rule.AbstractRule;
 import simulation.rules.rule.RuleType;
-import simulation.jss.simulation.state.SystemState;
+import simulation.definition.logic.state.SystemState;
 import simulation.util.lisp.LispParser;
 
 /**

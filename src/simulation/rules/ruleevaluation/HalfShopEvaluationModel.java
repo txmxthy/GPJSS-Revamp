@@ -3,7 +3,7 @@ package simulation.rules.ruleevaluation;
 import ec.EvolutionState;
 import ec.Fitness;
 import ec.util.Parameter;
-import simulation.jss.jobshop.SchedulingSet;
+import simulation.definition.SchedulingSet;
 import simulation.rules.rule.AbstractRule;
 import simulation.jss.surrogate.Surrogate;
 

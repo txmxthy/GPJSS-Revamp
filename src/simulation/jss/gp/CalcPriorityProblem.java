@@ -4,9 +4,9 @@ import ec.EvolutionState;
 import ec.Individual;
 import ec.Problem;
 import ec.simple.SimpleProblemForm;
-import simulation.jss.jobshop.OperationOption;
-import simulation.jss.jobshop.WorkCenter;
-import simulation.jss.simulation.state.SystemState;
+import simulation.definition.OperationOption;
+import simulation.definition.WorkCenter;
+import simulation.definition.logic.state.SystemState;
 
 /**
  * Created by YiMei on 27/09/16.

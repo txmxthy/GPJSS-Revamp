@@ -8,8 +8,8 @@ import ec.Fitness;
 import ec.gp.koza.KozaFitness;
 import ec.multiobjective.MultiObjectiveFitness;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
-import simulation.jss.jobshop.Objective;
-import simulation.jss.jobshop.SchedulingSet;
+import simulation.definition.Objective;
+import simulation.definition.SchedulingSet;
 import simulation.rules.rule.AbstractRule;
 
 public class TestResult {

@@ -1,12 +1,12 @@
 package simulation.jss.niching;
 
-import simulation.jss.jobshop.FlexibleStaticInstance;
-import simulation.jss.jobshop.OperationOption;
+import simulation.definition.FlexibleStaticInstance;
+import simulation.definition.OperationOption;
 import simulation.rules.rule.AbstractRule;
 import simulation.rules.rule.RuleType;
 import simulation.rules.rule.operation.weighted.WSPT;
 import simulation.rules.rule.workcenter.basic.WIQ;
-import simulation.jss.simulation.*;
+import simulation.definition.logic.*;
 
 import java.util.Collections;
 import java.util.List;

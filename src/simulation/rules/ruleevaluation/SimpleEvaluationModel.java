@@ -3,12 +3,12 @@ package simulation.rules.ruleevaluation;
 import ec.EvolutionState;
 import ec.Fitness;
 import ec.util.Parameter;
-import simulation.jss.jobshop.FlexibleStaticInstance;
-import simulation.jss.jobshop.SchedulingSet;
+import simulation.definition.FlexibleStaticInstance;
+import simulation.definition.SchedulingSet;
 import simulation.rules.rule.AbstractRule;
-import simulation.jss.simulation.DynamicSimulation;
-import simulation.jss.simulation.Simulation;
-import simulation.jss.simulation.StaticSimulation;
+import simulation.definition.logic.DynamicSimulation;
+import simulation.definition.logic.Simulation;
+import simulation.definition.logic.StaticSimulation;
 
 import java.util.ArrayList;
 import java.util.List;

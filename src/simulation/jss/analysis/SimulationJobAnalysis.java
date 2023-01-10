@@ -1,12 +1,12 @@
 package simulation.jss.analysis;
 
-import simulation.jss.jobshop.Job;
+import simulation.definition.Job;
 import simulation.rules.rule.RuleType;
 import simulation.rules.rule.operation.basic.FCFS;
 import simulation.rules.rule.operation.evolved.GPRule;
 import simulation.rules.rule.operation.weighted.WATC;
 import simulation.rules.rule.workcenter.basic.WIQ;
-import simulation.jss.simulation.DynamicSimulation;
+import simulation.definition.logic.DynamicSimulation;
 
 import java.io.BufferedWriter;
 import java.io.File;

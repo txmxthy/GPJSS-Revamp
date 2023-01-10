@@ -1,7 +1,7 @@
 /*
   Copyright 2012 by James McDermott
   Licensed under the Academic Free License version 3.0
-  See the file "LICENSE" for more information
+  See the file "license.md" for more information
 
 */
 

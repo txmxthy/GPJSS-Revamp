@@ -2,8 +2,8 @@ package simulation.rules.ruleanalysis;
 
 import ec.gp.GPNode;
 import ec.multiobjective.MultiObjectiveFitness;
-import simulation.jss.jobshop.Objective;
-import simulation.jss.jobshop.SchedulingSet;
+import simulation.definition.Objective;
+import simulation.definition.SchedulingSet;
 import simulation.rules.rule.AbstractRule;
 import simulation.rules.rule.operation.evolved.GPRule;
 import simulation.rules.rule.workcenter.basic.WIQ;

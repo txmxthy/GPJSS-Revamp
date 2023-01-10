@@ -3,7 +3,7 @@ package simulation.jss.helper;
 import ec.EvolutionState;
 import ec.gp.GPNode;
 import ec.util.RandomChoice;
-import simulation.jss.algorithm.featureweighted.FreBadGPRuleEvolutionState;
+import solvers.algorithm.featureweighted.FreBadGPRuleEvolutionState;
 
 import java.util.ArrayList;
 import java.util.HashMap;

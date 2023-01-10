@@ -1,14 +1,14 @@
 package simulation.jss.helper;
 
 import simulation.jss.FJSSMain;
-import simulation.jss.jobshop.FlexibleStaticInstance;
-import simulation.jss.jobshop.Objective;
-import simulation.jss.jobshop.SchedulingSet;
+import simulation.definition.FlexibleStaticInstance;
+import simulation.definition.Objective;
+import simulation.definition.SchedulingSet;
 import simulation.rules.rule.AbstractRule;
 import simulation.rules.rule.RuleType;
 import simulation.rules.rule.workcenter.basic.*;
-import simulation.jss.simulation.Simulation;
-import simulation.jss.simulation.StaticSimulation;
+import simulation.definition.logic.Simulation;
+import simulation.definition.logic.StaticSimulation;
 
 import java.io.*;
 import java.nio.file.DirectoryStream;

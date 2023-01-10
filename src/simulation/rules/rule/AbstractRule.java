@@ -9,14 +9,14 @@ import ec.EvolutionState;
 import ec.Fitness;
 import ec.multiobjective.MultiObjectiveFitness;
 import ec.util.Parameter;
-import simulation.jss.jobshop.Objective;
-import simulation.jss.jobshop.OperationOption;
-import simulation.jss.jobshop.SchedulingSet;
-import simulation.jss.jobshop.WorkCenter;
-import simulation.jss.simulation.RoutingDecisionSituation;
-import simulation.jss.simulation.SequencingDecisionSituation;
-import simulation.jss.simulation.Simulation;
-import simulation.jss.simulation.state.SystemState;
+import simulation.definition.Objective;
+import simulation.definition.OperationOption;
+import simulation.definition.SchedulingSet;
+import simulation.definition.WorkCenter;
+import simulation.definition.logic.RoutingDecisionSituation;
+import simulation.definition.logic.SequencingDecisionSituation;
+import simulation.definition.logic.Simulation;
+import simulation.definition.logic.state.SystemState;
 
 /**
  * The abstract dispatching rule for job shop scheduling.

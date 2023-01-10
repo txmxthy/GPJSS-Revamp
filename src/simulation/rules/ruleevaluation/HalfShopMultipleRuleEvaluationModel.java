@@ -4,10 +4,10 @@ import ec.EvolutionState;
 import ec.Fitness;
 import ec.multiobjective.MultiObjectiveFitness;
 import ec.util.Parameter;
-import simulation.jss.jobshop.SchedulingSet;
-import simulation.jss.jobshop.WorkCenter;
+import simulation.definition.SchedulingSet;
+import simulation.definition.WorkCenter;
 import simulation.rules.rule.AbstractRule;
-import simulation.jss.simulation.Simulation;
+import simulation.definition.logic.Simulation;
 import simulation.jss.surrogate.Surrogate;
 
 import java.util.ArrayList;

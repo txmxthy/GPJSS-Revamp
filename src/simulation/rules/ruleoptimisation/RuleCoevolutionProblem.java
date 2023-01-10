@@ -8,7 +8,7 @@ import ec.coevolve.GroupedProblemForm;
 import ec.gp.GPIndividual;
 import ec.multiobjective.MultiObjectiveFitness;
 import ec.util.Parameter;
-import simulation.jss.jobshop.Objective;
+import simulation.definition.Objective;
 import simulation.rules.rule.AbstractRule;
 import simulation.rules.rule.RuleType;
 import simulation.rules.rule.operation.evolved.GPRule;
