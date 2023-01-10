@@ -80,7 +80,7 @@ public class PushBuilder extends GPNodeBuilder
         return objs;
         }
     
-    GPNode[] dummy = new GPNode[0];
+    final GPNode[] dummy = new GPNode[0];
     
     public GPNode newRootedTree(final EvolutionState state,
         final GPType type,

@@ -15,7 +15,7 @@ public class SimpleBreederElite extends SimpleBreeder {
 	 */
 
 	// modified by fzhang 14.5.2018 save the elites in last several generations
-	int numPreElites = 5;
+    final int numPreElites = 5;
 	// method 1: arraylist
 	/*
 	 * ArrayList<Individual> tempSub1Elites= new ArrayList<Individual>();
@@ -23,8 +23,8 @@ public class SimpleBreederElite extends SimpleBreeder {
 	 */
 	// modified by fzhang 16.5.2018 method 2: use array
 	// method 2: array
-	Individual[] tempSub1Elites = new Individual[numPreElites];
-	Individual[] tempSub2Elites = new Individual[numPreElites];
+    final Individual[] tempSub1Elites = new Individual[numPreElites];
+	final Individual[] tempSub2Elites = new Individual[numPreElites];
 	int replaceInd1 = 0;
 	int replaceInd2 = 0;
 	int bestInd1 = 0; // bestInd will be set to 0,1,2,3,4
@@ -203,7 +203,7 @@ public class SimpleBreederElite extends SimpleBreeder {
 
     //override
 	static class EliteComparator implements SortComparatorL {
-		Individual[] inds;
+		final Individual[] inds;
 
 		public EliteComparator(Individual[] inds) {
 			super();

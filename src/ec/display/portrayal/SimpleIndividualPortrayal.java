@@ -36,15 +36,11 @@ public class SimpleIndividualPortrayal
     
     private static final LogRestarter restarter = new LogRestarter()
         {
-        public Log reopen(Log l)
-            throws IOException
-            {
+        public Log reopen(Log l) {
             return null;
             }
         
-        public Log restart(Log l)
-            throws IOException
-            {
+        public Log restart(Log l) {
             return null;
             }
         };

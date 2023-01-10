@@ -93,7 +93,7 @@ public class RatioBucketTournamentSelection extends SelectionMethod implements S
     public static final String P_RATIO = "ratio";
 
     /** The default value for RATIO */
-    static double defaultRATIO = 2;
+    static final double defaultRATIO = 2;
 
     /** The value of RATIO */
     public double ratio;

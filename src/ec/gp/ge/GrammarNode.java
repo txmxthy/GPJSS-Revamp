@@ -18,9 +18,9 @@ import java.util.*;
 
 public abstract class GrammarNode implements java.io.Serializable
     {
-    String head;
+    final String head;
     // may be empty but it's not very expensive
-    protected ArrayList<GrammarNode> children = new ArrayList<GrammarNode>();  
+    protected final ArrayList<GrammarNode> children = new ArrayList<GrammarNode>();
 
     public GrammarNode(String head)
         {

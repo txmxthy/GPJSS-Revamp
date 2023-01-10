@@ -141,7 +141,6 @@ public class StaticInstance implements JSSInstance {
 
                 instance.addJob(arrivalTime, dueDate, weight, numOps, route, procTimes);
             }
-            br.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -176,7 +175,6 @@ public class StaticInstance implements JSSInstance {
                 bw.newLine();
             }
 
-            bw.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -45,16 +45,16 @@ public class SlaveMonitor
     public static final String P_RESCHEDULELOSTJOBS = "eval.masterproblem.reschedule-lost-jobs";
     public static final int SEED_INCREMENT = 7919; // a large value (prime for fun) bigger than expected number of threads per slave
 
-    public EvolutionState state;
+    public final EvolutionState state;
     
     // set to true if slave connections should reschedule jobs before they are
     // completely shut down due to a lost slave.  We might not want this to
     // happen if we're doing asynchronous evolution, for example.  Do NOT
     // set this to true if you're doing generational evolution, it'll just
     // hang waiting for a (now-un-rescheduled) lost job.
-    boolean rescheduleLostJobs;
+    final boolean rescheduleLostJobs;
     
-    ThreadPool pool;
+    final ThreadPool pool;
     
     /** A counter used to give slaves unique numbers so they can construct
         useful unique names for themselves. */
@@ -68,15 +68,15 @@ public class SlaveMonitor
     /**
      * Indicates whether compression is used over the socket IO streams.
      */
-    public boolean useCompression;
+    public final boolean useCompression;
 
     boolean shutdownInProgress = false;
-    Object[] shutdownInProgressLock = new Object[0];  // arrays are serializable
+    final Object[] shutdownInProgressLock = new Object[0];  // arrays are serializable
     final boolean isShutdownInProgress() { synchronized (shutdownInProgressLock) { return shutdownInProgress; } }
     final void setShutdownInProgress(boolean val) { synchronized (shutdownInProgressLock) { shutdownInProgress = val; } }
     
     int randomSeed;
-    Thread thread;
+    final Thread thread;
 
     public boolean waitOnMonitor(Object monitor)
         {
@@ -98,16 +98,16 @@ public class SlaveMonitor
         }
 
     // the slaves (not really a queue)
-    LinkedList allSlaves = new LinkedList();
+    final LinkedList allSlaves = new LinkedList();
 
     // the available slaves
-    LinkedList availableSlaves = new LinkedList();
+    final LinkedList availableSlaves = new LinkedList();
 
     // the maximum number of jobs per slave
-    int maxJobsPerSlave;
+    final int maxJobsPerSlave;
 
     // whether the system should display information that is useful for debugging 
-    boolean showDebugInfo;
+    final boolean showDebugInfo;
     
     final void debug(String s)
         {
@@ -454,7 +454,7 @@ public class SlaveMonitor
             }
         }
 
-    LinkedList evaluatedIndividuals =  new LinkedList();
+    final LinkedList evaluatedIndividuals =  new LinkedList();
 
     public boolean evaluatedIndividualAvailable()
         {
@@ -493,20 +493,15 @@ public class SlaveMonitor
 
     /**
      * @param s checkpoint file output stream
-     * @throws IOException
      */
-    void writeObject(ObjectOutputStream out) throws IOException
-        {
+    void writeObject(ObjectOutputStream out) {
         state.output.fatal("Not implemented yet: SlaveMonitor.writeObject");
         }
         
     /**
      * @param s checkpoint file input stream.
-     * @throws IOException
-     * @throws ClassNotFoundException
      */
-    void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException
-        {
+    void readObject(ObjectInputStream in) {
         state.output.fatal("Not implemented yet: SlaveMonitor.readObject");
         }
     }

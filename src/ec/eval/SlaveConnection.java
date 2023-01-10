@@ -34,22 +34,22 @@ import ec.util.*;
 class SlaveConnection 
     {
     /** Name of the slave process */
-    String slaveName;
+    final String slaveName;
         
     /**  Socket for communication with the slave process */
-    Socket evalSocket;
+    final Socket evalSocket;
         
     /**  Used to transmit data to the slave. */
-    DataOutputStream dataOut;
+    final DataOutputStream dataOut;
         
     /**  Used to read results and randoms state from slave. */
-    public DataInputStream dataIn;
+    public final DataInputStream dataIn;
         
     // a pointer to the evolution state
-    EvolutionState state;
+    final EvolutionState state;
 
     // a pointer to the monitor
-    SlaveMonitor slaveMonitor;
+    final SlaveMonitor slaveMonitor;
 
     // a pointer to the worker thread that is working for this slave
     ThreadPool.Worker reader;
@@ -59,7 +59,7 @@ class SlaveConnection
 
     // given that we expect the slave to return the evaluated individuals in the exact same order,
     // the jobs need to be represented as a queue.
-    LinkedList jobs = new LinkedList();
+    final LinkedList jobs = new LinkedList();
 
     /**
        The constructor also creates the queue storing the jobs that the slave
@@ -90,7 +90,7 @@ class SlaveConnection
        be rescheduled for evaluation on other slaves.
     */
     boolean shuttingDown;
-    Object shutDownLock = new int[0];  // serializable and lockable
+    final Object shutDownLock = new int[0];  // serializable and lockable
     protected void shutdown( final EvolutionState state )
         {
         // prevent me from hitting this multiple times
@@ -130,7 +130,7 @@ class SlaveConnection
 
     public String toString() { return "Slave(" + slaveName + ")"; }
 
-    boolean showDebugInfo;
+    final boolean showDebugInfo;
         
     final void debug(String s)
         {

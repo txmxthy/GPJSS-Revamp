@@ -26,7 +26,7 @@ public class RandTree extends GPNodeBuilder
     LinkedList permutations;
 
     public static class ArityObject {
-        public int arity;
+        public final int arity;
         public ArityObject(int a) { arity=a; }
         }
 

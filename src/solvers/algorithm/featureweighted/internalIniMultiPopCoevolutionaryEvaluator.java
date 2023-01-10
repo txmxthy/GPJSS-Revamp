@@ -31,7 +31,7 @@ public class internalIniMultiPopCoevolutionaryEvaluator extends MultiPopCoevolut
     // which individual should have its fitness updated as a result
     boolean[] updates = null;
 
-    ArrayList<double[]> saveWeights = new ArrayList<>();
+    final ArrayList<double[]> saveWeights = new ArrayList<>();
 
     public void evaluatePopulation(final EvolutionState state) {
         // determine who needs to be evaluated

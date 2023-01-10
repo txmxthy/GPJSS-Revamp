@@ -44,8 +44,8 @@ public class FSGPRuleEvolutionState extends GPRuleEvolutionState implements Term
 
     ArrayList<Double> saveOldFitSubPop0 = new ArrayList<>();
     ArrayList<Double> saveOldFitSubPop1 = new ArrayList<>();
-    ArrayList<Double> saveFitDistanceSubPop0 = new ArrayList<>();
-    ArrayList<Double> saveFitDistanceSubPop1 = new ArrayList<>();
+    final ArrayList<Double> saveFitDistanceSubPop0 = new ArrayList<>();
+    final ArrayList<Double> saveFitDistanceSubPop1 = new ArrayList<>();
 
     ArrayList<Double> PheDistanceSubPop0 = new ArrayList<>();
     ArrayList<Double> PheDistanceSubPop1 = new ArrayList<>();

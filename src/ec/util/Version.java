@@ -41,7 +41,7 @@ public class Version
     public static final String date = "June 15, 2015";
     public static final String minimumJavaVersion = "1.5";
 
-    public static final String message()
+    public static String message()
         {
         Properties p = System.getProperties();
         String javaVersion = p.getProperty("java.version");

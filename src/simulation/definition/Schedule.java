@@ -9,7 +9,7 @@ import java.util.List;
 public class Schedule {
 
     private final List<List<Process>> processLists;
-    List<Job> jobs;
+    final List<Job> jobs;
 
     public Schedule(int numWorkCenters) {
         processLists = new ArrayList<>();

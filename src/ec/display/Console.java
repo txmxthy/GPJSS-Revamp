@@ -66,8 +66,8 @@ public class Console extends JFrame
     Thread playThread = null;
     boolean playing = false;
     boolean paused = false;
-    Object buttonLock = new Object();
-    Object cleanupLock = new Object();
+    final Object buttonLock = new Object();
+    final Object cleanupLock = new Object();
     int currentJob;
     final String[] clArgs;
     

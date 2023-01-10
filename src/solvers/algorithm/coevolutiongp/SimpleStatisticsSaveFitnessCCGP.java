@@ -82,8 +82,8 @@ public class SimpleStatisticsSaveFitnessCCGP extends Statistics implements Stead
     protected long jobSeed;
     
     //fzhang 25.6.2018 in order to save the rulesize in each generation
-    List<Double> aveSeqRulesizeSubPop0 = new ArrayList<>();
-    List<Double> aveRouRulesizeSubPop1 = new ArrayList<>();
+    final List<Double> aveSeqRulesizeSubPop0 = new ArrayList<>();
+    final List<Double> aveRouRulesizeSubPop1 = new ArrayList<>();
 
     /** The Statistics' log */
     public int statisticslog = 0;  // stdout

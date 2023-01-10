@@ -27,7 +27,7 @@ public class GPBuildDefaults implements DefaultsForm
     public static final String P_BUILD = "build";
 
     /** Returns the default base. */
-    public static final Parameter base()
+    public static Parameter base()
         {
         return GPDefaults.base().push(P_BUILD);
         }

@@ -37,12 +37,12 @@ public abstract class Simulation {
 
     protected AbstractRule sequencingRule;
     protected AbstractRule routingRule;
-    protected SystemState systemState;
-    protected PriorityQueue<AbstractEvent> eventQueue;
+    protected final SystemState systemState;
+    protected final PriorityQueue<AbstractEvent> eventQueue;
 
-    protected int numWorkCenters;
-    protected int numJobsRecorded;
-    protected int warmupJobs;
+    protected final int numWorkCenters;
+    protected final int numJobsRecorded;
+    protected final int warmupJobs;
     protected int numJobsArrived;
     protected int throughput;
     //protected int[] jobStates;

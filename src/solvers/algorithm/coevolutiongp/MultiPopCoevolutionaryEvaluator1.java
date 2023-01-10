@@ -542,7 +542,7 @@ public class MultiPopCoevolutionaryEvaluator1 extends Evaluator
 
 class EliteComparator implements SortComparatorL
     {
-    Individual[] inds;
+    final Individual[] inds;
     public EliteComparator(Individual[] inds) {super(); this.inds = inds;}
     public boolean lt(long a, long b)
         { return inds[(int)a].fitness.betterThan(inds[(int)b].fitness); }

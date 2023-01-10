@@ -24,10 +24,10 @@ public class Lexer
         string.  You'll need to check the index to determine for sure.*/
     public static final int FAILURE = -1;
         
-    CharSequence input;
+    final CharSequence input;
     int position = 0;
-    Matcher[] matchers;
-    String[] regexps;
+    final Matcher[] matchers;
+    final String[] regexps;
     int matchingIndex = FAILURE;
         
     /** Builds a Lexer for the given input with the provided regular expressions.  The regular expressions

@@ -179,10 +179,10 @@ Color color = new Color((rgb) & 0xFF, (rgb >> 8) & 0xFF, (rgb >> 16) & 0xFF, a);
         g.dispose();
         }
 
-    static JFrame f = new JFrame();
+    static final JFrame f = new JFrame();
     static  boolean first = true;
-    static JLabel left = new JLabel();
-    static JLabel right = new JLabel();
+    static final JLabel left = new JLabel();
+    static final JLabel right = new JLabel();
 
     int count = 0;
         

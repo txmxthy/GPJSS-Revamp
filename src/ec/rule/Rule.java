@@ -196,15 +196,13 @@ public abstract class Rule implements Prototype, Comparable
 
     /** Override this if you need to write rules out to a binary stream */
     public void writeRule(final EvolutionState state,
-        final DataOutput dataOutput) throws IOException
-        {
+        final DataOutput dataOutput) {
         state.output.fatal("writeRule(EvolutionState, DataOutput) not implemented in " + this.getClass());
         }
 
     /** Override this if you need to read rules in from a binary stream */
     public void readRule(final EvolutionState state,
-        final DataInput dataInput) throws IOException
-        {
+        final DataInput dataInput) {
         state.output.fatal("readRule(EvolutionState, DataInput) not implemented in " + this.getClass());
         }
 

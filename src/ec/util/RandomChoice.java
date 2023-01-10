@@ -304,7 +304,7 @@ public class RandomChoice
 
 
     // allows us to have zero-probability values
-    private static final int exemptZeroes(final float[] probabilities, int index)
+    private static int exemptZeroes(final float[] probabilities, int index)
         {
         //System.out.println(index);
         if (probabilities[index]==0.0f) // I need to scan forward because I'm in a left-trail
@@ -317,7 +317,7 @@ public class RandomChoice
         }
 
     // allows us to have zero-probability values
-    private static final int exemptZeroes(final double[] probabilities, int index)
+    private static int exemptZeroes(final double[] probabilities, int index)
         {
         //System.out.println(index);
         if (probabilities[index]==0.0) // I need to scan forward because I'm in a left-trail
@@ -331,8 +331,8 @@ public class RandomChoice
 
 
     // allows us to have zero-probability values
-    private static final int exemptZeroes(final Object[] objs, 
-        final RandomChoiceChooser chooser, int index)
+    private static int exemptZeroes(final Object[] objs,
+                                    final RandomChoiceChooser chooser, int index)
         {
         //System.out.println(index);
         if (chooser.getProbability(objs[index])==0.0f) // I need to scan forward because I'm in a left-trail
@@ -347,8 +347,8 @@ public class RandomChoice
 
 
     // allows us to have zero-probability values
-    private static final int exemptZeroes(final Object[] objs, 
-        final RandomChoiceChooserD chooser, int index)
+    private static int exemptZeroes(final Object[] objs,
+                                    final RandomChoiceChooserD chooser, int index)
         {
         //System.out.println(index);
         if (chooser.getProbability(objs[index])==0.0) // I need to scan forward because I'm in a left-trail

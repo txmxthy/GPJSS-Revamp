@@ -150,9 +150,7 @@ public class KozaFitness extends Fitness
         }
             
     public void readFitness(final EvolutionState state, 
-        final LineNumberReader reader)
-        throws IOException
-        {
+        final LineNumberReader reader) {
         DecodeReturn d = Code.checkPreamble(FITNESS_PREAMBLE, state, reader);
         
         // extract fitness

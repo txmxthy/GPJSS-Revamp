@@ -311,7 +311,7 @@ public class MetaProblem extends Problem implements SimpleProblemForm
 
     /** Acquire this lock before accessing bestUnderlyingIndividual */
 
-    public Object lock = new Object[0];  // not deep cloned
+    public final Object lock = new Object[0];  // not deep cloned
 
 
 

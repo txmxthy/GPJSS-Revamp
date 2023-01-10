@@ -260,11 +260,11 @@ public class ThreadPool implements java.io.Serializable
         boolean go = false;
                 
         // Thread which is running me
-        Thread thread;
+        final Thread thread;
                 
         // My underlying runnable, or null if I'm not doing a job right now
         Runnable toRun = null;
-        Object runLock = new Object[0];
+        final Object runLock = new Object[0];
                 
         Node(String name) 
             {

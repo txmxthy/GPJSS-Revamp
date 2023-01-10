@@ -29,8 +29,8 @@ public class multiPopCoevolutionaryClearingEvaluator extends MultiPopCoevolution
     // which individual should have its fitness updated as a result
     boolean[] updates = null;
 
-    ArrayList<Double> saveOldFitSubPop0 = new ArrayList<>();
-    ArrayList<Double> saveOldFitSubPop1 = new ArrayList<>();
+    final ArrayList<Double> saveOldFitSubPop0 = new ArrayList<>();
+    final ArrayList<Double> saveOldFitSubPop1 = new ArrayList<>();
 
     @Override
     public void evaluatePopulation(final EvolutionState state) {

@@ -260,7 +260,6 @@ public class GridResultCleaner {
                 writeLine(writer, makespanCSV);
             }
             writer.flush();
-            writer.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

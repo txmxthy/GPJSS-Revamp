@@ -51,13 +51,13 @@ public class SimpleEvaluator extends Evaluator
     public int mergeForm = MERGE_MEAN;
     public boolean cloneProblem;
 
-    Object[] lock = new Object[0];          // Arrays are serializable
+    final Object[] lock = new Object[0];          // Arrays are serializable
     int individualCounter = 0;
     int subPopCounter = 0;
     int chunkSize;  // a value >= 1, or C_AUTO
     public static final int C_AUTO = 0;
         
-    public ThreadPool pool = new ThreadPool();
+    public final ThreadPool pool = new ThreadPool();
 
     // checks to make sure that the Problem implements SimpleProblemForm
     public void setup(final EvolutionState state, final Parameter base)

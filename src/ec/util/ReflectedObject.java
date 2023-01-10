@@ -12,11 +12,11 @@ import javax.swing.event.*;
 
 public class ReflectedObject implements TreeModel
     {
-    Class type;     // the class or TYPE of the object
-    Object obj;     // the object.  Primitive objects are cast into their wrapper types
-    String name;    // the name of the instance variable holding the object.  Top-level objects have a name of "->"
-    Object uniq;    // a unique identifier for this particular instance variable (used to make getIndexOfChild() possible, ick)
-    static ReflectedObject unknown = new ReflectedObject(null)
+    final Class type;     // the class or TYPE of the object
+    final Object obj;     // the object.  Primitive objects are cast into their wrapper types
+    final String name;    // the name of the instance variable holding the object.  Top-level objects have a name of "->"
+    final Object uniq;    // a unique identifier for this particular instance variable (used to make getIndexOfChild() possible, ick)
+    static final ReflectedObject unknown = new ReflectedObject(null)
         {
         public String toString() { return "<unknown>"; }
         };

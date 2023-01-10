@@ -376,7 +376,7 @@ public class Uniform extends GPNodeBuilder
         return NUMCHILDPERMUTATIONS[functionset][intForNode(parent)][size][outof][pickchild];
         }
     
-    private final double getProb(final BigInteger i)
+    private double getProb(final BigInteger i)
         {
         if (i==null) return 0.0f;
         else return i.doubleValue();

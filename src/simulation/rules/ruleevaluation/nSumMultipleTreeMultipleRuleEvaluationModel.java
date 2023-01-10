@@ -19,8 +19,8 @@ import simulation.definition.logic.Simulation;
 public class nSumMultipleTreeMultipleRuleEvaluationModel extends MultipleRuleEvaluationModel{
 
 	//fzhang 2019.1.11 save the training fitnesses
-	  List<Double> genTrainFitnesses = new ArrayList<>();
-	  List<Double> GenObjvalue = new ArrayList<>();
+	final List<Double> genTrainFitnesses = new ArrayList<>();
+	  final List<Double> GenObjvalue = new ArrayList<>();
 
 	  public final static String P_OBJNAMES = "objNames";
 	  protected List<String> objNames;
@@ -33,7 +33,7 @@ public class nSumMultipleTreeMultipleRuleEvaluationModel extends MultipleRuleEva
 
       //fzhang 2019.1.11 to save the two fitness in training process
 	  double tempfitness = Double.MAX_VALUE;
-	  ArrayList<Double> trainfitnesses = new ArrayList<Double>() {{
+	  final ArrayList<Double> trainfitnesses = new ArrayList<Double>() {{
 		  add(Double.MAX_VALUE);
 		  add(Double.MAX_VALUE);
 		  }};

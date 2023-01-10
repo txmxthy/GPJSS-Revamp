@@ -46,7 +46,7 @@ import ec.eval.MasterProblem;
 
 public class SteadyStateEvaluator extends SimpleEvaluator
     {
-    LinkedList queue = new LinkedList();
+    final LinkedList queue = new LinkedList();
     
     /** Holds the subpopulation currently being evaluated.  */ 
     int subpopulationBeingEvaluated = -1;

@@ -35,7 +35,7 @@ import java.util.*;
 
 public class MultiTreeFeatureUtil {
 
-    public static RuleType[] ruleTypes = {RuleType.SEQUENCING, RuleType.ROUTING};
+    public static final RuleType[] ruleTypes = {RuleType.SEQUENCING, RuleType.ROUTING};
 
     /**
      * Select a diverse set of individuals from the current population.

@@ -77,7 +77,7 @@ public class Output implements Serializable
         }
     
     boolean errors;
-    Vector logs = new Vector();
+    final Vector logs = new Vector();
     Vector announcements = new Vector();
     // boolean flush = true;
     boolean store = true;
@@ -529,7 +529,7 @@ public class Output implements Serializable
         println(s, V_NO_MESSAGES ,ALL_MESSAGE_LOGS, true);
         }
 
-    StringBuilder error = new StringBuilder();
+    final StringBuilder error = new StringBuilder();
     // builds up an error message in case the user wants to throw
     // an exception rather than quit
     String a(String str)
@@ -611,7 +611,7 @@ public class Output implements Serializable
         println("WARNING:\n"+s, ALL_MESSAGE_LOGS, true);
         }
     
-    java.util.HashSet oneTimeWarnings = new java.util.HashSet();
+    final java.util.HashSet oneTimeWarnings = new java.util.HashSet();
     /** Posts a warning one time only. */
     public synchronized void warnOnce(String s)
         {
@@ -952,7 +952,7 @@ public class Output implements Serializable
     static class Announcement implements Serializable
         {
         /** The announcement's...anouncement.*/
-        public String text;
+        public final String text;
 
         /** Creates a new announcement with text <i>t</i> and verbosity value <i>v</i> */
         public Announcement (String t)

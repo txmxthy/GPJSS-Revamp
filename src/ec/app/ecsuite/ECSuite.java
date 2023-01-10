@@ -667,7 +667,7 @@ import ec.vector.*;
 
         */
 
-        public static double[][][] rotationMatrix = new double[1][][];  // the actual matrix is stored in rotationMatrix[0] -- a hack
+        public static final double[][][] rotationMatrix = new double[1][][];  // the actual matrix is stored in rotationMatrix[0] -- a hack
 
         /** Dot product between two column vectors.  Does not modify the original vectors. */
         public static double dot(double[] x, double[] y)

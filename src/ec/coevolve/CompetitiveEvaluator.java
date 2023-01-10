@@ -605,7 +605,7 @@ public class CompetitiveEvaluator extends Evaluator
 // used by the K-Random-Opponents-One-Way and K-Random-Opponents-Two-Ways evaluations
 class EncapsulatedIndividual
     {
-    public Individual ind;
+    public final Individual ind;
     public int nOpponentsMet;
     public EncapsulatedIndividual( Individual ind_, int value_ )
         {

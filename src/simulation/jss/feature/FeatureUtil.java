@@ -40,7 +40,7 @@ import java.util.*;
 
 public class FeatureUtil {
 
-    public static RuleType[] ruleTypes = {RuleType.SEQUENCING, RuleType.ROUTING};
+    public static final RuleType[] ruleTypes = {RuleType.SEQUENCING, RuleType.ROUTING};
 
     /**
      * Select a diverse set of individuals from the current population.
@@ -882,8 +882,8 @@ public class FeatureUtil {
     /**
      * mimic top k% individuals and randomly generate other individuals with selected features
      */
-    static ArrayList<Double> savePheDistanceSubPop0 = new ArrayList<>();
-    static ArrayList<Double> savePheDistanceSubPop1 = new ArrayList<>();
+    static final ArrayList<Double> savePheDistanceSubPop0 = new ArrayList<>();
+    static final ArrayList<Double> savePheDistanceSubPop1 = new ArrayList<>();
     public static void adaptPopulationBasedOnPhenotypeWhole(EvolutionState state, double fracElites, int subPopNum) {
         Individual[] newPop = state.population.subpops[subPopNum].individuals;
         int numElites = (int)(fracElites * newPop.length);

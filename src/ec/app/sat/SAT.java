@@ -91,7 +91,7 @@ public class SAT extends Problem implements SimpleProblemForm
         {
         private static final long serialVersionUID = 1;
 
-        int[] variables;
+        final int[] variables;
         public Clause(String c)
             {
             StringTokenizer st = new StringTokenizer(c);

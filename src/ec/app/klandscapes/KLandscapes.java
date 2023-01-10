@@ -54,8 +54,8 @@ public class KLandscapes extends GPProblem implements SimpleProblemForm {
     // integer values from 2 upwards, in the paper's experimental
     // section, but can take on values 0 and 1.
     int k;
-    String P_PROBLEMNAME = "k-landscapes";
-    String P_KVALUE = "k-value";
+    final String P_PROBLEMNAME = "k-landscapes";
+    final String P_KVALUE = "k-value";
 
     public void setup(final EvolutionState state, final Parameter base)
         {
@@ -108,7 +108,7 @@ public class KLandscapes extends GPProblem implements SimpleProblemForm {
         }
 
     // doesn't need to be cloned
-    int[] indices = new int[256];  // we assume we only have letters, and 0 means "no sucessor"
+    final int[] indices = new int[256];  // we assume we only have letters, and 0 means "no sucessor"
     int getIndex(char c)
         {
         return indices[c - 'A'];

@@ -11,7 +11,7 @@ import java.util.List;
  */
 public abstract class AbstractEvent implements Comparable<AbstractEvent> {
 
-    protected double time;
+    protected final double time;
 
     public AbstractEvent(double time) {
         this.time = time;

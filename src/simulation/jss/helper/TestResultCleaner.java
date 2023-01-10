@@ -158,7 +158,6 @@ public class TestResultCleaner {
             }
 
             writer.flush();
-            writer.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

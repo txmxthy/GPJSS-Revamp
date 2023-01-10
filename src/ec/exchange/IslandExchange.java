@@ -1171,41 +1171,41 @@ class IslandExchangeMailbox implements Runnable
     public static final int SYNCHRONIZATION_SLEEP = 100;
 
     /**  storage for the incoming immigrants: 2 sizes: the subpopulation and the index of the immigrant */
-    public Individual[][] immigrants;
+    public final Individual[][] immigrants;
 
     /** the number of immigrants in the storage for each of the subpopulations */
-    public int[] nImmigrants;
+    public final int[] nImmigrants;
 
     // auxiliary variables to manage the queue storages
-    int[] nextIndexPosition;
+    final int[] nextIndexPosition;
 
     // the socket where it listens for incomming messages
     ServerSocket serverSocket;
 
     // the number of islands that send messages to the current mailbox
-    int n_incoming;
+    final int n_incoming;
 
     // whether the information on sockets is compressed or not (receives this information in the constructor)
-    boolean compressedCommunication;
+    final boolean compressedCommunication;
 
     // the sockets and readers for receiving incoming messages
-    Socket[] inSockets;
-    DataInputStream[] dataInput;
-    public String[] incomingIds;      // so we can print out nice names for our incoming connections
+    final Socket[] inSockets;
+    final DataInputStream[] dataInput;
+    public final String[] incomingIds;      // so we can print out nice names for our incoming connections
 
     // the state of the islands it is communicating to
-    boolean[] running;
+    final boolean[] running;
 
     // the state (to display messages mainly)
-    EvolutionState state;
+    final EvolutionState state;
 
     // synchronization variable
-    boolean[] syncVar = new boolean[1];
+    final boolean[] syncVar = new boolean[1];
 
     // My ID
-    String myId;
+    final String myId;
     
-    boolean chatty;
+    final boolean chatty;
 
     /**
        Public constructor used to initialize most of the parameters of the mailbox:

@@ -70,7 +70,7 @@ public class FreGPRuleEvolutionState extends GPRuleEvolutionState implements Ter
 
 	//fzhang 2019.5.19 pick terminals based on weighting power
 	double[][] weights = null;
-	ArrayList<double[]>  saveWeights = new ArrayList<>();
+	final ArrayList<double[]>  saveWeights = new ArrayList<>();
 	@Override
 	public GPNode pickTerminalRandom(int subPopNum) {
 		int index = -1; //random[0].nextInt(terminals[subPopNum].lenth)

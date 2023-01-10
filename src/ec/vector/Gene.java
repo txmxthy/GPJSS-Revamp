@@ -159,15 +159,13 @@ public abstract class Gene implements Prototype
 
     /** Override this if you need to write rules out to a binary stream */
     public void writeGene(final EvolutionState state,
-        final DataOutput dataOutput) throws IOException
-        {
+        final DataOutput dataOutput) {
         state.output.fatal("writeGene(EvolutionState, DataOutput) not implemented in " + this.getClass());
         }
 
     /** Override this if you need to read rules in from a binary stream */
     public void readGene(final EvolutionState state,
-        final DataInput dataInput) throws IOException
-        {
+        final DataInput dataInput) {
         state.output.fatal("readGene(EvolutionState, DataInput) not implemented in " + this.getClass());
         }
 

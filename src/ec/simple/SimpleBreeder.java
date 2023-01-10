@@ -89,7 +89,7 @@ public class SimpleBreeder extends Breeder
 
     public static final int NOT_SET = -1;
 
-    public ThreadPool pool = new ThreadPool();
+    public final ThreadPool pool = new ThreadPool();
 
     public boolean usingElitism(int subpopulation)
         {
@@ -443,7 +443,7 @@ public class SimpleBreeder extends Breeder
 
         static class EliteComparator implements SortComparatorL
         {
-        Individual[] inds;
+        final Individual[] inds;
         public EliteComparator(Individual[] inds) {super(); this.inds = inds;}
         public boolean lt(long a, long b)
             { return inds[(int)b].fitness.betterThan(inds[(int)a].fitness); }

@@ -33,7 +33,7 @@ public class multiPopCoevolutionaryEvaluator extends MultiPopCoevolutionaryEvalu
     // which individual should have its fitness updated as a result
     boolean[] updates = null;
 
-    ArrayList<double[]> saveWeights = new ArrayList<>();
+    final ArrayList<double[]> saveWeights = new ArrayList<>();
 
     public void evaluatePopulation(final EvolutionState state) {
         // determine who needs to be evaluated
@@ -75,7 +75,7 @@ public class multiPopCoevolutionaryEvaluator extends MultiPopCoevolutionaryEvalu
         afterCoevolutionaryEvaluation(state, state.population, (GroupedProblemForm) p_problem);
     }
 
-    ArrayList<Integer> badInds = new ArrayList<>();
+    final ArrayList<Integer> badInds = new ArrayList<>();
     //fzhang 2019.5.22 delect bad individuals in the population and replaced by generating new individuals with weighted features
     public void removeBadInds(final EvolutionState state) {
 //		Population newpop = new Population();

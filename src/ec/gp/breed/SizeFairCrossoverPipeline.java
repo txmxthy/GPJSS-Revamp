@@ -669,8 +669,8 @@ public class SizeFairCrossoverPipeline extends GPBreedingPipeline
      */
     static class RouletteWheelSelector 
         {
-        int[] length;
-        double[] probability;
+        final int[] length;
+        final double[] probability;
         int currentIndex = 0;
         int maxLength = 0;
 
@@ -745,7 +745,7 @@ public class SizeFairCrossoverPipeline extends GPBreedingPipeline
         // numberOfSubTrees beneath
         int numberOfSubTreesBeneath;
         // actual node
-        GPNode node;
+        final GPNode node;
                 
         public NodeInfo(GPNode node, int numberOfSubtrees)
             {

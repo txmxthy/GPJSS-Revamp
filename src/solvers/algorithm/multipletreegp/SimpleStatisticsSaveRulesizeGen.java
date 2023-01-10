@@ -18,8 +18,8 @@ public class SimpleStatisticsSaveRulesizeGen extends SimpleStatistics{
     protected long jobSeed;
 	
     //fzhang 25.6.2018 in order to save the rulesize in each generation
-    List<Long> aveSeqRulesizeTree0 = new ArrayList<>();
-    List<Long> aveRouRulesizeTree1 = new ArrayList<>();
+	final List<Long> aveSeqRulesizeTree0 = new ArrayList<>();
+    final List<Long> aveRouRulesizeTree1 = new ArrayList<>();
     
     /** GENERATIONAL: Called immediately before evaluation occurs. */
     public void preEvaluationStatistics(final EvolutionState state)

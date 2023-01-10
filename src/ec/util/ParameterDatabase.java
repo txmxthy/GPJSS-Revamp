@@ -382,7 +382,7 @@ public class ParameterDatabase extends Properties implements Serializable
     String label;
 
     // the parents of this database
-    Vector parents;
+    final Vector parents;
     
     // If the database was loaded via a file, this holds the directory of the database
     File directory;
@@ -391,8 +391,8 @@ public class ParameterDatabase extends Properties implements Serializable
     boolean checked;
 
     // List of parameters which were requested and ones which furthermore were fulfilled
-    Hashtable gotten;
-    Hashtable accessed;
+    final Hashtable gotten;
+    final Hashtable accessed;
     
     // If the database was loaded via getResource(), this holds the class and relative path
     // used in that load

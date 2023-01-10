@@ -107,9 +107,7 @@ public class SimpleFitness extends Fitness
 
     /** Presently does not decode the fact that the fitness is ideal or not */
     public void readFitness(final EvolutionState state, 
-        final LineNumberReader reader)
-        throws IOException
-        {
+        final LineNumberReader reader) {
         setFitness(state, Code.readDoubleWithPreamble(FITNESS_PREAMBLE, state, reader));
         }
 

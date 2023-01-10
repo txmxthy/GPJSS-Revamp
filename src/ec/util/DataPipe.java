@@ -85,25 +85,25 @@ public class DataPipe
         }
     
     /** The input stream */
-    public DataInputStream input;
+    public final DataInputStream input;
     /** The output stream */
-    public DataOutputStream output;
+    public final DataOutputStream output;
     
     public DataPipe()
         {
         OutputStream outStream = new OutputStream()
             {
-            public void write(int b) throws IOException { push((byte)b); }
-            public void write(byte[] b, int off, int len) throws IOException { push(b, off, len); }
-            public void write(byte[] b) throws IOException { push(b, 0, b.length); }
+            public void write(int b) { push((byte)b); }
+            public void write(byte[] b, int off, int len) { push(b, off, len); }
+            public void write(byte[] b) { push(b, 0, b.length); }
             };
         output = new DataOutputStream(outStream);
         
         InputStream inStream = new InputStream()
             {
-            public int read() throws IOException { return pull(); }
-            public int read(byte[] b, int off, int len) throws IOException { return pull(b, off, len); }
-            public int read(byte[] b) throws IOException { return pull(b, 0, b.length); }
+            public int read() { return pull(); }
+            public int read(byte[] b, int off, int len) { return pull(b, off, len); }
+            public int read(byte[] b) { return pull(b, 0, b.length); }
             };
         
         input = new DataInputStream(inStream);

@@ -40,7 +40,7 @@ public class CA implements java.io.Serializable
     int[] ca;
     int[] ca2;
     int[] rule;
-    int neighborhood;
+    final int neighborhood;
 
     public int[] getVals() { return ca; }
     public int[] getRule() { return rule; }

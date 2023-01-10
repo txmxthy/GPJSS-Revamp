@@ -19,13 +19,13 @@ public class RuleTestFor100Gen {
 
     public static final long simSeed = 968356;
 
-	protected String trainPath; //the directory of training things
-    protected RuleType ruleType;
-    protected int numRuns;
-    protected String testScenario;
-    protected String testSetName;
+	protected final String trainPath; //the directory of training things
+    protected final RuleType ruleType;
+    protected final int numRuns;
+    protected final String testScenario;
+    protected final String testSetName;
     protected List<Objective> objectives; // The objectives to test.
-    protected int numPopulations;
+    protected final int numPopulations;
 
     public RuleTestFor100Gen(String trainPath, RuleType ruleType, int numRuns,
                     String testScenario, String testSetName,

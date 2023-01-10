@@ -36,8 +36,8 @@ public class MajorityGP extends GPProblem implements SimpleProblemForm
     public static final int STEPS = 200;
 
 
-    int[][] trials = new int[NUM_TRIALS][CA_WIDTH];
-    int[] majorities = new int[NUM_TRIALS];
+    final int[][] trials = new int[NUM_TRIALS][CA_WIDTH];
+    final int[] majorities = new int[NUM_TRIALS];
 
     // kinds of trial types
     static final int MAJORITY_ZERO = 0;

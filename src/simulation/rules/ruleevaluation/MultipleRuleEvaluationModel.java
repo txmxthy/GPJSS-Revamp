@@ -30,7 +30,7 @@ public class MultipleRuleEvaluationModel extends AbstractEvaluationModel{
     //defined by fzhang, 26.4.2018
     int countBadrun = 0;
     int countInd = 0;
-    List<Integer> genNumBadRun = new ArrayList<>();
+    final List<Integer> genNumBadRun = new ArrayList<>();
     protected long jobSeed;
 
     //modified by fzhang 21.5.2018 to get the number of finished jobs

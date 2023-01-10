@@ -26,7 +26,7 @@ public class EveryFiveGenHalfShopMultipleRuleEvaluationModel extends MultipleRul
 	 //defined by fzhang, 26.4.2018
     int countBadrun = 0;
     int countInd = 0;
-    List<Integer> genNumBadRun = new ArrayList<>();
+    final List<Integer> genNumBadRun = new ArrayList<>();
     protected long jobSeed;
     
     protected boolean clear = true;

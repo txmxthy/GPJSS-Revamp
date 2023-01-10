@@ -45,7 +45,7 @@ public class Lid extends GPProblem implements SimpleProblemForm
     static final String P_TARGET_TERMINALS = "targetTerminals";
     static final String P_WEIGHT_DEPTH = "weightDepth";
 
-    int maxWeight = 100;
+    final int maxWeight = 100;
     int targetDepth;
     int targetTerminals;
     int actualDepth;

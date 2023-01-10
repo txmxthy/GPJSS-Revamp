@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class UniqueTerminalsGatherer extends GPNodeGatherer {
 
-    List<GPNode> terminals;
+    final List<GPNode> terminals;
 
     public UniqueTerminalsGatherer(List<GPNode> terminals) {
         super();

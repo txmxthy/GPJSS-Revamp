@@ -38,24 +38,24 @@ public class GrammarParser implements Prototype
      * these are needed to generate the predictive parse table.
      */
     // The list of production rules after flattenning the dagp tree
-    ArrayList productionRuleList = new ArrayList();
+    final ArrayList productionRuleList = new ArrayList();
     // Assign integer index to each of the rules, starting from 0
-    HashMap indexToRule = new HashMap();
+    final HashMap indexToRule = new HashMap();
     // Reverse map of the above HashMap indexToRule
-    HashMap ruleToIndex = new HashMap();
+    final HashMap ruleToIndex = new HashMap();
     // Function heads' (i.e. terminal') indices
-    HashMap functionHeadToIndex = new HashMap();
+    final HashMap functionHeadToIndex = new HashMap();
     // Rule heads' (i.e. non-terminal') indices
-    HashMap ruleHeadToIndex = new HashMap();
+    final HashMap ruleHeadToIndex = new HashMap();
     // Absolute production rule indices to relative indices (w.r.t. sub-rules)
-    HashMap absIndexToRelIndex = new HashMap();
+    final HashMap absIndexToRelIndex = new HashMap();
 
     /** 
      * The hash-map for the so called FIRST-SET, FOLLOW-SET and PREDICT-SET 
      * for each of the production rules. 
      */
-    HashMap ruleToFirstSet = new HashMap();
-    HashMap ruleToFollowSet = new HashMap();
+    final HashMap ruleToFirstSet = new HashMap();
+    final HashMap ruleToFollowSet = new HashMap();
     HashMap ruleToPredictSet = new HashMap();
 
     /** 

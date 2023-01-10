@@ -39,10 +39,10 @@ public class Log implements Serializable
     public transient PrintWriter writer;   // the actual writer.
 
     /** A filename, if the writer writes to a file */
-    public File filename;                // the filename to write to, if any
+    public final File filename;                // the filename to write to, if any
 
     /** Should the log post announcements? */
-    public boolean postAnnouncements;      // will the log post announcements?
+    public final boolean postAnnouncements;      // will the log post announcements?
 
     // stuff for restarting
 
@@ -50,13 +50,13 @@ public class Log implements Serializable
     public LogRestarter restarter;         // resets the log
 
     /** Should the log repost all announcements on restart */
-    public boolean repostAnnouncementsOnRestart;   // repost all announcements?
+    public final boolean repostAnnouncementsOnRestart;   // repost all announcements?
 
     /** If the log writes to a file, should it append to the file on restart,
         or should it overwrite the file? */
-    public boolean appendOnRestart;        // append to a file or replace it?
+    public final boolean appendOnRestart;        // append to a file or replace it?
     
-    public boolean isLoggingToSystemOut;
+    public final boolean isLoggingToSystemOut;
 
 
     // values for specifying logs based on System.out or System.err
@@ -164,13 +164,11 @@ public class Log implements Serializable
             writer = new PrintWriter(System.out);
             restarter = new LogRestarter()
                 {
-                public Log restart(Log l) throws IOException
-                    {
+                public Log restart(Log l) {
                     l.writer = new PrintWriter(System.out);
                     return l;
                     }
-                public Log reopen(Log l) throws IOException
-                    {
+                public Log reopen(Log l) {
                     return l;  // makes no sense
                     }
                 };
@@ -180,13 +178,11 @@ public class Log implements Serializable
             writer = new PrintWriter(System.err);
             restarter = new LogRestarter()
                 {
-                public Log restart(Log l) throws IOException
-                    {
+                public Log restart(Log l) {
                     l.writer = new PrintWriter(System.err);
                     return l;
                     }
-                public Log reopen(Log l) throws IOException
-                    {
+                public Log reopen(Log l) {
                     return l;  // makes no sense
                     }
                 };

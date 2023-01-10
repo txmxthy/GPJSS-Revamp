@@ -40,7 +40,7 @@ public class GPRuleEvolutionState extends SimpleEvolutionState {
 		this.weights = weights;
 	}
 
-	List<Double> genTimes = new ArrayList<>();
+	final List<Double> genTimes = new ArrayList<>();
 
 	public GPNode[][] getTerminals() {
 		return terminals;

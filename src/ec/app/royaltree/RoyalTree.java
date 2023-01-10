@@ -104,7 +104,7 @@ public class RoyalTree extends GPProblem implements SimpleProblemForm
 
 
     // doesn't need to be cloned
-    char[] successors = new char[256];  // we assume we only have letters, and 0 means "no sucessor"
+    final char[] successors = new char[256];  // we assume we only have letters, and 0 means "no sucessor"
     public RoyalTree()
         {
         String SUCCESSORS = "XABCDEFGHIJ";
