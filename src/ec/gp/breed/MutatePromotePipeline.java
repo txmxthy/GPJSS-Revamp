@@ -138,7 +138,6 @@ public class MutatePromotePipeline extends GPBreedingPipeline
         if (parent.parent instanceof GPNode)
             ((GPNode)(parent.parent)).children[parent.argposition] = node;
         else ((GPTree)(parent.parent)).child = node;
-        return;
         }
 
     private int numPromotableNodes(final GPInitializer initializer,
@@ -213,14 +212,14 @@ public class MutatePromotePipeline extends GPBreedingPipeline
                 }
             else // need to copy it
                 {
-                j = (GPIndividual)(i.lightClone());
+                j = i.lightClone();
                 
                 // Fill in various tree information that didn't get filled in there
                 j.trees = new GPTree[i.trees.length];
                 
                 for(int x=0;x<j.trees.length;x++)
                     {
-                    j.trees[x] = (GPTree)(i.trees[x].lightClone());
+                    j.trees[x] = i.trees[x].lightClone();
                     j.trees[x].owner = j;
                     j.trees[x].child = (GPNode)(i.trees[x].child.clone());
                     j.trees[x].child.parent = j.trees[x];

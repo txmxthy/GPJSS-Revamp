@@ -91,7 +91,7 @@ public class RuleMutationPipeline extends BreedingPipeline
             ((RuleIndividual)inds[q]).mutate(state, thread);
             ((RuleIndividual)inds[q]).postprocessIndividual(state,thread);
 
-            ((RuleIndividual)inds[q]).evaluated=false;
+            inds[q].evaluated=false;
             }
 
         return n;

@@ -24,7 +24,7 @@ public class KMeansPlusPlusClustererTemp<T extends Clusterable> extends Clustere
     }
 
     /** Strategies to use for replacing an empty cluster. */
-    public static enum EmptyClusterStrategy {
+    public enum EmptyClusterStrategy {
 
         /** Split the cluster with largest distance variance. */
         LARGEST_VARIANCE,

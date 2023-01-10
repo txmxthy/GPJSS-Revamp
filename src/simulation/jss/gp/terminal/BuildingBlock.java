@@ -12,7 +12,7 @@ import ec.gp.GPNode;
  */
 public class BuildingBlock extends GPNode {
 
-    private GPNode root;
+    private final GPNode root;
 
     public BuildingBlock(GPNode root) {
         super();
@@ -32,7 +32,7 @@ public class BuildingBlock extends GPNode {
             return node.toString();
         }
         else {
-            String string = "(" + node.toString();
+            String string = "(" + node;
             for (GPNode child : node.children) {
                 string += " " + subTreeString(child);
             }

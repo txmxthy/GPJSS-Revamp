@@ -18,7 +18,7 @@ import static java.util.Arrays.fill;
  */
 public class StaticSimulation extends Simulation {
 
-    private JSSInstance instance;
+    private final JSSInstance instance;
     private Shop shop;
     private List<Process> dummyProcesses;
 

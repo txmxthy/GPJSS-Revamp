@@ -9,6 +9,7 @@ import simulation.definition.logic.state.SystemState;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by yimei on 22/09/16.
@@ -206,10 +207,10 @@ public class Operation {
         Operation operation = (Operation) o;
 
         if (id != operation.id) return false;
-        if (job != null ? !job.equals(operation.job) : operation.job != null) return false;
-        if (operationOptions != null ? !operationOptions.equals(operation.operationOptions) : operation.operationOptions != null)
+        if (!Objects.equals(job, operation.job)) return false;
+        if (!Objects.equals(operationOptions, operation.operationOptions))
             return false;
-        return next != null ? next.equals(operation.next) : operation.next == null;
+        return Objects.equals(next, operation.next);
     }
 
     @Override

@@ -103,7 +103,7 @@ public abstract class GPNode implements GPNodeParent, Prototype
 
     /** The GPNode's parent.  4 bytes.  :-(  But it really helps simplify breeding. */
     public GPNodeParent parent;
-    public GPNode children[];
+    public GPNode[] children;
     /** The argument position of the child in its parent. 
         This is a byte to save space (GPNode is the critical object space-wise) -- 
         besides, how often do you have 256 children? You can change this to a short
@@ -406,7 +406,7 @@ public abstract class GPNode implements GPNodeParent, Prototype
         return new Iterator()
             {
             GPNode current;
-            Iterator iter = iterator();
+            final Iterator iter = iterator();
                         
             void fill()
                 {
@@ -621,7 +621,7 @@ public abstract class GPNode implements GPNodeParent, Prototype
     public void resetNode(final EvolutionState state, final int thread, final GPFunctionSet functionSet) { }
 
     /** A convenience function for identifying a GPNode in an error message */
-    public String errorInfo() { return "GPNode " + toString() + " in the function set for tree " + ((GPTree)(rootParent())).treeNumber(); }
+    public String errorInfo() { return "GPNode " + this + " in the function set for tree " + ((GPTree)(rootParent())).treeNumber(); }
 
 
     public GPNode lightClone()
@@ -646,10 +646,10 @@ public abstract class GPNode implements GPNodeParent, Prototype
  
     public Object clone()
         { 
-        GPNode newnode = (GPNode)(lightClone());
+        GPNode newnode = lightClone();
         for(int x=0;x<children.length;x++)
             {
-            newnode.children[x] = (GPNode)(children[x].cloneReplacing()); 
+            newnode.children[x] = children[x].cloneReplacing();
             // if you think about it, the following CAN'T be implemented by
             // the children's clone method.  So it's set here.
             newnode.children[x].parent = newnode;
@@ -684,10 +684,10 @@ public abstract class GPNode implements GPNodeParent, Prototype
             return newSubtree.cloneReplacing();
         else
             {
-            GPNode newnode = (GPNode)(lightClone());
+            GPNode newnode = lightClone();
             for(int x=0;x<children.length;x++)
                 {
-                newnode.children[x] = (GPNode)(children[x].cloneReplacing(newSubtree,oldSubtree)); 
+                newnode.children[x] = children[x].cloneReplacing(newSubtree,oldSubtree);
                 // if you think about it, the following CAN'T be implemented by
                 // the children's clone method.  So it's set here.
                 newnode.children[x].parent = newnode;
@@ -714,10 +714,10 @@ public abstract class GPNode implements GPNodeParent, Prototype
             }
         else
             {
-            GPNode newnode = (GPNode)(lightClone());
+            GPNode newnode = lightClone();
             for(int x=0;x<children.length;x++)
                 {
-                newnode.children[x] = (GPNode)(children[x].cloneReplacingNoSubclone(newSubtree,oldSubtree)); 
+                newnode.children[x] = children[x].cloneReplacingNoSubclone(newSubtree,oldSubtree);
                 // if you think about it, the following CAN'T be implemented by
                 // the children's clone method.  So it's set here.
                 newnode.children[x].parent = newnode;
@@ -750,10 +750,10 @@ public abstract class GPNode implements GPNodeParent, Prototype
             return newSubtrees[candidate].cloneReplacing(newSubtrees,oldSubtrees);
         else
             {
-            GPNode newnode = (GPNode)(lightClone());
+            GPNode newnode = lightClone();
             for(int x=0;x<children.length;x++)
                 {
-                newnode.children[x] = (GPNode)(children[x].cloneReplacing(newSubtrees,oldSubtrees)); 
+                newnode.children[x] = children[x].cloneReplacing(newSubtrees,oldSubtrees);
                 // if you think about it, the following CAN'T be implemented by
                 // the children's clone method.  So it's set here.
                 newnode.children[x].parent = newnode;
@@ -786,14 +786,14 @@ public abstract class GPNode implements GPNodeParent, Prototype
         else
             {
             numArgs = children.length;
-            curnode = (GPNode)lightClone();
+            curnode = lightClone();
             }
 
         // populate
 
         for(int x=0;x<numArgs;x++)
             {
-            curnode.children[x] = (GPNode)(children[x].cloneReplacingAtomic(newNode,oldNode)); 
+            curnode.children[x] = children[x].cloneReplacingAtomic(newNode,oldNode);
             // if you think about it, the following CAN'T be implemented by
             // the children's clone method.  So it's set here.
             curnode.children[x].parent = curnode;
@@ -837,14 +837,14 @@ public abstract class GPNode implements GPNodeParent, Prototype
         else
             {
             numArgs = children.length;
-            curnode = (GPNode)lightClone();
+            curnode = lightClone();
             }
 
         // populate
 
         for(int x=0;x<numArgs;x++)
             {
-            curnode.children[x] = (GPNode)(children[x].cloneReplacingAtomic(newNodes,oldNodes)); 
+            curnode.children[x] = children[x].cloneReplacingAtomic(newNodes,oldNodes);
             // if you think about it, the following CAN'T be implemented by
             // the children's clone method.  So it's set here.
             curnode.children[x].parent = curnode;
@@ -1057,7 +1057,7 @@ public abstract class GPNode implements GPNodeParent, Prototype
         if (rootp!=null)
             {
             int tnum = ((GPTree)(rootParent())).treeNumber();
-            return toString() + (tnum == GPTree.NO_TREENUM ? "" : " in tree " + tnum);
+            return this + (tnum == GPTree.NO_TREENUM ? "" : " in tree " + tnum);
             }
         else return toString();
         }
@@ -1303,7 +1303,7 @@ public abstract class GPNode implements GPNodeParent, Prototype
 
         // we're happy!
         dret.pos += len2;
-        return (GPNode)lightClone();
+        return lightClone();
         }
 
 
@@ -1349,7 +1349,7 @@ public abstract class GPNode implements GPNodeParent, Prototype
             set.terminals[expectedType.type] : 
             set.nonterminals[expectedType.type];
 
-        GPNode node = ((GPNode)(gpfi[index].lightClone()));
+        GPNode node = gpfi[index].lightClone();
         
         if (node.children == null || node.children.length != len)
             state.output.fatal("Mismatch in number of children (" + len + 

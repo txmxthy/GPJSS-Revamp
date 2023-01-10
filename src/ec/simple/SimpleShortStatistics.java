@@ -373,8 +373,8 @@ public class SimpleShortStatistics extends Statistics
         if (output)
             {
             state.output.print("" + popMeanFitness + " " , statisticslog);                                                                                  // mean fitness of pop this gen
-            state.output.print("" + (double)(popBestOfGeneration.fitness.fitness()) + " " , statisticslog);                 // best fitness of pop this gen
-            state.output.print("" + (double)(popBestSoFar.fitness.fitness()) + " " , statisticslog);                // best fitness of pop so far
+            state.output.print("" + popBestOfGeneration.fitness.fitness() + " " , statisticslog);                 // best fitness of pop this gen
+            state.output.print("" + popBestSoFar.fitness.fitness() + " " , statisticslog);                // best fitness of pop so far
             }
                         
         // hook for KozaShortStatistics etc.

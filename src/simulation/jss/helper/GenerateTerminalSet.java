@@ -24,7 +24,7 @@ import static simulation.jss.helper.GridResultCleaner.writeLine;
 public class GenerateTerminalSet {
 
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         //Should specify a directory path which will contain
         //csv files containing the chosen terminals - one for each job
         //then we should decide which ones to keep, and output these

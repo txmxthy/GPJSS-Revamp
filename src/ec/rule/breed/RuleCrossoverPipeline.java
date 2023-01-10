@@ -66,7 +66,7 @@ public class RuleCrossoverPipeline extends BreedingPipeline
     public double ruleCrossProbability;
 
     /** Temporary holding place for parents */
-    RuleIndividual parents[];
+    RuleIndividual[] parents;
 
     public RuleCrossoverPipeline() { parents = new RuleIndividual[2]; }
     public Parameter defaultBase() { return RuleDefaults.base().push(P_CROSSOVER); }
@@ -79,7 +79,7 @@ public class RuleCrossoverPipeline extends BreedingPipeline
         RuleCrossoverPipeline c = (RuleCrossoverPipeline)(super.clone());
 
         // deep-cloned stuff
-        c.parents = (RuleIndividual[]) parents.clone();
+        c.parents = parents.clone();
 
         return c;
         }

@@ -123,7 +123,7 @@ public class ParametersPanel
                         for (int ch = 0; ch < children; ++ch)
                             {
                             TreeNode child = selected.getChildAt(ch);
-                            String childRow[] = new String[3];
+                            String[] childRow = new String[3];
                             childRow[0] = newRow[0]+child;
                             Parameter param = new Parameter(childRow[0]);
                             childRow[1] = console.parameters.getString(param,null);

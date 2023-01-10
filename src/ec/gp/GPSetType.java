@@ -110,7 +110,7 @@ public final class GPSetType extends GPType
         }
 
     
-    public final boolean compatibleWith(final GPInitializer initializer,final GPType t)
+    public boolean compatibleWith(final GPInitializer initializer, final GPType t)
         {
         // if the type is me, then I'm compatible with it.
         if (t.type == type) return true;
@@ -126,13 +126,12 @@ public final class GPSetType extends GPType
             {
             GPSetType s = (GPSetType)t;
             int x=0; int y=0;
-            for( ; x < types_packed.length && y < s.types_packed.length ; )
-                {
+                while (x < types_packed.length && y < s.types_packed.length) {
                 if (types_packed[x] == s.types_packed[y]) return true;
                 else if (types_packed[x] < s.types_packed[y]) x++;
                 else y++;
                 }
-            return false;
+                return false;
             }
         }
     }

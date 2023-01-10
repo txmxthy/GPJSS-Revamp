@@ -190,9 +190,9 @@ public strictfp class MersenneTwister extends java.util.Random implements Serial
     private static final int TEMPERING_MASK_B = 0x9d2c5680;
     private static final int TEMPERING_MASK_C = 0xefc60000;
     
-    private int mt[]; // the array for the state vector
+    private int[] mt; // the array for the state vector
     private int mti; // mti==N+1 means mt[N] is not initialized
-    private int mag01[];
+    private int[] mag01;
     
     // a good initial seed (of int size, though stored in a long)
     //private static final long GOOD_SEED = 4357;
@@ -210,8 +210,8 @@ public strictfp class MersenneTwister extends java.util.Random implements Serial
         try
             {
             MersenneTwister f = (MersenneTwister)(super.clone());
-            f.mt = (int[])(mt.clone());
-            f.mag01 = (int[])(mag01.clone());
+            f.mt = mt.clone();
+            f.mag01 = mag01.clone();
             return f;
             }
         catch (CloneNotSupportedException e) { throw new InternalError(); } // should never happen
@@ -641,7 +641,7 @@ public strictfp class MersenneTwister extends java.util.Random implements Serial
     /**
      * Tests the code.
      */
-    public static void main(String args[])
+    public static void main(String[] args)
         { 
         int j;
 
@@ -655,7 +655,7 @@ public strictfp class MersenneTwister extends java.util.Random implements Serial
         for (j=0;j<1000;j++)
             {
             // first, convert the int from signed to "unsigned"
-            long l = (long)r.nextInt();
+            long l = r.nextInt();
             if (l < 0 ) l += 4294967296L;  // max int value
             String s = String.valueOf(l);
             while(s.length() < 10) s = " " + s;  // buffer
@@ -699,7 +699,7 @@ public strictfp class MersenneTwister extends java.util.Random implements Serial
         r = new MersenneTwister(SEED);
         for (j = 0; j < 1000; j++)
             {
-            System.out.print(r.nextBoolean((double)(j/999.0)) + " ");
+            System.out.print(r.nextBoolean(j/999.0) + " ");
             if (j%8==7) System.out.println();
             }
         if (!(j%8==7)) System.out.println();
@@ -708,7 +708,7 @@ public strictfp class MersenneTwister extends java.util.Random implements Serial
         r = new MersenneTwister(SEED);
         for (j = 0; j < 1000; j++)
             {
-            System.out.print(r.nextBoolean((float)(j/999.0f)) + " ");
+            System.out.print(r.nextBoolean(j/999.0f) + " ");
             if (j%8==7) System.out.println();
             }
         if (!(j%8==7)) System.out.println();

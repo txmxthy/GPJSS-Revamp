@@ -59,7 +59,7 @@ public class MultiSelection extends SelectionMethod
     public static final String P_MULTISELECT = "multiselect";
 
     /** The MultiSelection's individuals */
-    public SelectionMethod selects[];
+    public SelectionMethod[] selects;
 
     public Parameter defaultBase()
         {

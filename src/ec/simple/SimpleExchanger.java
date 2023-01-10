@@ -41,14 +41,12 @@ public  class SimpleExchanger extends Exchanger implements SteadyStateExchangerF
     public void initializeContacts(final EvolutionState state)
         {
         // don't care
-        return;
         }
 
     /** Doesn't do anything. */
     public void reinitializeContacts(final EvolutionState state)
         {
         // don't care
-        return;
         }
 
     /** Simply returns state.population. */
@@ -69,7 +67,6 @@ public  class SimpleExchanger extends Exchanger implements SteadyStateExchangerF
     public void closeContacts(final EvolutionState state, final int result)
         {
         // don't care
-        return;
         }
 
     /** Always returns null */

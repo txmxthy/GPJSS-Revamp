@@ -23,7 +23,7 @@ import ec.gp.*;
 
 public interface EvalPrint
     {
-    public void evalPrint(final EvolutionState state,
+    void evalPrint(final EvolutionState state,
         final int thread,
         final GPData input,
         final ADFStack stack,

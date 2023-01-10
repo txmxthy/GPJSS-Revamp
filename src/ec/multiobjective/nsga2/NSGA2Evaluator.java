@@ -46,7 +46,7 @@ public class NSGA2Evaluator extends SimpleEvaluator {
 	 * create the archive (it's the size of the original population -- keep in mind
 	 * that NSGA2Breeder had made the population larger to include the children.
 	 */
-	public int originalPopSize[];
+	public int[] originalPopSize;
 
 	public void setup(final EvolutionState state, final Parameter base) {
 		super.setup(state, base);
@@ -104,15 +104,13 @@ public class NSGA2Evaluator extends SimpleEvaluator {
 
 				// then put the m sparsest individuals in the new population
 				int m = originalPopSize[subpop] - newSubpopulation.size(); //how many positions left for new individuals
-				for (int j = 0; j < m; j++) 
-					newSubpopulation.add(rank[j]); //add some individuals based on the sparisity
+				newSubpopulation.addAll(Arrays.asList(rank).subList(0, m));
 
 				// and bail
 				break;
 			} else {
 				// dump in everyone
-				for (int j = 0; j < rank.length; j++) //add the while rank directly
-					newSubpopulation.add(rank[j]);
+				Collections.addAll(newSubpopulation, rank);
 			}
 		}
 

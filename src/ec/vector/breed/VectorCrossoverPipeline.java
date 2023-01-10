@@ -58,7 +58,7 @@ public class VectorCrossoverPipeline extends BreedingPipeline
     public boolean tossSecondParent;
 
     /** Temporary holding place for parents */
-    VectorIndividual parents[];
+    VectorIndividual[] parents;
 
     public VectorCrossoverPipeline() { parents = new VectorIndividual[2]; }
     public Parameter defaultBase() { return VectorDefaults.base().push(P_CROSSOVER); }
@@ -71,7 +71,7 @@ public class VectorCrossoverPipeline extends BreedingPipeline
         VectorCrossoverPipeline c = (VectorCrossoverPipeline)(super.clone());
 
         // deep-cloned stuff
-        c.parents = (VectorIndividual[]) parents.clone();
+        c.parents = parents.clone();
 
         return c;
         }

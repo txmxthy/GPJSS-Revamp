@@ -180,8 +180,8 @@ public class BucketTournamentSelection extends SelectionMethod implements Steady
                 }
             else // check if it has the same fitness as last individual
                 {
-                if( ((Individual)state.population.subpops[subpopulation].individuals[i]).fitness.equivalentTo(
-                        ((Individual)state.population.subpops[subpopulation].individuals[i-1]).fitness ) )
+                if( state.population.subpops[subpopulation].individuals[i].fitness.equivalentTo(
+                        state.population.subpops[subpopulation].individuals[i-1].fitness ) )
                     {
                     // now the individual has exactly the same fitness as previous one,
                     // so we just put it in the same bucket as the previous one(s)
@@ -256,9 +256,11 @@ public class BucketTournamentSelection extends SelectionMethod implements Steady
         final int subpopulation,
         final int thread,
         final int individual)
-        { return; }
+        {
+        }
     
     public void sourcesAreProperForm(final SteadyStateEvolutionState state)
-        { return; }
+        {
+        }
     
     }

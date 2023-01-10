@@ -99,7 +99,7 @@ public class SigmaScalingSelection extends FitProportionateSelection
                 
         for(int x=0;x<fitnesses.length;x++)
             {
-            fitnesses[x] = ((Individual)(s.population.subpops[subpopulation].individuals[x])).fitness.fitness();
+            fitnesses[x] = s.population.subpops[subpopulation].individuals[x].fitness.fitness();
             if (fitnesses[x] < 0) // uh oh
                 s.output.fatal("Discovered a negative fitness value.  SigmaScalingSelection requires that all fitness values be non-negative(offending subpopulation #" + subpopulation + ")");
             }
@@ -121,7 +121,7 @@ public class SigmaScalingSelection extends FitProportionateSelection
         // Fill fitnesses[] with sigma scaled fitness values
         for(int x=0;x<fitnesses.length;x++)
             {
-            fitnesses[x] = (double)sigmaScaledValue(fitnesses[x], meanFitness, sigma, s); // adjust the fitness proportion according to sigma scaling.
+            fitnesses[x] = sigmaScaledValue(fitnesses[x], meanFitness, sigma, s); // adjust the fitness proportion according to sigma scaling.
                                 
             // Sigma scaling formula can return negative values, this is unacceptable for fitness proportionate style selection...
             // so we must substitute the fitnessFloor (some value >= 0) when a sigma scaled fitness <= fitnessFloor is encountered.

@@ -51,8 +51,8 @@ public class FSGPRuleEvolutionState extends GPRuleEvolutionState implements Term
     private int numClusters1;
     private int numClusters2;
 
-    private double fitUB = Double.NEGATIVE_INFINITY;
-    private double fitLB = Double.POSITIVE_INFINITY;
+    private final double fitUB = Double.NEGATIVE_INFINITY;
+    private final double fitLB = Double.POSITIVE_INFINITY;
 
     ArrayList<Double> saveOldFitSubPop0 = new ArrayList<>();
     ArrayList<Double> saveOldFitSubPop1 = new ArrayList<>();
@@ -344,7 +344,7 @@ public class FSGPRuleEvolutionState extends GPRuleEvolutionState implements Term
 
         RuleType ruleType = ruleTypes[subPopNum];
         for (int ind = 0; ind < individuals.size(); ind++) {
-            GPIndividual gpIndi = (GPIndividual) individuals.get(ind); //check the individual one by one
+            GPIndividual gpIndi = individuals.get(ind); //check the individual one by one
             int[] charList = pc.characterise(new GPRule(ruleType,gpIndi.trees[0]));//the measured rule
             GPIndividual newInd;
             double distance = 0.0;

@@ -33,7 +33,7 @@ public class CoevolutionaryECSuite extends ECSuite implements GroupedProblemForm
         for( int i = 0 ; i < pop.subpops.length ; i++ )
             if (prepareForAssessment[i])
                 for( int j = 0 ; j < pop.subpops[i].individuals.length ; j++ )
-                    ((SimpleFitness)(pop.subpops[i].individuals[j].fitness)).trials = new ArrayList();
+                    pop.subpops[i].individuals[j].fitness.trials = new ArrayList();
         }
 
     public void postprocessPopulation(final EvolutionState state, Population pop, boolean[] assessFitness, boolean countVictoriesOnly) {

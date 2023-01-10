@@ -54,7 +54,7 @@ public class multiPopCoevolutionaryClearingEvaluator extends MultiPopCoevolution
         ////fzhang 2019.6.6 in order to get the real fitnesses of top 20% individuals in old population
         //==============================start===============================
         preGenerations = state.parameters.getIntWithDefault(new Parameter(P_PRE_GENERATIONS), null, 0);
-        if(state.generation == preGenerations && flag == false){
+        if(state.generation == preGenerations && !flag){
             flag = true;
             PopulationUtils.sort(state.population); //old population
             ((MultiPopCoevolutionaryClearingEvaluator)state.evaluator).setClear(false);
@@ -108,7 +108,7 @@ public class multiPopCoevolutionaryClearingEvaluator extends MultiPopCoevolution
         ////fzhang 2019.6.6 in order to get the real fitnesses of top 20% individuals in old population
         //==============================start===============================
         preGenerations = state.parameters.getIntWithDefault(new Parameter(P_PRE_GENERATIONS), null, 0);
-        if(state.generation == preGenerations && flag == false){
+        if(state.generation == preGenerations && !flag){
             flag = true;
             PopulationUtils.sort(pop); //old population
             ((MultiPopCoevolutionaryClearingEvaluator)state.evaluator).setClear(false);
@@ -166,7 +166,7 @@ public class multiPopCoevolutionaryClearingEvaluator extends MultiPopCoevolution
             }
 
             //evaluate new individuals
-            ((MultiObjectiveFitness)(newPop[i].fitness)).trials = new ArrayList();//this is always make trials.size == 1, actually useless
+            newPop[i].fitness.trials = new ArrayList();//this is always make trials.size == 1, actually useless
             ((GroupedProblemForm)(this.p_problem)).evaluate(state, inds
                     , updates // Should the fitness of individuals be updated? Here it says yes and yes.
                     , false

@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class JobArrivalEvent extends AbstractEvent {
 
-    private Job job;
+    private final Job job;
 
     public JobArrivalEvent(double time, Job job) {
         super(time);

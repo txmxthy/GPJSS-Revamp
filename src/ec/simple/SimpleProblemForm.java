@@ -31,7 +31,7 @@ public interface SimpleProblemForm
         and sets their fitness appropriately.
     */
 
-    public void evaluate(final EvolutionState state,
+    void evaluate(final EvolutionState state,
         final Individual ind,
         final int subpopulation,
         final int threadnum);
@@ -42,7 +42,7 @@ public interface SimpleProblemForm
         Problem, and logs the results.  This might be called to print out
         facts about the best individual in the population, for example.  */
 
-    public void describe(
+    void describe(
         final EvolutionState state,
         final Individual ind,
         final int subpopulation,
@@ -50,7 +50,7 @@ public interface SimpleProblemForm
         final int log);
 
     //2019.2.21 mimic evaluate to make this reasonable
-	public void normObjective(final EvolutionState state,
+    void normObjective(final EvolutionState state,
 	        final Individual ind,
 	        final int subpopulation,
 	        final int threadnum);

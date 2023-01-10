@@ -106,7 +106,7 @@ public class MultiObjectiveStatistics extends SimpleStatistics
             if (doFinal) state.output.println("\n\nPareto Front of Subpopulation " + s, statisticslog);
 
             // build front
-            ArrayList front = typicalFitness.partitionIntoParetoFront(state.population.subpops[s].individuals, null, null);
+            ArrayList front = MultiObjectiveFitness.partitionIntoParetoFront(state.population.subpops[s].individuals, null, null);
 
             // sort by objective[0]
             Object[] sortedFront = front.toArray();

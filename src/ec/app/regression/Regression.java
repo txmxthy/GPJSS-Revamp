@@ -65,8 +65,8 @@ public class Regression extends GPProblem implements SimpleProblemForm
     // they can be just light-cloned and not deep cloned.
     // cool, huh?
 
-    public double inputs[];
-    public double outputs[];
+    public double[] inputs;
+    public double[] outputs;
 
     // don't bother cloning the inputs and outputs; they're read-only :-)
     // don't bother cloning the currentValue; it's transitory

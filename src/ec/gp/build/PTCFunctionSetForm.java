@@ -31,16 +31,16 @@ public interface PTCFunctionSetForm
         that various terminal in the function set will be chosen over other terminal
         with the same return type.  The ordering of the array is the same as
         the terminal[type][...] array in GPFunctionSet.  */
-    public double[] terminalProbabilities(final int type);
+    double[] terminalProbabilities(final int type);
 
     /** Returns an organized distribution (see ec.util.RandomChoice) of likelihoods
         that various nonterminals in the function set will be chosen over other nonterminals
         with the same return type. The ordering of the array is the same as
         the nonterminals[type][...] array in GPFunctionSet. */
-    public double[] nonterminalProbabilities(final int type);
+    double[] nonterminalProbabilities(final int type);
     
     /** Returns an array (by return type) of the probability that PTC1 must pick a
         nonterminal over a terminal in order to guarantee the expectedTreeSize.
         Only used by PTC1, not by PTC2. */
-    public double[] nonterminalSelectionProbabilities(final int expectedTreeSize);
+    double[] nonterminalSelectionProbabilities(final int expectedTreeSize);
     }

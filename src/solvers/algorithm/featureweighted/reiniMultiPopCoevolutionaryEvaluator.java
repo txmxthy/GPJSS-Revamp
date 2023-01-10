@@ -113,7 +113,7 @@ public class reiniMultiPopCoevolutionaryEvaluator extends MultiPopCoevolutionary
             }
 
             //evaluate new individuals
-            ((MultiObjectiveFitness)(newPop[i].fitness)).trials = new ArrayList();//this is always make trials.size == 1, actually useless
+            newPop[i].fitness.trials = new ArrayList();//this is always make trials.size == 1, actually useless
             ((GroupedProblemForm)(this.p_problem)).evaluate(state, inds
                     , updates // Should the fitness of individuals be updated? Here it says yes and yes.
                     , false

@@ -532,7 +532,7 @@ public class FeatureUtil {
                 BuildingBlock bb = new BuildingBlock(BBs.get(i));
 
                 for (int j = 0; j < selIndis.size(); j++) {
-                    writer.write(bb.toString() + "," +
+                    writer.write(bb + "," +
                             selIndis.get(j).fitness.fitness() + "," +
                             BBContributionStats.get(i).getElement(j) + "," +
                             BBVotingWeightStats.get(i).getElement(j) + "," +
@@ -815,7 +815,7 @@ public class FeatureUtil {
         Individual[] newPop = state.population.subpops[subPopNum].individuals;
 
         Individual[] inds = new Individual[state.population.subpops.length]; // individuals to evaluate together
-        boolean[] updates = new boolean[state.population.subpops.length];; // which individual should have its fitness updated as a result
+        boolean[] updates = new boolean[state.population.subpops.length];// which individual should have its fitness updated as a result
 
         PhenoCharacterisation pc = null;
         if (state.evaluator instanceof ClearingEvaluator) {
@@ -867,7 +867,7 @@ public class FeatureUtil {
             }
 
             //evaluate new individuals
-            ((MultiObjectiveFitness)(tempNewInd.fitness)).trials = new ArrayList();//this is always make trials.size == 1, actually useless
+            tempNewInd.fitness.trials = new ArrayList();//this is always make trials.size == 1, actually useless
             ((GroupedProblemForm)(state.evaluator.p_problem)).evaluate(state, inds
                     , updates // Should the fitness of individuals be updated? Here it says yes and yes.
                     , false
@@ -976,7 +976,7 @@ public class FeatureUtil {
         Individual[] newPop = new Individual[numElites];
 
         Individual[] inds = new Individual[state.population.subpops.length]; // individuals to evaluate together
-        boolean[] updates = new boolean[state.population.subpops.length];; // which individual should have its fitness updated as a result
+        boolean[] updates = new boolean[state.population.subpops.length];// which individual should have its fitness updated as a result
 
         PhenoCharacterisation pc = null;
         if (state.evaluator instanceof ClearingEvaluator) {
@@ -1040,7 +1040,7 @@ public class FeatureUtil {
             }
 
             //evaluate new individuals
-            ((MultiObjectiveFitness)(tempNewInd.fitness)).trials = new ArrayList();//this is always make trials.size == 1, actually useless
+            tempNewInd.fitness.trials = new ArrayList();//this is always make trials.size == 1, actually useless
             ((GroupedProblemForm)(state.evaluator.p_problem)).evaluate(state, inds
                     , updates // Should the fitness of individuals be updated? Here it says yes and yes.
                     , false

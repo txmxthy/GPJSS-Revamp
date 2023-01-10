@@ -7,6 +7,7 @@ import simulation.rules.rule.operation.evolved.GPRule;
 import simulation.definition.logic.event.*;
 import simulation.definition.logic.state.SystemState;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.PriorityQueue;
 
 import ec.gp.GPNode;
@@ -114,10 +115,7 @@ public abstract class Simulation {
         if (e.hasNext()) {
             AbstractEvent a = e.next();
             if (a instanceof ProcessStartEvent) {
-                if (((ProcessStartEvent) a).getProcess().getWorkCenter().getId() ==
-                        process.getWorkCenter().getId()) {
-                    return false;
-                }
+                return ((ProcessStartEvent) a).getProcess().getWorkCenter().getId() != process.getWorkCenter().getId();
             }
         }
         return true;
@@ -417,11 +415,11 @@ public abstract class Simulation {
         if (warmupJobs != that.warmupJobs) return false;
         if (numJobsArrived != that.numJobsArrived) return false;
         if (throughput != that.throughput) return false;
-        if (sequencingRule != null ? !sequencingRule.equals(that.sequencingRule) : that.sequencingRule != null)
+        if (!Objects.equals(sequencingRule, that.sequencingRule))
             return false;
-        if (routingRule != null ? !routingRule.equals(that.routingRule) : that.routingRule != null) return false;
-        if (systemState != null ? !systemState.equals(that.systemState) : that.systemState != null) return false;
-        return eventQueue != null ? eventQueue.equals(that.eventQueue) : that.eventQueue == null;
+        if (!Objects.equals(routingRule, that.routingRule)) return false;
+        if (!Objects.equals(systemState, that.systemState)) return false;
+        return Objects.equals(eventQueue, that.eventQueue);
     }
 
     @Override

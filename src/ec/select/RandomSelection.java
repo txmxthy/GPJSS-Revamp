@@ -75,9 +75,11 @@ public class RandomSelection extends SelectionMethod implements SteadyStateBSour
         final int subpopulation,
         final int thread,
         final int individual)
-        { return; }
+        {
+        }
     
     public void sourcesAreProperForm(final SteadyStateEvolutionState state)
-        { return; }
+        {
+        }
     
     }

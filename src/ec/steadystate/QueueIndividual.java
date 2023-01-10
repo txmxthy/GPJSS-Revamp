@@ -22,5 +22,5 @@ public class QueueIndividual implements java.io.Serializable
         ind = i; 
         subpop=s; 
         }
-    };
+    }
 

@@ -133,8 +133,7 @@ public class Particle extends DoubleVectorIndividual
                         
         if (personalBestFitness != null)
             {
-            if (!personalBestFitness.equals(i.personalBestFitness))
-                return false;
+                return personalBestFitness.equals(i.personalBestFitness);
             }
 
         return true;
@@ -151,8 +150,8 @@ public class Particle extends DoubleVectorIndividual
         {
         Particle myobj = (Particle) (super.clone());
         // must clone the velocity and neighborhood pattern if they exist
-        if (velocity != null) velocity = (double[])(velocity.clone());
-        if (neighborhood != null) neighborhood = (int[])(neighborhood.clone());
+        if (velocity != null) velocity = velocity.clone();
+        if (neighborhood != null) neighborhood = neighborhood.clone();
         return myobj;
         }
 
@@ -162,17 +161,17 @@ public class Particle extends DoubleVectorIndividual
         if (personalBestFitness == null || fitness.betterThan(personalBestFitness))
             {
             personalBestFitness = (Fitness)(fitness.clone());
-            personalBestGenome = (double[])(genome.clone());
+            personalBestGenome = genome.clone();
             }
         
         // initialize neighborhood if it's not been created yet
         PSOBreeder psob = (PSOBreeder)(state.breeder);
-        if (neighborhood == null || psob.neighborhood == psob.C_NEIGHBORHOOD_RANDOM_EACH_TIME)
+        if (neighborhood == null || psob.neighborhood == PSOBreeder.C_NEIGHBORHOOD_RANDOM_EACH_TIME)
             {
-            if (psob.neighborhood == psob.C_NEIGHBORHOOD_RANDOM) // "random" scheme is the only thing that is available for now
+            if (psob.neighborhood == PSOBreeder.C_NEIGHBORHOOD_RANDOM) // "random" scheme is the only thing that is available for now
                 neighborhood = createRandomPattern(myindex, psob.includeSelf, 
                     state.population.subpops[subpop].individuals.length, psob.neighborhoodSize, state, thread);
-            else if (psob.neighborhood == psob.C_NEIGHBORHOOD_TOROIDAL || psob.neighborhood == psob.C_NEIGHBORHOOD_RANDOM_EACH_TIME)
+            else if (psob.neighborhood == PSOBreeder.C_NEIGHBORHOOD_TOROIDAL || psob.neighborhood == PSOBreeder.C_NEIGHBORHOOD_RANDOM_EACH_TIME)
                 neighborhood = createToroidalPattern(myindex, psob.includeSelf,
                     state.population.subpops[subpop].individuals.length, psob.neighborhoodSize);
             else // huh?
@@ -194,7 +193,7 @@ public class Particle extends DoubleVectorIndividual
                 
         // clone neighborhood best
         neighborhoodBestFitness = (Fitness)(neighborhoodBestFitness.clone());
-        neighborhoodBestGenome = (double[])(neighborhoodBestGenome.clone());
+        neighborhoodBestGenome = neighborhoodBestGenome.clone();
         }
 
     // velocityCoeff:       cognitive/confidence coefficient for the velocity

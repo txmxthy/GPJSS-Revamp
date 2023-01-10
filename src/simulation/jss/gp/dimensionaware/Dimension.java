@@ -8,5 +8,5 @@ package simulation.jss.gp.dimensionaware;
 public enum Dimension {
     TIME_UNIT,
     OP_NUMBER,
-    WEIGHT;
+    WEIGHT
 }

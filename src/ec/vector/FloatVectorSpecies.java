@@ -336,12 +336,10 @@ public class FloatVectorSpecies extends VectorSpecies
 
     public boolean inNumericalTypeRange(double geneVal)
         {
-        if (i_prototype instanceof FloatVectorIndividual)
+            // dunno what the individual is...
+            if (i_prototype instanceof FloatVectorIndividual)
             return (geneVal <= Float.MAX_VALUE && geneVal >= -Float.MAX_VALUE);
-        else if (i_prototype instanceof DoubleVectorIndividual)
-            return true; // geneVal is valid for all double
-        else
-            return false; // dunno what the individual is...
+        else return i_prototype instanceof DoubleVectorIndividual; // geneVal is valid for all double
         }
 
 

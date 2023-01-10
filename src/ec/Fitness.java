@@ -369,7 +369,8 @@ public abstract class Fitness implements Prototype, Comparable
         {
         // first let's merge trials.  We assume they're Doubles
                 
-        if (other.trials == null) return;  // I win
+        if (other.trials == null) {
+        }  // I win
         else if (trials == null)  // he wins
             {
             trials = other.trials;                              // just steal him
@@ -422,7 +423,7 @@ public abstract class Fitness implements Prototype, Comparable
         setToMeanOf(...), so if that method is unimplemented, this method will also fail.  */
     public void setToBestOf(EvolutionState state, Fitness[] fitnesses)
         {
-        Fitness[] f2 = (Fitness[])(fitnesses.clone());
+        Fitness[] f2 = fitnesses.clone();
         Arrays.sort(f2);
         setToMeanOf(state, new Fitness[] { f2[0] });
         }
@@ -438,7 +439,7 @@ public abstract class Fitness implements Prototype, Comparable
         setToMeanOf(...), so if that method is unimplemented, this method will also fail. */
     public void setToMedianOf(EvolutionState state, Fitness[] fitnesses)
         {
-        Fitness[] f2 = (Fitness[])(fitnesses.clone());
+        Fitness[] f2 = fitnesses.clone();
         Arrays.sort(f2);
         if (f2.length % 2 == 1)
             {

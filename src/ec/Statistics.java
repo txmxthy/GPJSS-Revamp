@@ -106,7 +106,7 @@ public class Statistics implements Singleton
             {
             Parameter p = base.push(P_CHILD).push(""+x);
             children[x] = (Statistics)(state.parameters.getInstanceForParameterEq(p,null,Statistics.class));
-            ((Statistics)children[x]).setup(state,p);
+            children[x].setup(state,p);
             }
         }
     

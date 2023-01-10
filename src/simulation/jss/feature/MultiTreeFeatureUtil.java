@@ -377,7 +377,7 @@ public class MultiTreeFeatureUtil {
                 BuildingBlock bb = new BuildingBlock(BBs.get(i));
 
                 for (int j = 0; j < selIndis.size(); j++) {
-                    writer.write(bb.toString() + "," +
+                    writer.write(bb + "," +
                             selIndis.get(j).fitness.fitness() + "," +
                             BBContributionStats.get(i).getElement(j) + "," +
                             BBVotingWeightStats.get(i).getElement(j) + "," +

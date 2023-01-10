@@ -10,8 +10,8 @@ import java.util.List;
  */
 public abstract class DecisionSituation {
 
-    private List<OperationOption> queue = null;
-    private SystemState systemState = null;
+    private final List<OperationOption> queue = null;
+    private final SystemState systemState = null;
 
     public List<OperationOption> getQueue() {
         return queue;

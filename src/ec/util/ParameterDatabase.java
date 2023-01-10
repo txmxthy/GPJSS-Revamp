@@ -1203,16 +1203,16 @@ public class ParameterDatabase extends Properties implements Serializable
                 // ...but we can't use it and still be compatible with JDK 1.1
 
                 if (i < minValue)
-                    return (double) (minValue - 1);
+                    return minValue - 1;
                 return i;
                 } 
             catch (NumberFormatException e) 
                 {
-                return (double) (minValue - 1);
+                return minValue - 1;
                 }
             } 
         else
-            return (double) (minValue - 1);
+            return minValue - 1;
         }
 
     /**
@@ -1267,18 +1267,18 @@ public class ParameterDatabase extends Properties implements Serializable
                 // ...but we can't use it and still be compatible with JDK 1.1
 
                 if (i < minValue)
-                    return (double) (minValue - 1);
+                    return minValue - 1;
                 if (i > maxValue)
-                    return (double) (minValue - 1);
+                    return minValue - 1;
                 return i;
                 } 
             catch (NumberFormatException e) 
                 {
-                return (double) (minValue - 1);
+                return minValue - 1;
                 }
             } 
         else
-            return (double) (minValue - 1);
+            return minValue - 1;
         }
 
     /**
@@ -1789,7 +1789,7 @@ public class ParameterDatabase extends Properties implements Serializable
             String v = null;
             if (s != null) 
                 {
-                v = (String) (_get(s));
+                v = _get(s);
                 uncheck();
                 }
             if (v == null)
@@ -1827,7 +1827,7 @@ public class ParameterDatabase extends Properties implements Serializable
             String v = null;
             if (s != null) 
                 {
-                v = (String) (_get(s));
+                v = _get(s);
                 uncheck();
                 }
             if (v == null)
@@ -1865,7 +1865,7 @@ public class ParameterDatabase extends Properties implements Serializable
             String v = null;
             if (s != null) 
                 {
-                v = (String) (_get(s));
+                v = _get(s);
                 uncheck();
                 }
             if (v == null)
@@ -1901,7 +1901,7 @@ public class ParameterDatabase extends Properties implements Serializable
             String v = null;
             if (s != null) 
                 {
-                v = (String) (_get(s));
+                v = _get(s);
                 uncheck();
                 }
             if (v == null)
@@ -1941,9 +1941,7 @@ public class ParameterDatabase extends Properties implements Serializable
         printGotten(parameter, defaultParameter, true);
         if (exists(parameter))
             return true;
-        if (exists(defaultParameter))
-            return true;
-        return false;
+            return exists(defaultParameter);
         }
 
 
@@ -1978,8 +1976,8 @@ public class ParameterDatabase extends Properties implements Serializable
             String p = "P: ";
             if (exists) p = "E: ";
             
-            if (parameter==null && defaultParameter == null) 
-                return;
+            if (parameter==null && defaultParameter == null) {
+            }
                 
             else if (parameter == null)
                 {
@@ -2289,7 +2287,7 @@ public class ParameterDatabase extends Properties implements Serializable
         Beware that a ParameterDatabase is itself a Dictionary; but if you pass one in here you 
         will only get the lowest-level elements.  If parent.n are defined, parents will 
         be attempted to be loaded -- that's the reason for the FileNotFoundException and IOException.  */
-    public ParameterDatabase(java.util.Dictionary map) throws FileNotFoundException, IOException 
+    public ParameterDatabase(java.util.Dictionary map) throws IOException
         {
         this();
         label = "Dictionary: " + System.identityHashCode(map);
@@ -2502,7 +2500,7 @@ public class ParameterDatabase extends Properties implements Serializable
      * ParameterDatabase(filename).
      */
 
-    public ParameterDatabase(String pathNameRelativeToClassFile, Class cls, String[] args) throws FileNotFoundException, IOException 
+    public ParameterDatabase(String pathNameRelativeToClassFile, Class cls, String[] args) throws IOException
         {
         this();
         label = "" + cls + " : " + pathNameRelativeToClassFile;
@@ -2548,7 +2546,7 @@ public class ParameterDatabase extends Properties implements Serializable
         If parent.n are defined, parents will be attempted to be loaded -- that's 
         the reason for the FileNotFoundException and IOException. */
 
-    public ParameterDatabase(String pathNameRelativeToClassFile, Class cls) throws FileNotFoundException, IOException 
+    public ParameterDatabase(String pathNameRelativeToClassFile, Class cls) throws IOException
         {
         this();
         label = "" + cls + " : " + pathNameRelativeToClassFile;
@@ -2620,7 +2618,7 @@ public class ParameterDatabase extends Properties implements Serializable
         If parent.n are defined, parents will be attempted to be loaded -- that's 
         the reason for the FileNotFoundException and IOException. */
 
-    public ParameterDatabase(java.io.InputStream stream) throws FileNotFoundException, IOException 
+    public ParameterDatabase(java.io.InputStream stream) throws IOException
         {
         this();
         label = "Stream: " + System.identityHashCode(stream);
@@ -2659,7 +2657,7 @@ public class ParameterDatabase extends Properties implements Serializable
      * Creates a new parameter database tree from a given database file and its
      * parent files.
      */
-    public ParameterDatabase(File file) throws FileNotFoundException, IOException 
+    public ParameterDatabase(File file) throws IOException
         {
         this();
         label = "File: " + file.getPath();
@@ -2708,7 +2706,7 @@ public class ParameterDatabase extends Properties implements Serializable
      * ParameterDatabase(file).
      */
 
-    public ParameterDatabase(File file, String[] args) throws FileNotFoundException, IOException 
+    public ParameterDatabase(File file, String[] args) throws IOException
         {
         this();
         label = "File: " + file.getPath();
@@ -2953,7 +2951,7 @@ public class ParameterDatabase extends Properties implements Serializable
     
     /** Test the ParameterDatabase */
     public static void main(String[] args)
-        throws FileNotFoundException, IOException 
+        throws IOException
         {
         ParameterDatabase pd = new ParameterDatabase(new File(args[0]), args);
         pd.set(new Parameter("Hi there"), "Whatever");

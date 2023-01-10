@@ -3,6 +3,8 @@ package simulation.definition;
 import simulation.rules.rule.AbstractRule;
 import simulation.definition.logic.state.SystemState;
 
+import java.util.Objects;
+
 /**
  * Created by dyska on 7/05/17.
  *
@@ -13,8 +15,8 @@ public class OperationOption implements Comparable<OperationOption> {
 
     private final Operation operation;
     private final int optionId;
-    private double procTime;
-    private WorkCenter workCenter;
+    private final double procTime;
+    private final WorkCenter workCenter;
 
     // Attributes for simulation.
     private double readyTime;
@@ -171,7 +173,7 @@ public class OperationOption implements Comparable<OperationOption> {
         if (Double.compare(option.flowDueDate, flowDueDate) != 0) return false;
         if (Double.compare(option.nextProcTime, nextProcTime) != 0) return false;
         if (Double.compare(option.priority, priority) != 0) return false;
-        return workCenter != null ? workCenter.equals(option.workCenter) : option.workCenter == null;
+        return Objects.equals(workCenter, option.workCenter);
     }
 
     @Override

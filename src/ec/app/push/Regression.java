@@ -32,8 +32,8 @@ public class Regression extends PushProblem implements SimpleProblemForm
     // they can be just light-cloned and not deep cloned.
     // cool, huh?
 
-    public double inputs[];
-    public double outputs[];
+    public double[] inputs;
+    public double[] outputs;
 
     public double func(double x)
         { return x*x*x*x + x*x*x + x*x + x; }

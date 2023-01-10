@@ -40,7 +40,7 @@ public class ReflectedObject implements TreeModel
         try {
             if (obj == null) return field + "null";
             else if (type.isArray()) return field + type.getName() + ", length=" + Array.getLength(obj);
-            return field+type.getName()+" "+obj.toString();
+            return field+type.getName()+" "+ obj;
             } catch (Exception e) {
             e.printStackTrace();
             return field + type.getName() + " <error>";
@@ -63,7 +63,7 @@ public class ReflectedObject implements TreeModel
         {
         ReflectedObject[] fields = getFields();
         ReflectedObject[] props = getProperties();
-        ReflectedObject o[] = new ReflectedObject[fields.length + props.length];
+        ReflectedObject[] o = new ReflectedObject[fields.length + props.length];
         System.arraycopy(fields,0,o,0,fields.length);
         System.arraycopy(props,0,o,fields.length,props.length);
         return o;
@@ -166,7 +166,7 @@ public class ReflectedObject implements TreeModel
         ReflectedObject[] children = ((ReflectedObject)parent).getChildren();
         for(int x=0;x<children.length;x++)
             if (children[x].equals(child)) return x;
-        throw new IndexOutOfBoundsException("No such child " + child + " in parent " + ((ReflectedObject)parent).toString());
+        throw new IndexOutOfBoundsException("No such child " + child + " in parent " + parent);
         }
     public boolean isLeaf(Object parent)
         {
@@ -242,7 +242,7 @@ public class ReflectedObject implements TreeModel
                             Object o = null;
                             try
                                 {
-                                o = m[x].invoke(obj, new Object[0]);
+                                o = m[x].invoke(obj);
                                 }
                             catch (InvocationTargetException e)
                                 {
@@ -290,7 +290,7 @@ public class ReflectedObject implements TreeModel
                         Object o = null;
                         try
                             {
-                            o = m[x].invoke(obj, new Object[0]);
+                            o = m[x].invoke(obj);
                             refs[count] = new ReflectedObject(o, o == null || m[x].getReturnType().isPrimitive() ? 
                                 m[x].getReturnType() : o.getClass(),
                                 "Property " + m[x].getName(), "Property " + m[x].getName());

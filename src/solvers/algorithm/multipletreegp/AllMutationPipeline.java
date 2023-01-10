@@ -99,7 +99,7 @@ public class AllMutationPipeline extends MutationPipeline {
                 }
 
                 GPIndividual j;
-                		 j = (GPIndividual)(i.lightClone());
+                		 j = i.lightClone();
                          // Fill in various tree information that didn't get filled in there
                          j.trees = new GPTree[i.trees.length];
 
@@ -110,7 +110,7 @@ public class AllMutationPipeline extends MutationPipeline {
                         	 if(p1[x] != null)
                               // we've got a tree with a kicking cross position!
                                  {
-                                 j.trees[x] = (GPTree)(i.trees[x].lightClone());
+                                 j.trees[x] = i.trees[x].lightClone();
                                  j.trees[x].owner = j;
                                  j.trees[x].child = i.trees[x].child.cloneReplacingNoSubclone(p2[x],p1[x]);
                                  j.trees[x].child.parent = j.trees[x];
@@ -119,7 +119,7 @@ public class AllMutationPipeline extends MutationPipeline {
                                  } // it's changed
                              else
                                  {
-                                 j.trees[x] = (GPTree)(i.trees[x].lightClone());
+                                 j.trees[x] = i.trees[x].lightClone();
                                  j.trees[x].owner = j;
                                  j.trees[x].child = (GPNode)(i.trees[x].child.clone());
                                  j.trees[x].child.parent = j.trees[x];

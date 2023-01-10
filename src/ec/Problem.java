@@ -132,7 +132,6 @@ public abstract class Problem implements Prototype
         final int threadnum,
         final int log)
         {
-        return;
         }
 
     /** @deprecated  Use the version without verbosity */

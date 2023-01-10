@@ -398,7 +398,7 @@ public class Slave
                                 // as we've set up TWO EvolutionStates in a row with no good reason.
                                 ParameterDatabase coverDatabase = new ParameterDatabase();  // protect the underlying one
                                 coverDatabase.addParent(state.parameters);
-                                newState = (EvolutionState) Evolve.initialize(coverDatabase, 0);
+                                newState = Evolve.initialize(coverDatabase, 0);
                                 newState.startFresh();
                                 newState.output.message("Replacing random number generators, ignore above seed message");
                                 newState.random = state.random;  // continue with RNG
@@ -616,8 +616,8 @@ public class Slave
                 state.population.subpops[subpops[i]].individuals[counts[subpops[i]]++] = inds[i];
             
             // Evaluate the population until time is up, or the evolution stops
-            int result = state.R_NOTDONE; 
-            while (result == state.R_NOTDONE) 
+            int result = EvolutionState.R_NOTDONE;
+            while (result == EvolutionState.R_NOTDONE)
                 { 
                 result = state.evolve(); 
                 endTime = System.currentTimeMillis(); 
@@ -685,8 +685,8 @@ public class Slave
             }
 
         // Read the individuals from the stream
-        Individual inds[] = new Individual[numInds];
-        boolean updateFitness[] = new boolean[numInds];
+        Individual[] inds = new Individual[numInds];
+        boolean[] updateFitness = new boolean[numInds];
         try
             {
             for(int i=0;i<inds.length;++i)

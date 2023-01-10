@@ -248,9 +248,11 @@ public class DoubleTournamentSelection extends SelectionMethod implements Steady
         final int subpopulation,
         final int thread,
         final int individual)
-        { return; }
+        {
+        }
     
     public void sourcesAreProperForm(final SteadyStateEvolutionState state)
-        { return; }
+        {
+        }
     
     }

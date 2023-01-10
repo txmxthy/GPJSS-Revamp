@@ -359,8 +359,8 @@ public class BBOBenchmarks extends Problem implements SimpleProblemForm
                                           * saves 30% of time
                                           */
                     {
-                    aK[i] = Math.pow(0.5, (double) i);
-                    bK[i] = Math.pow(3., (double) i);
+                    aK[i] = Math.pow(0.5, i);
+                    bK[i] = Math.pow(3., i);
                     f0 += aK[i] * Math.cos(2 * Math.PI * bK[i] * 0.5);
                     }
                 break;
@@ -1414,7 +1414,6 @@ public class BBOBenchmarks extends Problem implements SimpleProblemForm
                     }
                 value = 10. * Math.pow(value / (double) genomeSize - f0, 3.);
                 value += fAdd;
-                ;
 
                 fit = (-value);
                 ((SimpleFitness) (ind.fitness)).setFitness(state, fit, fit == 0.0);
@@ -1608,7 +1607,7 @@ public class BBOBenchmarks extends Problem implements SimpleProblemForm
                         f2 = 100. * (tmx[i] * tmx[i] - tmx[i + 1]) * (tmx[i] * tmx[i] - tmx[i + 1]) + (1 - tmx[i]) * (1 - tmx[i]);
                         tmp += f2 / 4000. - Math.cos(f2);
                         }
-                    value = 1. + 1. * tmp / (double) (genomeSize - 1);
+                    value = 1. + tmp / (double) (genomeSize - 1);
                     }
                 switch (noise)
                     {
@@ -1784,7 +1783,7 @@ public class BBOBenchmarks extends Problem implements SimpleProblemForm
                         break;
                     }
                 value += fAdd;
-                ; /* without noise */
+                /* without noise */
 
                 fit = (-value);
                 ((SimpleFitness) (ind.fitness)).setFitness(state, fit, fit == 0.0);
@@ -1854,7 +1853,7 @@ public class BBOBenchmarks extends Problem implements SimpleProblemForm
 
                 value *= value;
                 value += fAdd;
-                ; /* without noise */
+                /* without noise */
 
                 fit = (-value);
                 ((SimpleFitness) (ind.fitness)).setFitness(state, fit, fit == 0.0);
@@ -1916,14 +1915,14 @@ public class BBOBenchmarks extends Problem implements SimpleProblemForm
                     tmp = 0.0;
                     for (j = 1; j < 33; j++)
                         {
-                        tmp2 = Math.pow(2., (double) j);
+                        tmp2 = Math.pow(2., j);
                         arr = tmx[i] * tmp2;
                         tmp += Math.abs(arr - Math.round(arr)) / tmp2;
                         }
                     tmp = 1. + tmp * (double) (i + 1);
                     prod *= tmp;
                     }
-                value = 10. / (double) genomeSize / (double) genomeSize * (-1. + Math.pow(prod, 10. / Math.pow((double) genomeSize, 1.2)));
+                value = 10. / (double) genomeSize / (double) genomeSize * (-1. + Math.pow(prod, 10. / Math.pow(genomeSize, 1.2)));
                 value += fAdd;
                 fit = (-value);
                 ((SimpleFitness) (ind.fitness)).setFitness(state, fit, fit == 0.0);
@@ -1939,7 +1938,7 @@ public class BBOBenchmarks extends Problem implements SimpleProblemForm
                 double tmp3,
                     tmp4;
                 fPen = tmp2 = tmp3 = tmp4 = 0.0;
-                double s = 1. - 0.5 / (Math.sqrt((double) (genomeSize + 20)) - 4.1);
+                double s = 1. - 0.5 / (Math.sqrt(genomeSize + 20) - 4.1);
                 double d = 1.;
                 double mu2 = -Math.sqrt((mu1 * mu1 - d) / s);
 
@@ -2009,7 +2008,6 @@ public class BBOBenchmarks extends Problem implements SimpleProblemForm
             if (g[i] == 0.0)
                 g[i] = 1e-99;
             }
-        return;
         }
 
     void gauss(double[] g, MersenneTwisterFast random, int n)
@@ -2028,7 +2026,6 @@ public class BBOBenchmarks extends Problem implements SimpleProblemForm
             if (g[i] == 0.0)
                 g[i] = 1e-99;
             }
-        return;
         }
 
     void computeXopt(double[] xOpt, MersenneTwisterFast random)

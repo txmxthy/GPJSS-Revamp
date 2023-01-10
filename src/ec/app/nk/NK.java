@@ -58,7 +58,7 @@ public class NK extends Problem implements SimpleProblemForm
 
         for (int i=0; i < n; i++)
             {
-            boolean tmpInd[] = new boolean[k+1];
+            boolean[] tmpInd = new boolean[k+1];
             tmpInd[0] = ind2.genome[i];
 
             double val=0;

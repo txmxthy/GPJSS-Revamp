@@ -82,7 +82,7 @@ public class IntegerVectorIndividual extends VectorIndividual
         IntegerVectorIndividual myobj = (IntegerVectorIndividual) (super.clone());
 
         // must clone the genome
-        myobj.genome = (int[])(genome.clone());
+        myobj.genome = genome.clone();
         
         return myobj;
         } 
@@ -310,7 +310,7 @@ public class IntegerVectorIndividual extends VectorIndividual
                                 }
                             do
                                 {
-                                int n = (int)(state.random[thread].nextBoolean() ? 1 : -1);
+                                int n = state.random[thread].nextBoolean() ? 1 : -1;
                                 int g = genome[x];
                                 if ((n == 1 && g < max) ||
                                     (n == -1 && g > min))

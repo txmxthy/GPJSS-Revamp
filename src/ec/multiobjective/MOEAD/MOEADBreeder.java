@@ -12,7 +12,7 @@ public class MOEADBreeder extends NSGA2Breeder {
 
 	public Population breedPopulation(EvolutionState state) {
 
-		Population oldPop = (Population) state.population;
+		Population oldPop = state.population;
 		Population newPop = (Population) state.population.emptyClone();
 
 		Individual[] oldInds = oldPop.subpops[0].individuals;
@@ -20,7 +20,7 @@ public class MOEADBreeder extends NSGA2Breeder {
 		newPop.subpops[0].individuals = newInds;
 
 		// do regular breeding of this subpopulation
-		BreedingPipeline bp = (BreedingPipeline) newPop.subpops[0].species.pipe_prototype;
+		BreedingPipeline bp = newPop.subpops[0].species.pipe_prototype;
 
 		// Pass the probIndex as the starting point for each pipeline invocation
 		for (int probIndex = 0; probIndex < state.population.subpops[0].individuals.length; probIndex++) {

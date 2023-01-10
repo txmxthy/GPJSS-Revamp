@@ -227,8 +227,8 @@ public class MutationPipeline extends GPBreedingPipeline
                 // let's keep on going for the more complex test
                 GPNode root2 = ((GPTree)(inner2.rootParent())).child;
                 int root2size = root2.numNodes(GPNode.NODESEARCH_ALL);
-                if (root2size - inner2size + inner1size > maxSize)  // take root2, remove inner2 and swap in inner1.  Is it still small enough?
-                    return false;
+                    // take root2, remove inner2 and swap in inner1.  Is it still small enough?
+                    return root2size - inner2size + inner1size <= maxSize;
                 }
             }
 
@@ -330,7 +330,7 @@ public class MutationPipeline extends GPBreedingPipeline
                 }
             else // need to clone the individual
                 {
-                j = (GPIndividual)(i.lightClone());
+                j = i.lightClone();
 
                 // Fill in various tree information that didn't get filled in there
                 j.trees = new GPTree[i.trees.length];
@@ -341,7 +341,7 @@ public class MutationPipeline extends GPBreedingPipeline
                     {
                     if (x==t && res)  // we've got a tree with a kicking cross position!
                         {
-                        j.trees[x] = (GPTree)(i.trees[x].lightClone());
+                        j.trees[x] = i.trees[x].lightClone();
                         j.trees[x].owner = j;
                         j.trees[x].child = i.trees[x].child.cloneReplacingNoSubclone(p2,p1);
                         j.trees[x].child.parent = j.trees[x];
@@ -350,7 +350,7 @@ public class MutationPipeline extends GPBreedingPipeline
                         } // it's changed
                     else
                         {
-                        j.trees[x] = (GPTree)(i.trees[x].lightClone());
+                        j.trees[x] = i.trees[x].lightClone();
                         j.trees[x].owner = j;
                         j.trees[x].child = (GPNode)(i.trees[x].child.clone());
                         j.trees[x].child.parent = j.trees[x];

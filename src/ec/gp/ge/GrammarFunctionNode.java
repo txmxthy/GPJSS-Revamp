@@ -52,7 +52,7 @@ public class GrammarFunctionNode extends GrammarNode
     /** Returna given argument. */
     public GrammarNode getArgument(int index)
         {
-        return (GrammarNode)(children.get(index));
+        return children.get(index);
         }
 
     /** Returns the prototype without cloning it first.  Be certain to clone before using. */

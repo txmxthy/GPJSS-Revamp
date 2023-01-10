@@ -137,7 +137,7 @@ public interface Prototype extends Cloneable, Setup
         </ul>
     */
 
-    public Object clone();
+    Object clone();
 
     /** Sets up the object by reading it from the parameters stored
         in <i>state</i>, built off of the parameter base <i>base</i>.
@@ -151,12 +151,12 @@ public interface Prototype extends Cloneable, Setup
         called at least once on an instance or some "parent"
         object from which it was ultimately cloned. */
 
-    public void setup(final EvolutionState state, final Parameter base);
+    void setup(final EvolutionState state, final Parameter base);
 
     /** Returns the default base for this prototype.
         This should generally be implemented by building off of the static base()
         method on the DefaultsForm object for the prototype's package. This should
         be callable during setup(...).  */
-    public Parameter defaultBase();
+    Parameter defaultBase();
     }
 

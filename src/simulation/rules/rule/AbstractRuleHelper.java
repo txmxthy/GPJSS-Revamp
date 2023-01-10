@@ -8,7 +8,7 @@ public class AbstractRuleHelper {
 	public static EvolutionState state;
 
 	public AbstractRuleHelper(EvolutionState state) {
-		this.state = state;
+		AbstractRuleHelper.state = state;
 	}
 
 }

@@ -80,7 +80,7 @@ public class SimpleEvolutionState extends EvolutionState
                     output.warning("Using evaluations, but initial total population size does not divide evenly into it.  Modifying evaluations to a smaller value ("
                         + ((numEvaluations / generationSize) * generationSize) +") which divides evenly.");  // note integer division
                 numGenerations = (int)(numEvaluations / generationSize);  // note integer division
-                numEvaluations = numGenerations * generationSize;
+                numEvaluations = (long) numGenerations * generationSize;
                 }
             output.message("Generations will be " + numGenerations);
             }

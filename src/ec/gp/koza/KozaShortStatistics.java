@@ -82,8 +82,8 @@ public class KozaShortStatistics extends SimpleShortStatistics
 
     public boolean doDepth;
 
-    long totalDepthSoFarTree[][];
-    long totalSizeSoFarTree[][];
+    long[][] totalDepthSoFarTree;
+    long[][] totalSizeSoFarTree;
     long[][] totalSizeThisGenTree;                  // per-subpop total size of individuals this generation per tree
     long[][] totalDepthThisGenTree;                 // per-subpop total size of individuals this generation per tree
 

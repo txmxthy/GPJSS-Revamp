@@ -13,9 +13,9 @@ import simulation.definition.logic.state.SystemState;
  */
 public class CalcPriorityProblem extends Problem implements SimpleProblemForm {
 
-    private OperationOption operation;
-    private WorkCenter workCenter;
-    private SystemState systemState;
+    private final OperationOption operation;
+    private final WorkCenter workCenter;
+    private final SystemState systemState;
 
     public CalcPriorityProblem(OperationOption operation,
                                WorkCenter workCenter,

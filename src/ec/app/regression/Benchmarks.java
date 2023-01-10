@@ -130,7 +130,7 @@ public class Benchmarks extends GPProblem implements SimpleProblemForm
 
 
     // parameter names
-    public static final String names[] =
+    public static final String[] names =
         {
         "koza-1", "koza-2", "koza-3",
         "nguyen-1", "nguyen-2", "nguyen-3", "nguyen-4", "nguyen-5", "nguyen-6", "nguyen-7", "nguyen-8", "nguyen-9", "nguyen-10",
@@ -142,7 +142,7 @@ public class Benchmarks extends GPProblem implements SimpleProblemForm
 
 
     // expected function sets.  "fn" means "function set with n terminal x_1 ... x_n"
-    public static final String fs[] =
+    public static final String[] fs =
         {
         "koza1", "koza1", "koza1",
         "koza1", "koza1", "koza1", "koza1", "koza1", "koza1", "koza1", "koza1", "koza2", "koza2",
@@ -155,7 +155,7 @@ public class Benchmarks extends GPProblem implements SimpleProblemForm
 
 
     // function sets with various variable lengths
-    public static final String fs_vars[][] =
+    public static final String[][] fs_vars =
         {
         { },
             { "koza1", "keijzer1", "vladislavleva-c1" },
@@ -196,13 +196,13 @@ public class Benchmarks extends GPProblem implements SimpleProblemForm
         }
 
     // recursive trick to dump the full mesh into a bag.  Enter this by setting variable to 0,  Yuck, expensive.  But O(n).
-    void buildIntervalPoints(EvolutionState state, ArrayList list, double[] min, double[] max, double[] interval, double current[], int variable, int threadnum)
+    void buildIntervalPoints(EvolutionState state, ArrayList list, double[] min, double[] max, double[] interval, double[] current, int variable, int threadnum)
         {
         if (variable == min.length)  // we're out of variables, base case
             {
             double[] d = new double[min.length];
-            for(int i = 0; i < d.length; i++)
-                d[i] = current[i];      // not sure if System.arraycopy would be faster, probably not in this case
+                // not sure if System.arraycopy would be faster, probably not in this case
+                System.arraycopy(current, 0, d, 0, d.length);
             list.add(d);
             }
         else

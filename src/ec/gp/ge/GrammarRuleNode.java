@@ -39,7 +39,7 @@ public class GrammarRuleNode extends GrammarNode
     /** Returns a given choice. */
     public GrammarNode getChoice(int index)
         {
-        return (GrammarNode)(children.get(index));
+        return children.get(index);
         }
 
     /** Adds to this node all the choices of another node. */
@@ -60,9 +60,9 @@ public class GrammarRuleNode extends GrammarNode
             GrammarNode node = (GrammarNode)i.next();
             String nodeString = "" ;
             if(node instanceof GrammarRuleNode)
-                nodeString = ((GrammarRuleNode)node).getHead();
+                nodeString = node.getHead();
             else if(node instanceof GrammarFunctionNode)
-                nodeString = ((GrammarFunctionNode)node).toString();
+                nodeString = node.toString();
             ret += nodeString + (i.hasNext() ? " | " : "");
             }
         return ret;

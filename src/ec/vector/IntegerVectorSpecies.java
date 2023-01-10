@@ -200,11 +200,10 @@ public class IntegerVectorSpecies extends VectorSpecies
             return (geneVal <= Byte.MAX_VALUE && geneVal >= Byte.MIN_VALUE);
         else if (i_prototype instanceof ShortVectorIndividual)
             return (geneVal <= Short.MAX_VALUE && geneVal >= Short.MIN_VALUE);
-        else if (i_prototype instanceof IntegerVectorIndividual)
+        else // dunno what the individual is...
+            if (i_prototype instanceof IntegerVectorIndividual)
             return (geneVal <= Integer.MAX_VALUE && geneVal >= Integer.MIN_VALUE);
-        else if (i_prototype instanceof LongVectorIndividual)
-            return true;  // geneVal is valid for all longs
-        else return false;  // dunno what the individual is...
+        else return i_prototype instanceof LongVectorIndividual;  // geneVal is valid for all longs
         }
 
     public boolean inNumericalTypeRange(long geneVal)
@@ -213,11 +212,10 @@ public class IntegerVectorSpecies extends VectorSpecies
             return (geneVal <= Byte.MAX_VALUE && geneVal >= Byte.MIN_VALUE);
         else if (i_prototype instanceof ShortVectorIndividual)
             return (geneVal <= Short.MAX_VALUE && geneVal >= Short.MIN_VALUE);
-        else if (i_prototype instanceof IntegerVectorIndividual)
+        else // dunno what the individual is...
+            if (i_prototype instanceof IntegerVectorIndividual)
             return (geneVal <= Integer.MAX_VALUE && geneVal >= Integer.MIN_VALUE);
-        else if (i_prototype instanceof LongVectorIndividual)
-            return true;  // geneVal is valid for all longs
-        else return false;  // dunno what the individual is...
+        else return i_prototype instanceof LongVectorIndividual;  // geneVal is valid for all longs
         }
     
     public void setup(final EvolutionState state, final Parameter base)

@@ -48,8 +48,8 @@ public interface GroupedProblemForm
         <p>If you are basing fitness on trials, this method should create the initial trials
         <b>if the prepareForFitnessAssessment[...] is true for that
         subpopulation</b>.
-    */ 
-    public void preprocessPopulation(final EvolutionState state, Population pop, final boolean[] prepareForFitnessAssessment, final boolean countVictoriesOnly);
+    */
+    void preprocessPopulation(final EvolutionState state, Population pop, final boolean[] prepareForFitnessAssessment, final boolean countVictoriesOnly);
 
     /** Finish processing the population (such as fitness information) after evaluation.
         Although this method is not static, you should not use it to write to any instance
@@ -74,7 +74,7 @@ public interface GroupedProblemForm
         ultimately update the fitnesses later when the flag is set.  assessFitness[] may not be
         the same as updateFitness[] in evaluate(...).
     */
-    public void postprocessPopulation(final EvolutionState state, Population pop, final boolean[] assessFitness, final boolean countVictoriesOnly);
+    void postprocessPopulation(final EvolutionState state, Population pop, final boolean[] assessFitness, final boolean countVictoriesOnly);
 
     /** Evaluates the individuals found in ind together.  If updateFitness[i] is true,
         then you should use this evaluation to update the fitness of the individual in
@@ -92,7 +92,7 @@ public interface GroupedProblemForm
         each time.  If it's not set, you should update Fitness as you see fit, then set
         the final Fitness in preprocessPopulation. 
     */
-    public void evaluate(final EvolutionState state,
+    void evaluate(final EvolutionState state,
         final Individual[] ind,  // the individuals to evaluate together
         final boolean[] updateFitness,  // should this individuals' fitness be updated?
         final boolean countVictoriesOnly, // don't bother updating Fitness with socres, just victories

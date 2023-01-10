@@ -135,7 +135,6 @@ public class OrderTree extends GPProblem implements SimpleProblemForm
                     }
                 }
             }
-        return;
         }
 
 	@Override

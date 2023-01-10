@@ -45,9 +45,9 @@ import java.util.*;
 public class KLandscapes extends GPProblem implements SimpleProblemForm {
 
     // Score of the nodes. Functionals (positions 0 and 1) and terminal (positions from 2 to 5)
-    double nodeScore[];
+    double[] nodeScore;
     // Score fo the edges. Row: functionals. Columns: funcionals + terminal
-    double edgeScore[][];
+    double[][] edgeScore;
     // Best possible fitness. Must be not negative.
     double bestFitness;
     // The K of the K-Landscapes. It is an index of epistasis. It has
@@ -61,13 +61,13 @@ public class KLandscapes extends GPProblem implements SimpleProblemForm {
         {
         super.setup(state,base);
         state.output.exitIfErrors();
-        Parameter kval = new Parameter(state.P_EVALUATOR).push(P_PROBLEM).push(P_PROBLEMNAME).push(P_KVALUE);
+        Parameter kval = new Parameter(EvolutionState.P_EVALUATOR).push(P_PROBLEM).push(P_PROBLEMNAME).push(P_KVALUE);
         k = state.parameters.getInt(kval,null,0);
         // System.out.println("K = " + k);
 
         for(int i = 0 ; i < indices.length; i++)
             indices[i] = -1;
-        indices['A' - 'A'] = 0;
+        indices[0] = 0;
         indices['B' - 'A'] = 1;
         indices['X' - 'A'] = 2;
         indices['Y' - 'A'] = 3;
@@ -88,8 +88,10 @@ public class KLandscapes extends GPProblem implements SimpleProblemForm {
         boolean ok = false;
         for (int i = 2; i < 6; i++)
             {
-            if (nodeScore[i] > 0)
-                ok = true;
+                if (nodeScore[i] > 0) {
+                    ok = true;
+                    break;
+                }
             }
         if (!ok)
             nodeScore[2] = r.nextDouble();
@@ -168,12 +170,9 @@ public class KLandscapes extends GPProblem implements SimpleProblemForm {
     double computeBestFitness()
         {
         // This is a dynamic programming kludge.
-        double ttable[][] = new double[k][2];
-        double ftable[][] = new double[k+1][2];
-        for (int i = 0; i < 2; i++)
-            {
-            ftable[0][i] = nodeScore[i];
-            }
+        double[][] ttable = new double[k][2];
+        double[][] ftable = new double[k+1][2];
+            System.arraycopy(nodeScore, 0, ftable[0], 0, 2);
         // Case 1: the optimum hase depth at most k
         for (int i = 0; i < k; i++)
             {

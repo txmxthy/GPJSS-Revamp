@@ -147,14 +147,14 @@ public class BestSelection extends SelectionMethod
                 {
                 public boolean lt(long a, long b)
                     {
-                    return ((Individual)(i[(int)b])).fitness.betterThan(
-                        ((Individual)(i[(int)a])).fitness);
+                    return i[(int)b].fitness.betterThan(
+                        i[(int)a].fitness);
                     }
 
                 public boolean gt(long a, long b)
                     {
-                    return ((Individual)(i[(int)a])).fitness.betterThan(
-                        ((Individual)(i[(int)b])).fitness);
+                    return i[(int)a].fitness.betterThan(
+                        i[(int)b].fitness);
                     }
                 });
 

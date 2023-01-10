@@ -12,7 +12,7 @@ import simulation.definition.logic.state.SystemState;
  * This rule should have a priority of the busy time of the workCenter.
  */
 public class SBT extends AbstractRule {
-    private RuleType type;
+    private final RuleType type;
 
     public SBT(RuleType t) {
         name = "\"SBT\"";

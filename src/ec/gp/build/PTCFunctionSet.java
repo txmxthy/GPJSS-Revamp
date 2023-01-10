@@ -37,14 +37,14 @@ import ec.gp.*;
 public class PTCFunctionSet extends GPFunctionSet implements PTCFunctionSetForm
     {
     /** terminal probabilities[type][thenodes], in organized form */
-    public double q_ty[][];
+    public double[][] q_ty;
     /** nonterminal probabilities[type][thenodes], in organized form */
-    public double q_ny[][];
+    public double[][] q_ny;
 
     public static final int CACHE_SIZE = 1024;
     /** cache of nonterminal selection probabilities -- dense array 
         [size-1][type].  If any items are null, they're not in the dense cache. */
-    public double p_y[][];
+    public double[][] p_y;
 
     public double[] terminalProbabilities(final int type)
         { return q_ty[type]; }
@@ -141,7 +141,7 @@ public class PTCFunctionSet extends GPFunctionSet implements PTCFunctionSetForm
                 count += (y==0 ? q_ny[x][y] : q_ny[x][y]-q_ny[x][y-1]) // it's organized
                     * nonterminals[x][y].children.length;
 
-            p[x] = (double)((1.0-(1.0/expectedTreeSize))/count);
+            p[x] = (1.0-(1.0/expectedTreeSize))/count;
             }
         return p;
         }

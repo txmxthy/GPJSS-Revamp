@@ -62,7 +62,7 @@ public class Lawnmower extends GPProblem implements SimpleProblemForm
     public static final int O_RIGHT = 3;
 
     // our map
-    public int map[][];
+    public int[][] map;
 
     // map[][]'s bounds
     public int maxx;
@@ -89,7 +89,7 @@ public class Lawnmower extends GPProblem implements SimpleProblemForm
         Lawnmower myobj = (Lawnmower) (super.clone());
         myobj.map = new int[map.length][];
         for(int x=0;x<map.length;x++)
-            myobj.map[x] = (int[])(map[x].clone());
+            myobj.map[x] = map[x].clone();
         return myobj;
         }
 

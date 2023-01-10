@@ -137,7 +137,7 @@ public class Edge extends GPProblem implements SimpleProblemForm
                 {
                 str += "(0:";
                 for(int y=0;y<reading0_l[x];y++)
-                    str += ((y>0 ? "," : "") + String.valueOf(reading0[x][y]));
+                    str += ((y>0 ? "," : "") + reading0[x][y]);
                 str += ") ";
                 }
 
@@ -145,7 +145,7 @@ public class Edge extends GPProblem implements SimpleProblemForm
                 {
                 str += "(1:";
                 for(int y=0;y<reading1_l[x];y++)
-                    str += ((y>0 ? "," : "") + String.valueOf(reading1[x][y]));
+                    str += ((y>0 ? "," : "") + reading1[x][y]);
                 str += ") ";
                 }
 
@@ -153,7 +153,7 @@ public class Edge extends GPProblem implements SimpleProblemForm
                 {
                 str += "(e:";
                 for(int y=0;y<epsilon_l[x];y++)
-                    str += ((y>0 ? "," : "") + String.valueOf(epsilon[x][y]));
+                    str += ((y>0 ? "," : "") + epsilon[x][y]);
                 str += ")";
                 }
             str += "\n";
@@ -391,8 +391,7 @@ public class Edge extends GPProblem implements SimpleProblemForm
         boolean st = STATE_1;
 
         // set initial state
-        for(int x=0;x<numNodes;x++)
-            state1[x]=start[x];
+            if (numNodes >= 0) System.arraycopy(start, 0, state1, 0, numNodes);
 
         // run
         for(int x=0;x<sample.length;x++)

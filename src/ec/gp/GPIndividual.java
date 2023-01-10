@@ -286,7 +286,7 @@ public class GPIndividual extends Individual
         myobj.trees = new GPTree[trees.length];
         for(int x=0;x<trees.length;x++)
             {
-            myobj.trees[x] = (GPTree)(trees[x].lightClone());  // note light-cloned!
+            myobj.trees[x] = trees[x].lightClone();  // note light-cloned!
             myobj.trees[x].owner = myobj;  // reset owner away from me
             }
         return myobj;

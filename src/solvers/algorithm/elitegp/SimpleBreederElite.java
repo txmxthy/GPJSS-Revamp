@@ -23,8 +23,8 @@ public class SimpleBreederElite extends SimpleBreeder {
 	 */
 	// modified by fzhang 16.5.2018 method 2: use array
 	// method 2: array
-	Individual tempSub1Elites[] = new Individual[numPreElites];
-	Individual tempSub2Elites[] = new Individual[numPreElites];
+	Individual[] tempSub1Elites = new Individual[numPreElites];
+	Individual[] tempSub2Elites = new Individual[numPreElites];
 	int replaceInd1 = 0;
 	int replaceInd2 = 0;
 	int bestInd1 = 0; // bestInd will be set to 0,1,2,3,4

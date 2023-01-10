@@ -13,7 +13,7 @@ import simulation.definition.logic.state.SystemState;
  * all machines in the workCenter.
  */
 public class SRT extends AbstractRule {
-    private RuleType type;
+    private final RuleType type;
 
     public SRT(RuleType t) {
         name = "\"SRT\"";

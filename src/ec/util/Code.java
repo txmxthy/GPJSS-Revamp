@@ -57,14 +57,14 @@ public class Code
 
     /** Encodes a byte. */
     public static String encode(final byte b) 
-        { return "b" + Byte.toString(b) + "|"; }
+        { return "b" + b + "|"; }
 
     /** Encodes a character. */
     public static String encode(final char c)
         {
         if (c >= 32 && c < 127 && c !='\\' && 
             c!= '\'') // we can safely print it
-            return "'" + String.valueOf(c) + "'";
+            return "'" + c + "'";
         else
             {
             // print it with an escape character
@@ -82,7 +82,7 @@ public class Code
                 return "'\\\\0";
             else
                 {
-                String s = Integer.toHexString((int)c);
+                String s = Integer.toHexString(c);
                 // pad with 0's  -- Java's parser freaks out otherwise
                 switch (s.length())
                     {
@@ -100,23 +100,23 @@ public class Code
 
     /** Encodes a short. */
     public static String encode(final short s)
-        { return "s" + Short.toString(s) + "|"; }
+        { return "s" + s + "|"; }
 
     /** Encodes an int. */
     public static String encode(final int i)
-        { return "i" + Integer.toString(i) + "|";  }
+        { return "i" + i + "|";  }
     
     /** Encodes a long. */
     public static String encode(final long l)
-        { return "l" + Long.toString(l) + "|"; }
+        { return "l" + l + "|"; }
 
     /** Encodes a float. */
     public static String encode(final float f)
-        { return "f" + Integer.toString(Float.floatToIntBits(f))+ "|" + String.valueOf(f) + "|"; }
+        { return "f" + Float.floatToIntBits(f) + "|" + f + "|"; }
 
     /** Encodes a double. */
     public static String encode(final double d)
-        { return "d" + Long.toString(Double.doubleToLongBits(d))+ "|" + String.valueOf(d) + "|"; }
+        { return "d" + Double.doubleToLongBits(d) + "|" + d + "|"; }
 
     /** Encodes a String. */
     public static String encode(final String s)
@@ -170,7 +170,7 @@ public class Code
                 else
                     {
                     if (!inUnicode) {sb.append("\\u"); inUnicode=true; }
-                    String ss = Integer.toHexString((int)c);
+                    String ss = Integer.toHexString(c);
                     // pad with 0's  -- Java's parser freaks out otherwise
                     switch (ss.length())
                         {
@@ -511,8 +511,8 @@ public class Code
                         sb.append((char)(Integer.decode("0x" + c +
                                     dat.charAt(x+1) +
                                     dat.charAt(x+2) +
-                                    dat.charAt(x+3)).intValue()));;
-                        x+=3;
+                                    dat.charAt(x+3)).intValue()));
+                            x+=3;
                         }
                     catch (NumberFormatException e)
                         { d.type = DecodeReturn.T_ERROR; d.s = "Bad Unicode in String"; return; }
@@ -606,7 +606,7 @@ public class Code
 
             
             default: 
-                d.type = DecodeReturn.T_ERROR; d.s = "Unknown token"; return; 
+                d.type = DecodeReturn.T_ERROR; d.s = "Unknown token";
                 // break;
             }
         }
@@ -652,7 +652,7 @@ public class Code
         if (d.type!=DecodeReturn.T_STRING)
             state.output.fatal("Line " + d.lineNumber + 
                 " has no string after preamble '" + preamble + "'\n-->" + d.data);
-        return (String)(d.s);
+        return d.s;
         }
 
     /** Finds the next nonblank line, skips past an expected preamble, and reads in a character if there is one, and returns it.
@@ -704,7 +704,7 @@ public class Code
         if (d.type!=DecodeReturn.T_LONG)
             state.output.fatal("Line " + d.lineNumber + 
                 " has no long after preamble '" + preamble + "'\n-->" + d.data);
-        return (long)(d.l);
+        return d.l;
         }
         
     /** Finds the next nonblank line, skips past an expected preamble, and reads in an integer if there is one, and returns it.

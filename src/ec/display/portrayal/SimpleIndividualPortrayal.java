@@ -50,7 +50,7 @@ public class SimpleIndividualPortrayal
         };
     
     final JTextPane textPane;
-    private CharArrayWriter printIndividualWriter;
+    private final CharArrayWriter printIndividualWriter;
     
     public SimpleIndividualPortrayal()
         {

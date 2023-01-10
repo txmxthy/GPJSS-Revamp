@@ -14,9 +14,9 @@ import java.util.List;
  */
 public class SequencingDecisionSituation extends DecisionSituation {
 
-    private List<OperationOption> queue;
-    private WorkCenter workCenter;
-    private SystemState systemState;
+    private final List<OperationOption> queue;
+    private final WorkCenter workCenter;
+    private final SystemState systemState;
 
     public SequencingDecisionSituation(List<OperationOption> queue,
                                        WorkCenter workCenter,

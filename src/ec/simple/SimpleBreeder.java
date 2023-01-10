@@ -270,9 +270,9 @@ public class SimpleBreeder extends Breeder
         if (numThreads < state.breedthreads)
             state.output.warnOnce("Largest subpopulation size (" + numThreads +") is smaller than number of breedthreads (" + state.breedthreads + "), so fewer breedthreads will be created.");
 
-        int numinds[][] =
+        int[][] numinds =
             new int[numThreads][state.population.subpops.length];
-        int from[][] =
+        int[][] from =
             new int[numThreads][state.population.subpops.length];
 
         for(int x=0;x<state.population.subpops.length;x++)
@@ -402,10 +402,10 @@ public class SimpleBreeder extends Breeder
             if (!shouldBreedSubpop(state, subpop, threadnum))
                 {
                 // instead of breeding, we should just copy forward this subpopulation.  We'll copy the part we're assigned
-                for(int ind=from[subpop] ; ind < numinds[subpop] - from[subpop]; ind++)
                     // newpop.subpops[subpop].individuals[ind] = (Individual)(state.population.subpops[subpop].individuals[ind].clone());
                     // this could get dangerous
-                    newpop.subpops[subpop].individuals[ind] = state.population.subpops[subpop].individuals[ind];
+                    if (numinds[subpop] - from[subpop] - from[subpop] >= 0)
+                        System.arraycopy(state.population.subpops[subpop].individuals, from[subpop], newpop.subpops[subpop].individuals, from[subpop], numinds[subpop] - from[subpop] - from[subpop]);
                 }
             else
                 {
@@ -414,7 +414,7 @@ public class SimpleBreeder extends Breeder
                 if (clonePipelineAndPopulation)
                     bp = (BreedingPipeline)newpop.subpops[subpop].species.pipe_prototype.clone();
                 else
-                    bp = (BreedingPipeline)newpop.subpops[subpop].species.pipe_prototype;
+                    bp = newpop.subpops[subpop].species.pipe_prototype;
 
                 // check to make sure that the breeding pipeline produces
                 // the right kind of individuals.  Don't want a mistake there! :-)
@@ -597,9 +597,9 @@ public class SimpleBreeder extends Breeder
             if (numThreads < state.breedthreads)
                 state.output.warnOnce("Largest subpopulation size (" + numThreads +") is smaller than number of breedthreads (" + state.breedthreads + "), so fewer breedthreads will be created.");
 
-            int numinds[][] =
+            int[][] numinds =
                     new int[numThreads][pop.subpops.length];
-            int from[][] =
+            int[][] from =
                     new int[numThreads][pop.subpops.length];
 
             for(int x=0;x<pop.subpops.length;x++)

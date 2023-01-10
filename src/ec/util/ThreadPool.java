@@ -63,7 +63,7 @@ public class ThreadPool implements java.io.Serializable
 
     /** A Worker is a special kind of object which represents an underlying
         Worker thread usable in the ThreadPool. */
-    public interface Worker { public void interrupt(); }
+    public interface Worker { void interrupt(); }
         
     // The current collection of available threads in the pool
     // (not including the threads presently working on jobs)
@@ -372,7 +372,7 @@ public class ThreadPool implements java.io.Serializable
             for(int x = 0; x < 1000; x++)
                 {
                 workers[x] = p.start( 
-                    runs[x] = new Runnable() { public void run() { try { Thread.currentThread().sleep(5000); }  
+                    runs[x] = new Runnable() { public void run() { try { Thread.sleep(5000); }
                             catch(InterruptedException e) { } } } );
                 }
             for(int y = 0; y < 1000; y++)

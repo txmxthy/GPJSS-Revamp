@@ -47,12 +47,12 @@ import java.util.List;
 public class GridResultCleaner {
     private static final char DEFAULT_SEPARATOR = ',';
     private static final String GRID_PATH = "/Users/dyska/Desktop/Uni/COMP489/GPJSS/grid_results/";
-    private String dataPath;
-    private String outPath;
+    private final String dataPath;
+    private final String outPath;
     private HashMap<String, Integer> benchmarkMakespans;
-    private boolean doIncludeGenerations;
-    private int numPops;
-    private boolean isStatic;
+    private final boolean doIncludeGenerations;
+    private final int numPops;
+    private final boolean isStatic;
     private AbstractRule routingRule;
 
     public GridResultCleaner(String simulationType, String dirName, int numPops, boolean doIncludeGenerations) {
@@ -312,7 +312,7 @@ public class GridResultCleaner {
         writeLine(w, values, DEFAULT_SEPARATOR, ' ');
     }
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         AbstractRule routingRule = new SBT(RuleType.ROUTING);
         GridResultCleaner grc = new GridResultCleaner("static","simple_routing_rule_tests", routingRule,
                 1, true);

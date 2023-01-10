@@ -175,9 +175,9 @@ public class RuleComparison {
 }
 
 class RuleComparisonResult {
-    private String routingRule;
-    private String sequencingRule;
-    private double fitness;
+    private final String routingRule;
+    private final String sequencingRule;
+    private final double fitness;
 
     public RuleComparisonResult(String routingRule, String sequencingRule, double fitness) {
         this.routingRule = routingRule;

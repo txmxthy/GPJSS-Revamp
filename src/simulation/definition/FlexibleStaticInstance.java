@@ -22,8 +22,8 @@ import java.util.List;
 public class FlexibleStaticInstance implements JSSInstance {
     public final int numWorkCenters;
     public final int numJobs;
-    private List<JobInformation> jobInformations;
-    private List<Double> workCenterReadyTimes;
+    private final List<JobInformation> jobInformations;
+    private final List<Double> workCenterReadyTimes;
     private String filePath;
 
     public FlexibleStaticInstance(int numWorkCenters, int numJobs, String filePath) {
@@ -210,11 +210,11 @@ public class FlexibleStaticInstance implements JSSInstance {
     }
 
     public static class JobInformation {
-        private int numOps;
-        private List<OperationInformation> operations;
-        private double arrivalTime;
-        private double dueDate;
-        private double weight;
+        private final int numOps;
+        private final List<OperationInformation> operations;
+        private final double arrivalTime;
+        private final double dueDate;
+        private final double weight;
 
         public JobInformation(int numOps) {
             this.numOps = numOps;
@@ -250,7 +250,7 @@ public class FlexibleStaticInstance implements JSSInstance {
     }
 
     public static class OperationInformation {
-        private List<OperationOptionInformation> options;
+        private final List<OperationOptionInformation> options;
         private OperationOptionInformation chosenOption;
 
         public void chooseOperationOption() {
@@ -284,8 +284,8 @@ public class FlexibleStaticInstance implements JSSInstance {
     }
 
     public static class OperationOptionInformation {
-        private int workCenterId;
-        private int time;
+        private final int workCenterId;
+        private final int time;
 
         public OperationOptionInformation(int workCenterId, int time) {
             this.workCenterId = workCenterId;

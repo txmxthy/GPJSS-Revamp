@@ -232,7 +232,7 @@ public class MultiObjectiveFitness extends Fitness
     public Object clone()
         {
         MultiObjectiveFitness f = (MultiObjectiveFitness) (super.clone());
-        f.objectives = (double[]) (objectives.clone()); // cloning an array
+        f.objectives = objectives.clone(); // cloning an array
 
         // note that we do NOT clone max and min fitness, or maximizing -- they're shared
         return f;
@@ -345,9 +345,7 @@ public class MultiObjectiveFitness extends Fitness
                     return true;
                 }
             }
-        if (abeatsb || bbeatsa)
-            return false;
-        return true;
+            return !abeatsb && !bbeatsa;
         }
 
     /**
@@ -428,7 +426,7 @@ public class MultiObjectiveFitness extends Fitness
         // iterate over all the remaining individuals
         for (int i = 1; i < inds.length; i++)
             {
-            Individual ind = (Individual) (inds[i]);
+            Individual ind = inds[i];
 
             boolean noOneWasBetter = true;
             int frontSize = front.size();
@@ -575,7 +573,7 @@ public class MultiObjectiveFitness extends Fitness
             Code.decode(d);
             if (d.type != DecodeReturn.T_DOUBLE)
                 state.output.fatal("Reading Line " + d.lineNumber + ": " + "Bad Fitness (objectives value #" + x + ").");
-            objectives[x] = (double) d.d;
+            objectives[x] = d.d;
             }
         }
 
@@ -614,7 +612,7 @@ public class MultiObjectiveFitness extends Fitness
                 MultiObjectiveFitness f = (MultiObjectiveFitness) fitnesses[k];
                 sum += f.objectives[i];
                 }
-            objectives[i] = (double)(sum / fitnesses.length);
+            objectives[i] = sum / fitnesses.length;
             }
         }
 

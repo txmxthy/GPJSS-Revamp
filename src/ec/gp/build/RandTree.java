@@ -25,8 +25,7 @@ public class RandTree extends GPNodeBuilder
 
     LinkedList permutations;
 
-    public static class ArityObject extends Object
-        {
+    public static class ArityObject {
         public int arity;
         public ArityObject(int a) { arity=a; }
         }
@@ -178,7 +177,7 @@ public class RandTree extends GPNodeBuilder
         {
         int treeSize;
         boolean valid=false;
-        String word=new String();
+        String word= "";
 
         treeSize=pickSize(state,thread);
 
@@ -196,7 +195,7 @@ public class RandTree extends GPNodeBuilder
             valid=checkDyckWord(word);
             if (!valid)
                 {
-                word=word.substring(word.length()-1,word.length()).concat(word.substring(0,word.length()-1));
+                word=word.substring(word.length()-1).concat(word.substring(0,word.length()-1));
                 cycle++;
                 if (cycle>=(treeSize*2)-1) {state.output.fatal("Not able to find valid permutation for generated Dyck word: "+word);}
                 }
@@ -295,7 +294,7 @@ public class RandTree extends GPNodeBuilder
             while (addStr.length()<arity) { addStr=addStr.concat("y"); }
 
             // finally put the string together again
-            dyck=dyck.substring(0,pos).concat(addStr).concat(dyck.substring(pos+1,dyck.length()));
+            dyck=dyck.substring(0,pos).concat(addStr).concat(dyck.substring(pos+1));
 
             // Find another non-0 arity to insert
             counter=0;
@@ -315,7 +314,7 @@ public class RandTree extends GPNodeBuilder
             {
             if(dyck.charAt(counter)=='*')
                 {
-                dyck=dyck.substring(0,counter).concat(dyck.substring(counter+1,dyck.length()));
+                dyck=dyck.substring(0,counter).concat(dyck.substring(counter+1));
                 }
             }
         return dyck;
@@ -350,14 +349,7 @@ public class RandTree extends GPNodeBuilder
                 }
             counter++;
             }
-        if (stack.length()!=1)
-            {
-            return false;
-            }
-        else
-            {
-            return true;
-            }
+            return stack.length() == 1;
         }
 
     // This function parses the dyck word and puts random nodes into their slots.
@@ -379,7 +371,7 @@ public class RandTree extends GPNodeBuilder
             if ((nextChar=='x') || (nextChar=='*')) /* terminal node */
                 {
                 GPNode[] nn = set.terminals[0];
-                GPNode n = (GPNode)(nn[state.random[thread].nextInt(nn.length)].lightClone());
+                GPNode n = nn[state.random[thread].nextInt(nn.length)].lightClone();
                 n.resetNode(state,thread);  // give ERCs a chance to randomize
                 s.push(n);
                 }
@@ -399,7 +391,7 @@ public class RandTree extends GPNodeBuilder
 
                 //Arity found.  Now just choose non terminal at random.
                 GPNode[] nonTerms=set.nodesByArity[0][Ycount];
-                GPNode nT=(GPNode) (nonTerms[state.random[thread].nextInt(nonTerms.length)].lightClone());
+                GPNode nT= nonTerms[state.random[thread].nextInt(nonTerms.length)].lightClone();
                 // Non terminal chosen, now attaching children
                 int childcount=Ycount;
                 while (childcount>0)

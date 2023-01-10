@@ -73,12 +73,12 @@ public class Ant extends GPProblem implements SimpleProblemForm
     public int food;
 
     // our map
-    public int map[][];
+    public int[][] map;
 
     // store the positions of food so we can reset our map
     // don't need to be deep-cloned, they're read-only
-    public int foodx[];
-    public int foody[];
+    public int[] foodx;
+    public int[] foody;
 
     // map[][]'s bounds
     public int maxx;
@@ -105,7 +105,7 @@ public class Ant extends GPProblem implements SimpleProblemForm
         Ant myobj = (Ant) (super.clone());
         myobj.map = new int[map.length][];
         for(int x=0;x<map.length;x++)
-            myobj.map[x] = (int[])(map[x].clone());
+            myobj.map[x] = map[x].clone();
         return myobj;
         }
 
@@ -243,7 +243,7 @@ public class Ant extends GPProblem implements SimpleProblemForm
 
         int[][] map2 = new int[map.length][];
         for(int x=0;x<map.length;x++)
-            map2[x] = (int[])(map[x].clone());
+            map2[x] = map[x].clone();
 
         map2[posx][posy] = pmod; pmod++;
         for(moves=0; moves<maxMoves && sum<food; )

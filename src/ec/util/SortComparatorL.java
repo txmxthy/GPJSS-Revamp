@@ -24,8 +24,8 @@ package ec.util;
 public interface SortComparatorL 
     {
     /** Returns true if a < b, else false */
-    public boolean lt(long a, long b);
+    boolean lt(long a, long b);
 
     /** Returns true if a > b, else false */
-    public boolean gt(long a, long b);
+    boolean gt(long a, long b);
     }

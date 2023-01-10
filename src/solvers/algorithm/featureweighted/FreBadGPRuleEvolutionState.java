@@ -64,7 +64,7 @@ public class FreBadGPRuleEvolutionState extends GPRuleEvolutionState implements 
 	}
 
 
-	private ArrayList<Individual> lastGenEliteIndividual = new ArrayList<>();
+	private final ArrayList<Individual> lastGenEliteIndividual = new ArrayList<>();
 
 	@Override
 	public GPNode pickTerminalRandom(int subPopNum) {

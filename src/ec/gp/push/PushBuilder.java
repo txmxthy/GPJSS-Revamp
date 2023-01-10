@@ -101,11 +101,11 @@ public class PushBuilder extends GPNodeBuilder
         if (requestedSize == 1)
             {
             // pick a random terminal
-            n = (GPNode)(terminals[state.random[thread].nextInt(terminals.length)].lightClone());
+            n = terminals[state.random[thread].nextInt(terminals.length)].lightClone();
             }
         else
             {
-            n = (GPNode)(nonterminals[state.random[thread].nextInt(nonterminals.length)].lightClone());  // it's always going to be the Dummy
+            n = nonterminals[state.random[thread].nextInt(nonterminals.length)].lightClone();  // it's always going to be the Dummy
             
             // do decomposition
             byte pos = 0;            // THIS WILL HAVE TO BE MODIFIED TO AN INT LATER ON AND THIS WILL AFFECT ARGPOSITIONS!!!

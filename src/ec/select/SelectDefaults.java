@@ -26,7 +26,7 @@ public final class SelectDefaults implements DefaultsForm
     public static final String P_SELECT = "select";
 
     /** Returns the default base. */
-    public static final Parameter base()
+    public static Parameter base()
         {
         return new Parameter(P_SELECT);
         }

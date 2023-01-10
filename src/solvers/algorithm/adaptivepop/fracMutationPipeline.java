@@ -98,7 +98,7 @@ public class fracMutationPipeline extends MutationPipeline {
             }
             else // need to clone the individual
             {
-                j = (GPIndividual)(i.lightClone());
+                j = i.lightClone();
 
                 // Fill in various tree information that didn't get filled in there
                 j.trees = new GPTree[i.trees.length];
@@ -109,7 +109,7 @@ public class fracMutationPipeline extends MutationPipeline {
                 {
                     if (x==t && res)  // we've got a tree with a kicking cross position!
                     {
-                        j.trees[x] = (GPTree)(i.trees[x].lightClone());
+                        j.trees[x] = i.trees[x].lightClone();
                         j.trees[x].owner = j;
                         j.trees[x].child = i.trees[x].child.cloneReplacingNoSubclone(p2,p1);
                         j.trees[x].child.parent = j.trees[x];
@@ -118,7 +118,7 @@ public class fracMutationPipeline extends MutationPipeline {
                     } // it's changed
                     else
                     {
-                        j.trees[x] = (GPTree)(i.trees[x].lightClone());
+                        j.trees[x] = i.trees[x].lightClone();
                         j.trees[x].owner = j;
                         j.trees[x].child = (GPNode)(i.trees[x].child.clone());
                         j.trees[x].child.parent = j.trees[x];

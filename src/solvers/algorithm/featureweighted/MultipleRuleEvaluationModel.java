@@ -158,7 +158,7 @@ public class MultipleRuleEvaluationModel extends AbstractEvaluationModel{
             return;
         }
         //System.out.println(rules.size()); //2 repeat
-        if(Flag.value == false)
+        if(!Flag.value)
            countInd++;
 
         AbstractRule sequencingRule = rules.get(0); // for each arraylist in list, they have two elements, the first one is sequencing rule and the second one is routing rule
@@ -202,7 +202,7 @@ public class MultipleRuleEvaluationModel extends AbstractEvaluationModel{
                             //System.out.println(systemState.getJobsInSystem().size());
                             //System.out.println(systemState.getJobsCompleted().size());
                             //normObjValue = normObjValue*(systemState.getJobsInSystem().size()/systemState.getJobsCompleted().size());
-                            if(Flag.value == false)
+                            if(!Flag.value)
                                countBadrun++;
                             break;
                         }

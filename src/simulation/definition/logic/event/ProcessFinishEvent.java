@@ -7,13 +7,14 @@ import simulation.definition.logic.SequencingDecisionSituation;
 import simulation.definition.logic.Simulation;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by yimei on 22/09/16.
  */
 public class ProcessFinishEvent extends AbstractEvent {
 
-    private Process process;
+    private final Process process;
     //fzhang 29.8.2018 in order to record the completion time of jobs
     protected long jobSeed;
 
@@ -220,7 +221,7 @@ public class ProcessFinishEvent extends AbstractEvent {
 
         ProcessFinishEvent that = (ProcessFinishEvent) o;
 
-        return process != null ? process.equals(that.process) : that.process == null;
+        return Objects.equals(process, that.process);
     }
 
     @Override

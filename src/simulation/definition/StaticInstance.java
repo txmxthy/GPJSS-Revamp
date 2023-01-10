@@ -24,7 +24,7 @@ public class StaticInstance implements JSSInstance {
     public final int numWorkCenters;
     public final int numJobs;
     private List<Double> workCenterReadyTimes;
-    private List<JobInformation> jobInformations;
+    private final List<JobInformation> jobInformations;
 
     public StaticInstance(int numWorkCenters, int numJobs,
                           List<Double> workCenterReadyTimes,
@@ -65,12 +65,12 @@ public class StaticInstance implements JSSInstance {
     }
 
     public class JobInformation {
-        private double arrivalTime;
-        private double dueDate;
-        private double weight;
-        private int numOps;
+        private final double arrivalTime;
+        private final double dueDate;
+        private final double weight;
+        private final int numOps;
         private List<Integer> route;
-        private List<Double> procTimes;
+        private final List<Double> procTimes;
 
         public JobInformation(double arrivalTime,
                               double dueDate,

@@ -112,7 +112,7 @@ public class multiPopCoevolutionaryEvaluator extends MultiPopCoevolutionaryEvalu
                         }
 
                         //evaluate new individuals
-                        ((MultiObjectiveFitness)(newInd.fitness)).trials = new ArrayList();//this is always make trials.size == 1, actually useless
+                        newInd.fitness.trials = new ArrayList();//this is always make trials.size == 1, actually useless
                         ((GroupedProblemForm)(this.p_problem)).evaluate(state, inds
                                 , updates // Should the fitness of individuals be updated? Here it says yes and yes.
                                 , false

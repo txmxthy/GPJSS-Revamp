@@ -542,9 +542,8 @@ public class Output implements Serializable
     /** Posts a fatal error.  This causes the system to exit. */
     public synchronized void fatal(String s)
         {
-        StringBuilder error = new StringBuilder();
-        println(a("FATAL ERROR:\n"+s), ALL_MESSAGE_LOGS, true);
-        exitWithError(this, error.toString(), throwsErrors);
+            println(a("FATAL ERROR:\n"+s), ALL_MESSAGE_LOGS, true);
+        exitWithError(this, "", throwsErrors);
         }
             
     /** Posts a fatal error.  This causes the system to exit. */
@@ -941,8 +940,8 @@ public class Output implements Serializable
             int Z_SYNC_FLUSH = outz.getField("Z_SYNC_FLUSH").getInt(null);
             
             Class outc = Class.forName("com.jcraft.jzlib.ZOutputStream");
-            Object outi = outc.getConstructor(new Class[] { OutputStream.class, Integer.TYPE }).newInstance(new Object[] { out, Integer.valueOf(Z_BEST_SPEED) });
-            outc.getMethod("setFlushMode", new Class[] { Integer.TYPE }).invoke(outi, new Object[] { new Integer(Z_SYNC_FLUSH) });
+            Object outi = outc.getConstructor(new Class[] { OutputStream.class, Integer.TYPE }).newInstance(out, Integer.valueOf(Z_BEST_SPEED));
+            outc.getMethod("setFlushMode", new Class[] { Integer.TYPE }).invoke(outi, new Integer(Z_SYNC_FLUSH));
             return (OutputStream) outi;
             }
         // just in case of RuntimeExceptions

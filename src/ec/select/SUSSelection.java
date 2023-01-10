@@ -136,12 +136,12 @@ public class SUSSelection extends SelectionMethod
         fitnesses = new double[s.population.subpops[subpopulation].individuals.length];
 
         // compute offset
-        offset = (double)(s.random[thread].nextDouble() / fitnesses.length);
+        offset = s.random[thread].nextDouble() / fitnesses.length;
         
         // load fitnesses but don't build distribution yet
         for(int x=0;x<fitnesses.length;x++)
             {
-            fitnesses[x] = ((Individual)(s.population.subpops[subpopulation].individuals[x])).fitness.fitness();
+            fitnesses[x] = s.population.subpops[subpopulation].individuals[x].fitness.fitness();
             if (fitnesses[x] < 0) // uh oh
                 s.output.fatal("Discovered a negative fitness value.  SUSSelection requires that all fitness values be non-negative(offending subpopulation #" + subpopulation + ")");
             }
@@ -173,7 +173,7 @@ public class SUSSelection extends SelectionMethod
             if ((lastIndex == 0 || offset >= fitnesses[lastIndex - 1]) && offset < fitnesses[lastIndex])
                 break;
 
-        offset += (double)(1.0 / fitnesses.length);  // update for next time
+        offset += 1.0 / fitnesses.length;  // update for next time
         steps++;
         return indices[lastIndex];
         }

@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class ProcessStartEvent extends AbstractEvent {
 
-    private Process process;
+    private final Process process;
 
     public ProcessStartEvent(double time, Process process) {
         super(time);

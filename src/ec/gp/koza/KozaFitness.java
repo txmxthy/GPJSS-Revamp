@@ -160,7 +160,7 @@ public class KozaFitness extends Fitness
         if (d.type!=DecodeReturn.T_DOUBLE)
             state.output.fatal("Reading Line " + d.lineNumber + ": " +
                 "Bad Fitness.");
-        standardizedFitness = (double)d.d;
+        standardizedFitness = d.d;
         
         // extract hits
         Code.decode(d);
@@ -201,7 +201,7 @@ public class KozaFitness extends Fitness
             }
         f /= fitnesses.length;
         h /= fitnesses.length;
-        standardizedFitness = (double)f;
+        standardizedFitness = f;
         hits = (int)h;
         }
     }

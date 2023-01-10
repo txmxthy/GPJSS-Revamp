@@ -201,10 +201,9 @@ public class PTC2 extends GPNodeBuilder
             (triedTerminals = true) &&                                                       // [first set triedTerminals]
             terminals.length != 0)                                                           // AND if there are available terminal
             {
-            root = (GPNode)
-                terminals[RandomChoice.pickFromDistribution(
-                    pset.terminalProbabilities(t),
-                    state.random[thread].nextDouble())].lightClone();
+            root = terminals[RandomChoice.pickFromDistribution(
+                pset.terminalProbabilities(t),
+                state.random[thread].nextDouble())].lightClone();
             root.resetNode(state,thread);  // give ERCs a chance to randomize
             root.argposition = (byte)argposition;
             root.parent = parent;
@@ -214,10 +213,9 @@ public class PTC2 extends GPNodeBuilder
             if (triedTerminals) warnAboutNoTerminalWithType(type, false, state);        // we tried terminal and we're here because there were none!
 
             // pick a nonterminal
-            root = (GPNode)
-                nonterminals[RandomChoice.pickFromDistribution(
-                    pset.nonterminalProbabilities(t),
-                    state.random[thread].nextDouble())].lightClone();
+            root = nonterminals[RandomChoice.pickFromDistribution(
+                pset.nonterminalProbabilities(t),
+                state.random[thread].nextDouble())].lightClone();
             root.resetNode(state,thread);  // give ERCs a chance to randomize
             root.argposition = (byte)argposition;
             root.parent = parent;
@@ -256,10 +254,9 @@ public class PTC2 extends GPNodeBuilder
                     (triedTerminals = true) &&                                                // [first set triedTerminals]
                     terminals.length != 0)                                                    // AND if there are available terminal
                     {
-                    GPNode n = (GPNode)
-                        terminals[RandomChoice.pickFromDistribution(
-                            pset.terminalProbabilities(y),
-                            state.random[thread].nextDouble())].lightClone();
+                    GPNode n = terminals[RandomChoice.pickFromDistribution(
+                        pset.terminalProbabilities(y),
+                        state.random[thread].nextDouble())].lightClone();
                     dequeue_node.children[dequeue_argpos] = n;
                     n.resetNode(state,thread);  // give ERCs a chance to randomize
                     n.argposition = (byte)dequeue_argpos;
@@ -271,10 +268,9 @@ public class PTC2 extends GPNodeBuilder
                     {
                     if (triedTerminals) warnAboutNoTerminalWithType(type, false, state);       // we tried terminal and we're here because there were none!
                                                                                         
-                    GPNode n = (GPNode)
-                        nonterminals[RandomChoice.pickFromDistribution(
-                            pset.nonterminalProbabilities(y),
-                            state.random[thread].nextDouble())].lightClone();
+                    GPNode n = nonterminals[RandomChoice.pickFromDistribution(
+                        pset.nonterminalProbabilities(y),
+                        state.random[thread].nextDouble())].lightClone();
                     dequeue_node.children[dequeue_argpos] = n;
                     n.resetNode(state,thread);  // give ERCs a chance to randomize
                     n.argposition = (byte)dequeue_argpos;

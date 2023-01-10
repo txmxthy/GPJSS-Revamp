@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class SchedulingSet {
 
-    private List<Simulation> simulations;
+    private final List<Simulation> simulations;
     private List<Integer> replications;
     private RealMatrix objectiveLowerBoundMtx;
 

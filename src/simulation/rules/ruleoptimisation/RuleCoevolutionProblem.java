@@ -65,7 +65,7 @@ public class RuleCoevolutionProblem extends RuleOptimizationProblem implements G
             if (prepareForFitnessAssessment[i]) {
                 for (int j = 0; j < pop.subpops[i].individuals.length; j++) {
                 	//System.out.println("i = " + i + ", j = " + j);
-                    ((MultiObjectiveFitness)(pop.subpops[i].individuals[j].fitness)).trials = new ArrayList();
+                    pop.subpops[i].individuals[j].fitness.trials = new ArrayList();
                 }
             }
         }
@@ -147,7 +147,7 @@ public class RuleCoevolutionProblem extends RuleOptimizationProblem implements G
                     }
                     // put me at position 0
                     Double t = (Double)(coind.fitness.trials.get(0));
-                    coind.fitness.trials.set(0, new Double(trialValue));  // put me at 0
+                    coind.fitness.trials.set(0, trialValue);  // put me at 0
                     coind.fitness.trials.add(t);  // move him to the end
                 }
 

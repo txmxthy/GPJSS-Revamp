@@ -57,7 +57,7 @@ public class HIFF extends Problem implements SimpleProblemForm
         {
         BitVectorIndividual ind2 = (BitVectorIndividual) ind;
 
-        double genes[] = new double[ind2.genome.length];
+        double[] genes = new double[ind2.genome.length];
         for (int i=0; i < genes.length; i++)
             genes[i] = ((ind2.genome[i]) ? 1 : 0);
         double fitness = H(genes);
@@ -66,7 +66,7 @@ public class HIFF extends Problem implements SimpleProblemForm
         ind2.evaluated = true;
         }
 
-    double H(double genes[])
+    double H(double[] genes)
         {
         double bonus=1, F=0;
         int last = genes.length;
@@ -88,7 +88,7 @@ public class HIFF extends Problem implements SimpleProblemForm
         return F;
         }
 
-    double t(double transform[], int first)
+    double t(double[] transform, int first)
         {
         int s=0;
         for (int i=first+1; i < first+K; i++)

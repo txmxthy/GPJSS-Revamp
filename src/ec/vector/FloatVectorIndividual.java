@@ -83,7 +83,7 @@ public class FloatVectorIndividual extends VectorIndividual
         FloatVectorIndividual myobj = (FloatVectorIndividual) (super.clone());
 
         // must clone the genome
-        myobj.genome = (float[]) (genome.clone());
+        myobj.genome = genome.clone();
 
         return myobj;
         }
@@ -344,7 +344,7 @@ public class FloatVectorIndividual extends VectorIndividual
             }
         do
             {
-            int n = (int)(random.nextBoolean() ? 1 : -1);
+            int n = random.nextBoolean() ? 1 : -1;
             float g = (float)Math.floor(genome[index]);
             if ((n == 1 && g < max) ||
                 (n == -1 && g > min))

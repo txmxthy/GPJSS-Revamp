@@ -83,7 +83,7 @@ public class ShortVectorIndividual extends VectorIndividual
         ShortVectorIndividual myobj = (ShortVectorIndividual) (super.clone());
 
         // must clone the genome
-        myobj.genome = (short[])(genome.clone());
+        myobj.genome = genome.clone();
         
         return myobj;
         } 
@@ -300,7 +300,7 @@ public class ShortVectorIndividual extends VectorIndividual
                     switch(s.mutationType(x))
                         {
                         case IntegerVectorSpecies.C_RESET_MUTATION:
-                            genome[x] = (short)randomValueFromClosedInterval((short)s.minGene(x), (short)s.maxGene(x), state.random[thread]);
+                            genome[x] = randomValueFromClosedInterval((short)s.minGene(x), (short)s.maxGene(x), state.random[thread]);
                             break;
                         case IntegerVectorSpecies.C_RANDOM_WALK_MUTATION:
                             int min = (int)s.minGene(x);
@@ -313,7 +313,7 @@ public class ShortVectorIndividual extends VectorIndividual
                                 }
                             do
                                 {
-                                int n = (int)(state.random[thread].nextBoolean() ? 1 : -1);
+                                int n = state.random[thread].nextBoolean() ? 1 : -1;
                                 int g = genome[x];
                                 if ((n == 1 && g < max) ||
                                     (n == -1 && g > min))
@@ -341,7 +341,7 @@ public class ShortVectorIndividual extends VectorIndividual
         {
         IntegerVectorSpecies s = (IntegerVectorSpecies) species;
         for(int x=0;x<genome.length;x++)
-            genome[x] = (short)randomValueFromClosedInterval((short)s.minGene(x), (short)s.maxGene(x), state.random[thread]);
+            genome[x] = randomValueFromClosedInterval((short)s.minGene(x), (short)s.maxGene(x), state.random[thread]);
         }
 
     public int hashCode()

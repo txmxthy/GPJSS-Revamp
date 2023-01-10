@@ -565,7 +565,7 @@ public class MetaProblem extends Problem implements SimpleProblemForm
                     else inds = ((SimpleShortStatistics)(evaluatedState.statistics)).getBestSoFar();
                     if (inds == null)
                         state.output.fatal("Underlying evolution state has a Statistics object which provides a null best-so-far array.  Can't extract fitness.");
-                    fits.add((Fitness)(inds[0].fitness));
+                    fits.add(inds[0].fitness);
                     //System.err.println("" + inds[0] + " " + inds[0].fitness);
                     }
                 else if (evaluatedState.statistics == null)

@@ -26,7 +26,7 @@ public final class MultiObjectiveDefaults implements DefaultsForm
     public static final String P_MULTI = "multi";
 
     /** Returns the default base. */
-    public static final Parameter base()
+    public static Parameter base()
         {
         return new Parameter(P_MULTI);
         }

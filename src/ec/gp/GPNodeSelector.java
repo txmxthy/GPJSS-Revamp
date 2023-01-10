@@ -39,21 +39,21 @@ public interface GPNodeSelector extends Prototype
         same tree.
     */
 
-    public abstract GPNode pickNode(final EvolutionState s,
-        final int subpopulation,
-        final int thread,
-        final GPIndividual ind,
-        final GPTree tree);
+    GPNode pickNode(final EvolutionState s,
+                           final int subpopulation,
+                           final int thread,
+                           final GPIndividual ind,
+                           final GPTree tree);
 
     //fzhang 9.6.2018  in order to pick a root node directly
-    public abstract GPNode pickRootNode(final EvolutionState s,
-            final int subpopulation,
-            final int thread,
-            final GPIndividual ind,
-            final GPTree tree);
+    GPNode pickRootNode(final EvolutionState s,
+                               final int subpopulation,
+                               final int thread,
+                               final GPIndividual ind,
+                               final GPTree tree);
     
     /** Resets the Node Selector before a new series of pickNode()
         if need be. */
-    public abstract void reset();
+    void reset();
 
     }

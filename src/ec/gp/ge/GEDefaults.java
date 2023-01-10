@@ -30,7 +30,7 @@ public final class GEDefaults implements DefaultsForm
     public static final String P_GE = "ge";
 
     /** Returns the default base. */
-    public static final Parameter base()
+    public static Parameter base()
         {
         return new Parameter(P_GE);
         }

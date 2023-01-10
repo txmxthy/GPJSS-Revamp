@@ -36,6 +36,5 @@ public class SimpleFinisher extends Finisher
     public void finishPopulation(final EvolutionState state, final int result)
         {
         // don't care
-        return;
         }
     }

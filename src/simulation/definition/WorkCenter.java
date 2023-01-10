@@ -1,9 +1,6 @@
 package simulation.definition;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by yimei on 24/09/16.
@@ -11,11 +8,11 @@ import java.util.List;
 public class WorkCenter {
 
     private final int id;
-    private int numMachines;
+    private final int numMachines;
 
     // Attributes for simulation.
-    private LinkedList<OperationOption> queue;
-    private List<Double> machineReadyTimes;
+    private final LinkedList<OperationOption> queue;
+    private final List<Double> machineReadyTimes;
     private double workInQueue;
     //numOperation in queue    modfied by fzhang 20.4.2018
     private int numOperationInQueue;
@@ -256,8 +253,8 @@ public class WorkCenter {
         if (numMachines != that.numMachines) return false;
         if (Double.compare(that.workInQueue, workInQueue) != 0) return false;
         if (Double.compare(that.busyTime, busyTime) != 0) return false;
-        if (queue != null ? !queue.equals(that.queue) : that.queue != null) return false;
-        return machineReadyTimes != null ? machineReadyTimes.equals(that.machineReadyTimes) : that.machineReadyTimes == null;
+        if (!Objects.equals(queue, that.queue)) return false;
+        return Objects.equals(machineReadyTimes, that.machineReadyTimes);
     }
 
     @Override

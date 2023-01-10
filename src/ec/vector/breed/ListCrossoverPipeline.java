@@ -89,7 +89,7 @@ public class ListCrossoverPipeline extends BreedingPipeline
     public double minCrossoverPercentage;
     public double maxCrossoverPercentage;
     
-    protected VectorIndividual parents[];
+    protected VectorIndividual[] parents;
     
     public ListCrossoverPipeline() { parents = new VectorIndividual[2]; }
     public Parameter defaultBase() { return VectorDefaults.base().push(P_LIST_CROSSOVER); }
@@ -99,7 +99,7 @@ public class ListCrossoverPipeline extends BreedingPipeline
     public Object clone()
         {
         ListCrossoverPipeline c = (ListCrossoverPipeline)(super.clone());
-        c.parents = (VectorIndividual[]) parents.clone();
+        c.parents = parents.clone();
         return c;
         }
 
@@ -154,14 +154,14 @@ public class ListCrossoverPipeline extends BreedingPipeline
         if(minChildSize < 0)
             {
             state.output.error("ListCrossoverPipeline:\n" +
-                "   Parameter min-child-size is currently equal to: " + Integer.toString(minChildSize) + "\n" +
+                "   Parameter min-child-size is currently equal to: " + minChildSize + "\n" +
                 "   min-child-size must be a positive integer\n");
             }
         
         if(numTries < 1)
             {
             state.output.error("ListCrossoverPipeline:\n" +
-                "   Parameter tries is currently equal to: " + Integer.toString(numTries) + "\n" +
+                "   Parameter tries is currently equal to: " + numTries + "\n" +
                 "   tries must be greater than or equal to 1\n");
             }
                                
@@ -169,13 +169,13 @@ public class ListCrossoverPipeline extends BreedingPipeline
         if(minCrossoverPercentage < 0.0 || minCrossoverPercentage > 1.0)
             {
             state.output.error("ListCrossoverPipeline:\n" +
-                "   Parameter min-crossover-percent is currently equal to: " + Double.toString(minCrossoverPercentage) + "\n" +
+                "   Parameter min-crossover-percent is currently equal to: " + minCrossoverPercentage + "\n" +
                 "   min-crossover-percent must be either a real-value double float between [0.0, 1.0] or left unspecified\n");
             }
         if(maxCrossoverPercentage < 0.0 || maxCrossoverPercentage > 1.0)
             {
             state.output.error("ListCrossoverPipeline:\n" +
-                "   Parameter max-crossover-percent is currently equal to: " + Double.toString(maxCrossoverPercentage) + "\n" +
+                "   Parameter max-crossover-percent is currently equal to: " + maxCrossoverPercentage + "\n" +
                 "   max-crossover-percent must be either a real-value double float between [0.0, 1.0] or left unspecified\n");
             }
         if(minCrossoverPercentage > maxCrossoverPercentage)
@@ -186,8 +186,8 @@ public class ListCrossoverPipeline extends BreedingPipeline
         if(minCrossoverPercentage == maxCrossoverPercentage)
             {
             state.output.warning("ListCrossoverPipeline:\n" +
-                "   Parameter min-crossover-percent and max-crossover-percent are currently equal to: " + 
-                Double.toString(minCrossoverPercentage) + "\n" +
+                "   Parameter min-crossover-percent and max-crossover-percent are currently equal to: " +
+                    minCrossoverPercentage + "\n" +
                 "   This effectively prevents any crossover from occurring\n");
             }
         }
@@ -245,8 +245,8 @@ public class ListCrossoverPipeline extends BreedingPipeline
             // determines size of parents, in terms of chunks
             int chunk_size = ((VectorSpecies)(parents[0].species)).chunksize;  
             int[] size = new int[2];  // sizes of parents
-            size[0] = (int)parents[0].genomeLength();
-            size[1] = (int)parents[1].genomeLength();      
+            size[0] = parents[0].genomeLength();
+            size[1] = parents[1].genomeLength();
             int[] size_in_chunks = new int[2];   // sizes of parents by chunk (if chunk == 1, this is just size[])
             size_in_chunks[0] = size[0]/chunk_size;
             size_in_chunks[1] = size[1]/chunk_size;
@@ -274,7 +274,7 @@ public class ListCrossoverPipeline extends BreedingPipeline
             // attempt 'num-tries' times to produce valid children (which are bigger than min-child-size)
             boolean valid_children = false;
             int attempts = 0;
-            while(valid_children == false && attempts < numTries)
+            while(!valid_children && attempts < numTries)
                 {
                 // generate split indices for one-point (tail end used as end of segment)
                 if(crossoverType == VectorSpecies.C_ONE_POINT)
@@ -353,7 +353,7 @@ public class ListCrossoverPipeline extends BreedingPipeline
                 }
            
             // if the children produced were valid, updates the parents
-            if(valid_children == true)
+            if(valid_children)
                 {
                 parents[0].join(pieces[0]);
                 parents[1].join(pieces[1]);
@@ -363,7 +363,7 @@ public class ListCrossoverPipeline extends BreedingPipeline
             // insert parents back into the population
             inds[q] = parents[0];
             q++;
-            if(q < n + start && tossSecondParent == false)
+            if(q < n + start && !tossSecondParent)
                 {
                 inds[q] = parents[1];
                 q++;

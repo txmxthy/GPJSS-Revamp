@@ -56,7 +56,7 @@ public class CA implements java.io.Serializable
         {
         if (vals.length != ca.length)
             throw new RuntimeException("CA length invalid given prespecified size.");
-        ca = (int[])(vals.clone());
+        ca = vals.clone();
         }
 
     public void clear(boolean toOnes) 

@@ -127,9 +127,7 @@ public class SteadyStateEvaluator extends SimpleEvaluator
         he signals that the run is complete. */
     public boolean runComplete(final EvolutionState state, final Individual ind)
         {
-        if (ind.fitness.isIdealFitness())
-            return true;
-        return false;
+            return ind.fitness.isIdealFitness();
         }
 
     }

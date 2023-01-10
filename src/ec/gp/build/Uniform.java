@@ -175,9 +175,9 @@ public class Uniform extends GPNodeBuilder
     // integer constants, not exactly that useful for us.  As a result, we'll
     // be making a dang lot of BigIntegers here.  Garbage-collection hell.  :-(
     // ...well, it's not all that slow really.
-    public BigInteger NUMTREESOFTYPE[/*FunctionSet*/][/*type*/][/*size*/];
-    public BigInteger NUMTREESROOTEDBYNODE[/*FunctionSet*/][/*nodenum*/][/*size*/];
-    public BigInteger NUMCHILDPERMUTATIONS[/*FunctionSet*/][/*parentnodenum*/][/*size*/][/*outof*/][/*pickchild*/];
+    public BigInteger[][][] NUMTREESOFTYPE/*FunctionSet*//*type*//*size*/;
+    public BigInteger[][][] NUMTREESROOTEDBYNODE/*FunctionSet*//*nodenum*//*size*/;
+    public BigInteger[][][][][] NUMCHILDPERMUTATIONS/*FunctionSet*//*parentnodenum*//*size*//*outof*//*pickchild*/;
     
     
     
@@ -186,12 +186,12 @@ public class Uniform extends GPNodeBuilder
     // [/*the nodes*/] is an array of <node,probability> pairs for all possible nodes rooting
     // trees of the desired size and compatible with the given return type.  It says that if you
     // were to pick a tree, this would be the probability that this node would be the root of it.
-    public UniformGPNodeStorage ROOT_D[/*FunctionSet*/][/*type*/][/*size*/][/*the nodes*/];
+    public UniformGPNodeStorage[][][][] ROOT_D/*FunctionSet*//*type*//*size*//*the nodes*/;
     
     // True if ROOT_D all zero for all possible nodes in [/*the nodes*/] above. 
-    public boolean ROOT_D_ZERO[/*FunctionSet*/][/*type*/][/*size*/];
+    public boolean[][][] ROOT_D_ZERO/*FunctionSet*//*type*//*size*/;
     
-    public double CHILD_D[/*FunctionSet*/][/*type*/][/*outof*/][/*pickchild*/][/* the nodes*/];
+    public double[][][][][] CHILD_D/*FunctionSet*//*type*//*outof*//*pickchild*//* the nodes*/;
     
     
     public void setup(final EvolutionState state, final Parameter base)
@@ -443,14 +443,14 @@ public class Uniform extends GPNodeBuilder
         int choice = RandomChoice.pickFromDistribution(
             ROOT_D[functionset][type][size],ROOT_D[functionset][type][size][0],
             mt.nextDouble());
-        GPNode node = (GPNode)(ROOT_D[functionset][type][size][choice].node.lightClone());
+        GPNode node = ROOT_D[functionset][type][size][choice].node.lightClone();
         node.resetNode(state,thread);  // give ERCs a chance to randomize
         //System.out.println("Size: " + size + "Rooted: " + node);
         if (node.children.length == 0 && size !=1) // uh oh
             {
             System.out.println("Size: " + size + " Node: " + node);
             for(int x=0;x<ROOT_D[functionset][type][size].length;x++)
-                System.out.println("" + x + (GPNode)(ROOT_D[functionset][type][size][x].node) + " " + ROOT_D[functionset][type][size][x].prob );
+                System.out.println("" + x + ROOT_D[functionset][type][size][x].node + " " + ROOT_D[functionset][type][size][x].prob );
             }
         if (size > 1)  // nonterminal
             fillNodeWithChildren(state,thread,initializer,functionset,node,ROOT_D[functionset][type][size][choice].node,0,size-1,mt);

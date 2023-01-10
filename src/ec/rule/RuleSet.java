@@ -108,7 +108,7 @@ public class RuleSet implements Prototype
             // copy the rules over
             if( rules != null )
                 {
-                newRuleSet.rules = (Rule[])(rules.clone());
+                newRuleSet.rules = rules.clone();
                 }
             else
                 {
@@ -506,8 +506,8 @@ public class RuleSet implements Prototype
         // we need to sort the rulesets.  First, let's clone
         // the rule arrays
 
-        Rule[] srules = (Rule[])(rules.clone());
-        Rule[] orules = (Rule[])(other.rules.clone());
+        Rule[] srules = rules.clone();
+        Rule[] orules = other.rules.clone();
 
         java.util.Arrays.sort(srules);
         java.util.Arrays.sort(orules);

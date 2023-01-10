@@ -737,15 +737,8 @@ public class ControlPanel extends JPanel
             randomSeedsRadioButton.addItemListener(new java.awt.event.ItemListener() 
                 { 
                 public void itemStateChanged(java.awt.event.ItemEvent e) 
-                    {    
-                    if (e.getStateChange() == ItemEvent.SELECTED) 
-                        {
-                        generateSeedsButton.setEnabled(true);
-                        }
-                    else
-                        {
-                        generateSeedsButton.setEnabled(false);
-                        }
+                    {
+                        generateSeedsButton.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
                     }
                 });
             }
@@ -808,15 +801,8 @@ public class ControlPanel extends JPanel
             checkpointCheckBox.addItemListener(new java.awt.event.ItemListener() 
                 { 
                 public void itemStateChanged(java.awt.event.ItemEvent e) 
-                    {    
-                    if (e.getStateChange() == ItemEvent.SELECTED) 
-                        {
-                        setEnabled(checkpointPanel, true);
-                        }
-                    else
-                        {
-                        setEnabled(checkpointPanel, false);
-                        }
+                    {
+                        setEnabled(checkpointPanel, e.getStateChange() == ItemEvent.SELECTED);
                     
                     console.parameters.set(new Parameter(EvolutionState.P_CHECKPOINT),"" + ((JCheckBox)e.getSource()).isSelected());
                     }

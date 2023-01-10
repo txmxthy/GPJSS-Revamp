@@ -61,13 +61,13 @@ public class TwoBox extends GPProblem implements SimpleProblemForm
     // they can be just light-cloned and not deep cloned.
     // cool, huh?
 
-    public double inputsl0[];
-    public double inputsw0[];
-    public double inputsh0[];
-    public double inputsl1[];
-    public double inputsw1[];
-    public double inputsh1[];
-    public double outputs[];
+    public double[] inputsl0;
+    public double[] inputsw0;
+    public double[] inputsh0;
+    public double[] inputsl1;
+    public double[] inputsw1;
+    public double[] inputsh1;
+    public double[] outputs;
 
     public final double func(final double l0, final double w0,
         final double h0, final double l1,

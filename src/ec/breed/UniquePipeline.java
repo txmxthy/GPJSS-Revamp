@@ -102,8 +102,7 @@ public class UniquePipeline extends BreedingPipeline
         {
         set.clear();
         Individual[] inds = state.population.subpops[subpopulation].individuals;
-        for(int i = 0; i < inds.length; i++)
-            set.add(inds[i]);
+            Collections.addAll(set, inds);
         }
 
     int removeDuplicates(Individual[] inds, int start, int num)

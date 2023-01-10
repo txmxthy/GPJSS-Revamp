@@ -13,8 +13,8 @@ import java.util.List;
  */
 public class Shop {
 
-    private List<Job> jobs;
-    private List<WorkCenter> workCenters;
+    private final List<Job> jobs;
+    private final List<WorkCenter> workCenters;
 
     public Shop() {
         this.jobs = new ArrayList<>();
@@ -126,7 +126,7 @@ public class Shop {
 
         Shop shop = Shop.readFromFile("20_5_0.txt");
 
-        System.out.println(shop.toString());
+        System.out.println(shop);
 
     }
 }

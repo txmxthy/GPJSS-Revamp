@@ -2,6 +2,7 @@ package simulation.jss.helper;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -135,7 +136,7 @@ public class GridResultFixer {
 
     public static void writeToFile(File file, List<String> lines) {
         try {
-            Files.write(file.toPath(), lines, Charset.forName("UTF-8"));
+            Files.write(file.toPath(), lines, StandardCharsets.UTF_8);
         } catch (IOException e) {
             e.printStackTrace();
         }

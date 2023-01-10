@@ -184,8 +184,8 @@ public class CompetitiveEvaluator extends Evaluator
      */
     public void evaluatePopulation(final EvolutionState state)
         {
-        int numinds[] = new int[state.evalthreads];
-        int from[] = new int[state.evalthreads];
+        int[] numinds = new int[state.evalthreads];
+        int[] from = new int[state.evalthreads];
         boolean[] assessFitness = new boolean[state.population.subpops.length];
         for(int i = 0; i < assessFitness.length; i++)
             assessFitness[i] = true;                                        // update everyone's fitness in preprocess and postprocess
@@ -411,7 +411,7 @@ public class CompetitiveEvaluator extends Evaluator
         System.arraycopy(individuals,0,queue,0,len);
 
         Individual[] competition = new Individual[2];
-        int subpops[] = new int[] { subpop, subpop };
+        int[] subpops = new int[] { subpop, subpop };
         boolean[] updates = new boolean[2];
         updates[0] = true;
         updates[1] = false;
@@ -612,7 +612,7 @@ class EncapsulatedIndividual
         ind = ind_;
         nOpponentsMet = value_;
         }
-    };
+    }
 
 /*
 // used by the Single-Elimination-Tournament, (Double-Elimination-Tournament and World-Cup) evaluations

@@ -54,13 +54,13 @@ public interface Space
        method.  All such accesses from the specific thread will use the exact same index, until
        this function is called again to change the index.
     */
-    public void setIndex( int threadnum, int index );
+    void setIndex( int threadnum, int index );
 
     /**
        Functionality: retrieve the index for a specific threanum.
        Returns -1 if any error is encountered.
     */
-    public int getIndex( int threadnum );
+    int getIndex( int threadnum );
 
     /**
        Input: the maximum distance for neighbors.
@@ -68,6 +68,6 @@ public interface Space
        computes the neighbors of that location that are within the specified distance.
        Output: returns one random neighbor within that distance (possibly including self)
     */
-    public int getIndexRandomNeighbor( final EvolutionState state, int threadnum, int distance );
+    int getIndexRandomNeighbor( final EvolutionState state, int threadnum, int distance );
 
     }

@@ -276,7 +276,7 @@ public class FSGPRuleEvolutionState extends GPRuleEvolutionState implements Term
         //before breeder, evaluate this population
         evaluator.evaluatePopulation(this);
 
-        Population oldPop = (Population) this.population;
+        Population oldPop = this.population;
         Population newPop = breeder.breedPopulation(this);//offspring individuals obtained by simpleBreeder
         evaluator.evaluatePopulation(this, newPop);
 

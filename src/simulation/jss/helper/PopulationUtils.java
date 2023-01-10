@@ -104,7 +104,7 @@ public class PopulationUtils
 //	}
 
 	public static void savePopulation(Population pop, String fileName)
-			throws FileNotFoundException, IOException
+			throws IOException
 	{
 		File file = new File(fileName);
 		if(file.exists())
@@ -126,8 +126,7 @@ public class PopulationUtils
 	}
 
 	public static Population loadPopulation(File file)
-			throws FileNotFoundException, IOException, ClassNotFoundException, InvalidObjectException
-	{
+			throws IOException, ClassNotFoundException {
 		Population retval = new Population();
 		try(ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file)))
 		{
@@ -173,8 +172,7 @@ public class PopulationUtils
 //	}
 
 	public static Population loadPopulation(String fileName)
-			throws FileNotFoundException, IOException, ClassNotFoundException, InvalidObjectException
-	{
+			throws IOException, ClassNotFoundException {
 		File file = new File(fileName);
 		return loadPopulation(file);
 	}
@@ -198,10 +196,10 @@ public class PopulationUtils
 
 
 class TerminalsStats {
-	private HashMap<String, Integer> stats = new HashMap<>();
+	private final HashMap<String, Integer> stats = new HashMap<>();
 
 	public void update(String nodeName) {
-		if (stats.containsKey(nodeName) == false) {
+		if (!stats.containsKey(nodeName)) {
 			stats.put(nodeName, 0); // put: set the value
 		}
 

@@ -434,7 +434,7 @@ public class GrammarParser implements Prototype
             }
         else
             {
-            ; // not implemented yet
+                // not implemented yet
             }
         }
 
@@ -468,7 +468,7 @@ public class GrammarParser implements Prototype
         }
 
     /** A simple testing facility. */
-    public static void main(String args[]) throws  FileNotFoundException
+    public static void main(String[] args) throws  FileNotFoundException
         {
         // make a dummy EvolutionState that just has an output for testing
         EvolutionState state = new EvolutionState();

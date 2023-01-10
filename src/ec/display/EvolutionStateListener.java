@@ -20,5 +20,5 @@ public interface EvolutionStateListener
     /**
      * @param evt
      */
-    public void postEvolution(EvolutionStateEvent evt);
+    void postEvolution(EvolutionStateEvent evt);
     }

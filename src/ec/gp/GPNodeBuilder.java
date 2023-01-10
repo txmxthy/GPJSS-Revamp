@@ -123,8 +123,8 @@ public abstract class GPNodeBuilder implements Prototype
             {
             GPNodeBuilder c = (GPNodeBuilder)(super.clone());
 
-            if (sizeDistribution != null) c.sizeDistribution = 
-                                              (double[]) (sizeDistribution.clone());
+            if (sizeDistribution != null) c.sizeDistribution =
+                    sizeDistribution.clone();
 
             return c;
             }

@@ -81,7 +81,7 @@ public class BitVectorIndividual extends VectorIndividual
         BitVectorIndividual myobj = (BitVectorIndividual) (super.clone());
         
         // must clone the genome
-        myobj.genome = (boolean[])(genome.clone());
+        myobj.genome = genome.clone();
         
         return myobj;
         } 
@@ -310,7 +310,7 @@ public class BitVectorIndividual extends VectorIndividual
         for( int i = 0 ; i < genome.length ; i++ )
             {
             Code.decode( d );
-            genome[i] = (boolean)(d.l!=0);
+            genome[i] = d.l!=0;
             }
         }
 

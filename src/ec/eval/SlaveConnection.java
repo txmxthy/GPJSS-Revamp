@@ -255,7 +255,7 @@ class SlaveConnection
             {
             // block on an incoming job
             byte val = dataIn.readByte();
-            debug(SlaveConnection.this.toString() + " Incoming Job");
+            debug(SlaveConnection.this + " Incoming Job");
             
             // okay, we've got a job.  Grab the earliest job, that's what's coming in
             
@@ -277,10 +277,10 @@ class SlaveConnection
             
             for(int i = 0; i < job.newinds.length; i++)
                 {
-                debug(SlaveConnection.this.toString() + " Individual# " + i);
-                debug(SlaveConnection.this.toString() + " Reading Byte" );
+                debug(SlaveConnection.this + " Individual# " + i);
+                debug(SlaveConnection.this + " Reading Byte" );
                 if (i > 0) val = dataIn.readByte();  // otherwise we've got it already
-                debug(SlaveConnection.this.toString() + " Reading Individual" );
+                debug(SlaveConnection.this + " Reading Individual" );
                 if (val == Slave.V_INDIVIDUAL)
                     {
                     job.newinds[i].readIndividual(state, dataIn);
@@ -294,7 +294,7 @@ class SlaveConnection
                     {
                     // do nothing
                     }
-                debug( SlaveConnection.this.toString() + " Read Individual" );
+                debug( SlaveConnection.this + " Read Individual" );
                 }
 
             ///// NEXT STEP: COPY THE NEWLY-READ INDIVIDUALS BACK INTO THE ORIGINAL

@@ -83,7 +83,7 @@ public class DoubleVectorIndividual extends VectorIndividual
         DoubleVectorIndividual myobj = (DoubleVectorIndividual) (super.clone());
 
         // must clone the genome
-        myobj.genome = (double[]) (genome.clone());
+        myobj.genome = genome.clone();
 
         return myobj;
         }
@@ -346,7 +346,7 @@ public class DoubleVectorIndividual extends VectorIndividual
             }
         do
             {
-            int n = (int)(random.nextBoolean() ? 1 : -1);
+            int n = random.nextBoolean() ? 1 : -1;
             double g = Math.floor(genome[index]);
             if ((n == 1 && g < max) ||
                 (n == -1 && g > min))
@@ -440,7 +440,7 @@ public class DoubleVectorIndividual extends VectorIndividual
         if (totalTries != 0 && tries == totalTries)
             {
             // just randomize
-            y1 = (double)(species.minGene(index) + random.nextDouble(true, true) * (species.maxGene(index) - species.minGene(index)));  //(double)(min_realvar[index] + random.nextDouble() * (max_realvar[index] - min_realvar[index]));
+            y1 = species.minGene(index) + random.nextDouble(true, true) * (species.maxGene(index) - species.minGene(index));  //(double)(min_realvar[index] + random.nextDouble() * (max_realvar[index] - min_realvar[index]));
             species.outOfRangeRetryLimitReached(state);// it better get inlined
             }
         genome[index] = y1; // ind[index] = y1;
@@ -496,7 +496,7 @@ public class DoubleVectorIndividual extends VectorIndividual
                     {
                     // just randomize
                     //y1 = (double)(min_realvar[j] + random.nextDouble(true, true) * (max_realvar[j] - min_realvar[j]));
-                    y1 = (double)(s.minGene(j) + random.nextDouble(true, true) * (s.maxGene(j) - s.minGene(j)));
+                    y1 = s.minGene(j) + random.nextDouble(true, true) * (s.maxGene(j) - s.minGene(j));
                     s.outOfRangeRetryLimitReached(state);// it better get inlined
                     }
                 ind[j] = y1;

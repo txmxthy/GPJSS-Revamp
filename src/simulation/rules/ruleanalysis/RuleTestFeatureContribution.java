@@ -23,8 +23,8 @@ import java.util.List;
  */
 public class RuleTestFeatureContribution extends RuleTest {
 
-    private String featureSetName;
-    private Ignorer ignorer = new SimpleIgnorer();
+    private final String featureSetName;
+    private final Ignorer ignorer = new SimpleIgnorer();
 
     public RuleTestFeatureContribution(String trainPath,
                                        RuleType ruleType,

@@ -60,7 +60,7 @@ public class NSGA2Breeder extends SimpleBreeder
      */
     public Population breedPopulation(EvolutionState state)
         {
-        Population oldPop = (Population) state.population;
+        Population oldPop = state.population;
         Population newPop = super.breedPopulation(state); //offspring individuals obtained by simpleBreeder
         Individual[] combinedInds;
         Subpopulation[] subpops = oldPop.subpops;

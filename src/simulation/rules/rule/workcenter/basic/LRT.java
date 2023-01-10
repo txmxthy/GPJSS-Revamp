@@ -12,7 +12,7 @@ import simulation.definition.logic.state.SystemState;
  * This rule should have a priority of the negative of the workCenter's ready time.
  */
 public class LRT extends AbstractRule {
-    private RuleType type;
+    private final RuleType type;
 
     public LRT(RuleType t) {
         name = "\"LRT\"";

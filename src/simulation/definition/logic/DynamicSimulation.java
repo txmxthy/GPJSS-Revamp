@@ -20,7 +20,7 @@ public class DynamicSimulation extends Simulation {
     public final static int SEED_ROTATION = 10000;
 
     private long seed;
-    private RandomDataGenerator randomDataGenerator;
+    private final RandomDataGenerator randomDataGenerator;
 
     private final int minNumOperations;
     private final int maxNumOperations;
@@ -28,13 +28,13 @@ public class DynamicSimulation extends Simulation {
     private final double dueDateFactor;
     private final boolean revisit;
 
-    private AbstractIntegerSampler numOperationsSampler;
+    private final AbstractIntegerSampler numOperationsSampler;
     //modified by fzhang, 17.04.2018  in order to set options from 2 to 10
     //private AbstractIntegerSampler numOptionsSampler;
 
-    private AbstractRealSampler procTimeSampler;
-    private AbstractRealSampler interArrivalTimeSampler;
-    private AbstractRealSampler jobWeightSampler;
+    private final AbstractRealSampler procTimeSampler;
+    private final AbstractRealSampler interArrivalTimeSampler;
+    private final AbstractRealSampler jobWeightSampler;
 
     private DynamicSimulation(long seed,
                               AbstractRule sequencingRule,

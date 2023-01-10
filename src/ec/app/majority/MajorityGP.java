@@ -110,7 +110,7 @@ public class MajorityGP extends GPProblem implements SimpleProblemForm
     // and make sure that nobody is using them at the moment.
 
     int lockCount = 0;
-    private Object[] lock = new Object[0];
+    private final Object[] lock = new Object[0];
 
     public void prepareToEvaluate(final EvolutionState state, final int threadnum)
         {

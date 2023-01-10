@@ -54,8 +54,8 @@ public abstract class PhenoCharacterisation {
 
 //the second class:  SequencingPhenoCharacterisation  extends the first class
 class SequencingPhenoCharacterisation extends PhenoCharacterisation {
-    private List<SequencingDecisionSituation> decisionSituations;
-    private int[] referenceIndexes;
+    private final List<SequencingDecisionSituation> decisionSituations;
+    private final int[] referenceIndexes;
 
     public SequencingPhenoCharacterisation(AbstractRule sequencingReferenceRule,
                                        List<SequencingDecisionSituation> decisionSituations) {
@@ -177,8 +177,8 @@ class SequencingPhenoCharacterisation extends PhenoCharacterisation {
 }
 
 class RoutingPhenoCharacterisation extends PhenoCharacterisation {
-    private List<RoutingDecisionSituation> decisionSituations;
-    private int[] referenceIndexes;
+    private final List<RoutingDecisionSituation> decisionSituations;
+    private final int[] referenceIndexes;
 
     public RoutingPhenoCharacterisation(AbstractRule routingReferenceRule,
                                            List<RoutingDecisionSituation> decisionSituations) {

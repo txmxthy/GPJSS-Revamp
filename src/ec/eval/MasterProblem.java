@@ -159,7 +159,7 @@ public class MasterProblem extends Problem implements SimpleProblemForm, Grouped
     // evaluate a regular individual
     public void evaluate(EvolutionState state, Individual ind, int subpopulation, int threadnum)
         {
-        if (jobSize > 1 && batchMode == true)    // chunked evaluation mechanism
+        if (jobSize > 1 && batchMode)    // chunked evaluation mechanism
             {
             queue.add(new QueueIndividual(ind, subpopulation));
             if (queue.size() >= jobSize)
@@ -191,7 +191,7 @@ public class MasterProblem extends Problem implements SimpleProblemForm, Grouped
 
 
     // send a group of individuals to one slave for evaluation
-    void evaluate(EvolutionState state, Individual inds[], int[] subpopulations, int threadnum)
+    void evaluate(EvolutionState state, Individual[] inds, int[] subpopulations, int threadnum)
         {
         if(showDebugInfo)
             state.output.message(Thread.currentThread().getName() + "Starting a " + (batchMode ? "batched " : "") + "SimpleProblemForm evaluation.");

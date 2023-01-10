@@ -74,7 +74,7 @@ public class VectorMutationPipeline extends BreedingPipeline
         for(int q=start;q<n+start;q++)
             {
             ((VectorIndividual)inds[q]).defaultMutate(state,thread);
-            ((VectorIndividual)inds[q]).evaluated=false;
+            inds[q].evaluated=false;
             }
 
         return n;

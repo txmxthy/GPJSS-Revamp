@@ -185,7 +185,7 @@ public class MutateAllNodesPipeline extends GPBreedingPipeline
     private GPNode generateCompatibleTree(final GPNode original, final GPFunctionSet set, final EvolutionState state, final GPType returntype, final int thread) 
         {
         // pick a new node and clone it
-        GPNode node = (GPNode)(pickCompatibleNode(original,set,state,returntype,thread).lightClone());
+        GPNode node = pickCompatibleNode(original,set,state,returntype,thread).lightClone();
         
         // reset it
         node.resetNode(state,thread);
@@ -276,7 +276,7 @@ public class MutateAllNodesPipeline extends GPBreedingPipeline
                 }
             else  // need to copy it in
                 {
-                j = (GPIndividual)(i.lightClone());
+                j = i.lightClone();
                 
                 // Fill in various tree information that didn't get filled in there
                 j.trees = new GPTree[i.trees.length];
@@ -285,7 +285,7 @@ public class MutateAllNodesPipeline extends GPBreedingPipeline
                     {
                     if (x==t)  // we've got a tree with a kicking cross position!
                         { 
-                        j.trees[x] = (GPTree)(i.trees[x].lightClone());
+                        j.trees[x] = i.trees[x].lightClone();
                         j.trees[x].owner = j;
                         j.trees[x].child = i.trees[x].child.cloneReplacingNoSubclone(p2,p1);
                         j.trees[x].child.parent = j.trees[x];
@@ -294,7 +294,7 @@ public class MutateAllNodesPipeline extends GPBreedingPipeline
                         } // it's changed
                     else 
                         {
-                        j.trees[x] = (GPTree)(i.trees[x].lightClone());
+                        j.trees[x] = i.trees[x].lightClone();
                         j.trees[x].owner = j;
                         j.trees[x].child = (GPNode)(i.trees[x].child.clone());
                         j.trees[x].child.parent = j.trees[x];

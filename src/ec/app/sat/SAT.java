@@ -27,7 +27,7 @@ public class SAT extends Problem implements SimpleProblemForm
 
     public static final String P_FILENAME = "sat-filename";
 
-    Clause formula[];
+    Clause[] formula;
 
     public void setup(EvolutionState state, Parameter base)
         {
@@ -128,5 +128,5 @@ public class SAT extends Problem implements SimpleProblemForm
 	public void normObjective(EvolutionState state, Individual ind, int subpopulation, int threadnum) {
 		// TODO Auto-generated method stub
 
-	};
+	}
     }

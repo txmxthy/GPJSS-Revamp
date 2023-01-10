@@ -13,7 +13,7 @@ import simulation.definition.logic.state.SystemState;
  * Should always be a non-negative quantity before taking its negative.
  */
 public class LBT extends AbstractRule {
-    private RuleType type;
+    private final RuleType type;
 
     public LBT(RuleType type) {
         name = "\"LBT\"";

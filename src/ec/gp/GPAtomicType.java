@@ -30,7 +30,7 @@ public final class GPAtomicType extends GPType
     /** Don't use this constructor unless you call setup(...) immediately after it. */
     public GPAtomicType() { }
 
-    public final boolean compatibleWith(final GPInitializer initializer, final GPType t)
+    public boolean compatibleWith(final GPInitializer initializer, final GPType t)
         {
         // if the type is me, then I'm compatible with it
         if (t.type==type) return true;

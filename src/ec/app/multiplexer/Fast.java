@@ -31,10 +31,10 @@ public class Fast
     /** 3-Multiplexer has 8 permutations of its 3 boolean variables */
     public static final int M_3_SIZE = 8;
     /** 3-Multiplexer bitfield values for the 3 boolean variables and 1 output variable, stored as bytes (8 bits used) */
-    public static final byte M_3 [/*4*/] = 
+    public static final byte[] M_3 /*4*/ =
         { 85, 51, 15, 39 };
     /** 3-Multiplexer names for the 3 boolean variables and 1 output variable */
-    public static final String M_3_NAMES[/*4*/] =
+    public static final String[] M_3_NAMES/*4*/ =
         { "A0", "D0", "D1", "Output" };
 
     /** 6-Multiplexer has 6 boolean variables (A0, A1, D0, D1, D2, D3) */
@@ -42,10 +42,10 @@ public class Fast
     /** 6-Multiplexer has 64 permutations of its 6 boolean variables */
     public static final int M_6_SIZE = 64;
     /** 6-Multiplexer bitfield values for the 6 boolean variables and 1 output variable, stored as longs (64 bits used) */
-    public static final long M_6[/*7*/] =
+    public static final long[] M_6/*7*/ =
         { 6148914691236517205L, 3689348814741910323L, 1085102592571150095L, 71777214294589695L, 281470681808895L, 4294967295L, 597899502893742975L };
     /** 6-Multiplexer names for the 6 boolean variables and 1 output variable */
-    public static final String M_6_NAMES[/*7*/] =
+    public static final String[] M_6_NAMES/*7*/ =
         { "A0", "A1", "D0", "D1", "D2", "D3", "Output" };
 
     /** 11-Multiplexer has 11 boolean variables (A0, A1, A2, D0, D1, D2, D3, D4, D5, D6, D7) */
@@ -53,7 +53,7 @@ public class Fast
     /** 11-Multiplexer has 2048 permutations of its 11 boolean variables */
     public static final int M_11_SIZE = 2048;
     /** 11-Multiplexer bitfield values for the 11 boolean variables and 1 output variable, where each of the 12 variable slots is an array of 32 longs (32 x 64 bits = 2048) which together comprise the big long 2048-bit permutation vector for that variable. */
-    public static final long M_11[/*12*/][/*32*/] =
+    public static final long[][] M_11/*12*//*32*/ =
         {
         { 6148914691236517205L, 6148914691236517205L, 6148914691236517205L, 6148914691236517205L, 6148914691236517205L, 6148914691236517205L, 6148914691236517205L, 6148914691236517205L, 6148914691236517205L, 6148914691236517205L, 6148914691236517205L, 6148914691236517205L, 6148914691236517205L, 6148914691236517205L, 6148914691236517205L, 6148914691236517205L, 6148914691236517205L, 6148914691236517205L, 6148914691236517205L, 6148914691236517205L, 6148914691236517205L, 6148914691236517205L, 6148914691236517205L, 6148914691236517205L, 6148914691236517205L, 6148914691236517205L, 6148914691236517205L, 6148914691236517205L, 6148914691236517205L, 6148914691236517205L, 6148914691236517205L, 6148914691236517205L },
         
@@ -81,6 +81,6 @@ public class Fast
 
         };
 
-    /** 11-Multiplexer names for the 11 boolean variables and 1 output variable */    public static final String M_11_NAMES[/*12*/] =
+    /** 11-Multiplexer names for the 11 boolean variables and 1 output variable */    public static final String[] M_11_NAMES/*12*/ =
         { "A0", "A1", "A2", "D0", "D1", "D2", "D3", "D4", "D5", "D6", "D7", "Output" };
     }

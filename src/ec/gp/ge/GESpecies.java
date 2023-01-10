@@ -191,7 +191,7 @@ public class GESpecies extends IntegerVectorSpecies
                 def.push(P_FILE).push("" + i));
             if(grammarFile == null)
                 state.output.fatal("Error retrieving dagp file(s): "
-                    + def.toString() + "."+ P_FILE + "." + i
+                    + def + "."+ P_FILE + "." + i
                     + " is undefined.");
             GPFunctionSet gpfs =
                 trees[i].constraints((GPInitializer) state.initializer).functionset;
@@ -613,8 +613,8 @@ public class GESpecies extends IntegerVectorSpecies
                             public int compare(Object o1, Object o2)
                                 {
                                 if(o1 instanceof GPNode && o2 instanceof GPNode)
-                                    return ((GPNode)o1).toString().
-                                        compareTo(((GPNode)o2).toString());
+                                    return o1.toString().
+                                        compareTo(o2.toString());
                                 return 0;
                                 }
                             }) >= 0 )
@@ -704,7 +704,7 @@ public class GESpecies extends IntegerVectorSpecies
                         stack.push(action.getHead());
                         }
                     else if(action instanceof GrammarRuleNode) // push as usual
-                        stack.push(((GrammarRuleNode)action).getHead());
+                        stack.push(action.getHead());
                     }
                 }
             }

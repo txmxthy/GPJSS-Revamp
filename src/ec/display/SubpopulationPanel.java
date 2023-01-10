@@ -121,7 +121,7 @@ public class SubpopulationPanel
                 {
                 public void valueChanged(ListSelectionEvent evt)
                     {
-                    if (evt.getValueIsAdjusting() == false)
+                    if (!evt.getValueIsAdjusting())
                         {
                         JList source = (JList)evt.getSource();
                         int idx = source.getSelectedIndex();
@@ -205,7 +205,7 @@ public class SubpopulationPanel
             portrayal = new SimpleIndividualPortrayal();
             }
         portrayal.setup(state, base);
-        individualDisplayPane.setBottomComponent(new JScrollPane((JComponent)portrayal));
+        individualDisplayPane.setBottomComponent(new JScrollPane(portrayal));
         }
     /**
      * This method initializes jScrollPane  

@@ -192,7 +192,7 @@ public class GEProblem extends Problem implements SimpleProblemForm, GroupedProb
                 }
             else
                 {
-                ((SimpleProblemForm)problem).evaluate(state, gpi, subpopulation, threadnum);
+                problem.evaluate(state, gpi, subpopulation, threadnum);
                 // Now we need to move the evaluated flag from the GPIndividual
                 // to the GEIndividual, and also for good measure, let's copy over
                 // the GPIndividual's fitness because even though the mapping function
@@ -205,7 +205,7 @@ public class GEProblem extends Problem implements SimpleProblemForm, GroupedProb
         else if (ind instanceof GPIndividual)
             {
             state.output.warnOnce("GPIndividual provided to GEProblem.  Hope that's correct.");
-            ((SimpleProblemForm)problem).evaluate(state, ind, subpopulation, threadnum);  // just evaluate directly
+            problem.evaluate(state, ind, subpopulation, threadnum);  // just evaluate directly
             }
         else
             {

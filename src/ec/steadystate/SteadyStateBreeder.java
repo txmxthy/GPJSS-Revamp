@@ -62,7 +62,7 @@ public class SteadyStateBreeder extends SimpleBreeder
     // public static final String P_RETRIES = "duplicate-retries";
         
     /** Loaded during the first iteration of breedPopulation */
-    SelectionMethod deselectors[];
+    SelectionMethod[] deselectors;
         
     /** Do we allow duplicates? */
     // public int numDuplicateRetries;

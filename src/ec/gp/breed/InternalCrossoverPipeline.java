@@ -215,10 +215,9 @@ public class InternalCrossoverPipeline extends GPBreedingPipeline
         if (!inner1.swapCompatibleWith(initializer, inner2)) return false;
 
         // next check to see if inner1 can fit in inner2's spot
-        if (inner1.depth()+inner2.atDepth() > maxDepth) return false;
+            return inner1.depth() + inner2.atDepth() <= maxDepth;
 
         // checks done!
-        return true;
         }
 
 
@@ -264,14 +263,14 @@ public class InternalCrossoverPipeline extends GPBreedingPipeline
                 }
             else // need to copy it
                 {
-                j = (GPIndividual)(i.lightClone());
+                j = i.lightClone();
                 
                 // Fill in various tree information that didn't get filled in there
                 j.trees = new GPTree[i.trees.length];
                 
                 for(int x=0;x<j.trees.length;x++)
                     {
-                    j.trees[x] = (GPTree)(i.trees[x].lightClone());  // light clone
+                    j.trees[x] = i.trees[x].lightClone();  // light clone
                     j.trees[x].owner = j;
                     j.trees[x].child = (GPNode)(i.trees[x].child.clone());
                     j.trees[x].child.parent = j.trees[x];

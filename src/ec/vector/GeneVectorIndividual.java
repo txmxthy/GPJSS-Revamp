@@ -85,7 +85,7 @@ public class GeneVectorIndividual extends VectorIndividual
         GeneVectorIndividual myobj = (GeneVectorIndividual) (super.clone());
 
         // must clone the genome
-        myobj.genome = (Gene[])(genome.clone());
+        myobj.genome = genome.clone();
         for(int x=0;x<genome.length;x++)
             myobj.genome[x] = (Gene)(genome[x].clone());
         

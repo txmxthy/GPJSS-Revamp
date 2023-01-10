@@ -84,7 +84,7 @@ public class Checkpoint
         @exception java.lang.ClassNotFoundException thrown when the checkpoint file contains a class reference which doesn't exist in your class hierarchy.
     **/
     public static EvolutionState restoreFromCheckpoint(String checkpoint)
-        throws IOException, ClassNotFoundException, OptionalDataException
+        throws IOException, ClassNotFoundException
     /* must throw something if error -- NEVER return null */
         { 
         // load from the file

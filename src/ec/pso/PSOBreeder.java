@@ -160,7 +160,7 @@ public class PSOBreeder extends Breeder
                 ((Particle)state.population.subpops[subpop].individuals[ind]).update(state, subpop, ind, 0);
                 }
             // clone global best
-            globalBest[subpop] = (double[])(globalBest[subpop].clone());
+            globalBest[subpop] = globalBest[subpop].clone();
             globalBestFitness[subpop] = (Fitness)(globalBestFitness[subpop].clone());
             }
 

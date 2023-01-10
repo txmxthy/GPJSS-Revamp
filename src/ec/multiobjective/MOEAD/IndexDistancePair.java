@@ -1,8 +1,8 @@
 package ec.multiobjective.MOEAD;
 
 public class IndexDistancePair implements Comparable<IndexDistancePair>{
-	private int index;
-	private double distance;
+	private final int index;
+	private final double distance;
 
 	public IndexDistancePair(int i, double d) {
 		index = i;

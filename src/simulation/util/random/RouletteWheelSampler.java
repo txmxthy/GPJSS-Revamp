@@ -15,7 +15,7 @@ import ec.EvolutionState;
 
 public class RouletteWheelSampler {
 
-	private double[] cumFreqs; // the cumulative frequencies, starting from 0.
+	private final double[] cumFreqs; // the cumulative frequencies, starting from 0.
 
 	public RouletteWheelSampler(double[] cumFreqs) {
 		this.cumFreqs = cumFreqs;

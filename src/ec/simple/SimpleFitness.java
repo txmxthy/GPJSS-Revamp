@@ -87,12 +87,12 @@ public class SimpleFitness extends Fitness
 
     public boolean equivalentTo(final Fitness _fitness)
         {
-        return ((SimpleFitness)_fitness).fitness() == fitness();
+        return _fitness.fitness() == fitness();
         }
 
     public boolean betterThan(final Fitness _fitness)
         {
-        return ((SimpleFitness)_fitness).fitness() < fitness();
+        return _fitness.fitness() < fitness();
         }
 
     public String fitnessToString()
@@ -143,7 +143,7 @@ public class SimpleFitness extends Fitness
             ideal = ideal && fit.isIdeal;
             }
         f /= fitnesses.length;
-        fitness = (double)f;
+        fitness = f;
         isIdeal = ideal;
         }
     }

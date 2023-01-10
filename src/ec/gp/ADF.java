@@ -154,7 +154,7 @@ public class ADF extends GPNode
                 typicalIndividual.trees[associatedTree].
                 constraints(initializer).functionset.nodes;
                         
-            ADFArgument validArgument[] = new ADFArgument[children.length];
+            ADFArgument[] validArgument = new ADFArgument[children.length];
 
             for(int w=0;w<funcs.length;w++)
                 {

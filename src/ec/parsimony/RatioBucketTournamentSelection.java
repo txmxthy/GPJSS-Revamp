@@ -156,7 +156,7 @@ public class RatioBucketTournamentSelection extends SelectionMethod implements S
         // how many individuals in current bucket
         int nInd;
 
-        double totalInds = ((double)state.population.subpops[subpopulation].individuals.length);
+        double totalInds = state.population.subpops[subpopulation].individuals.length;
         double averageBuck = Math.max( totalInds/ratio, 1 );
 
         // first individual goes into first bucket
@@ -176,8 +176,8 @@ public class RatioBucketTournamentSelection extends SelectionMethod implements S
                 }
             else // check if it has the same fitness as last individual
                 {
-                if( ((Individual)state.population.subpops[subpopulation].individuals[i]).fitness.equivalentTo(
-                        ((Individual)state.population.subpops[subpopulation].individuals[i-1]).fitness ) )
+                if( state.population.subpops[subpopulation].individuals[i].fitness.equivalentTo(
+                        state.population.subpops[subpopulation].individuals[i-1].fitness ) )
                     {
                     // now the individual has exactly the same fitness as previous one,
                     // so we just put it in the same bucket as the previous one(s)
@@ -246,9 +246,11 @@ public class RatioBucketTournamentSelection extends SelectionMethod implements S
         final int subpopulation,
         final int thread,
         final int individual)
-        { return; }
+        {
+        }
     
     public void sourcesAreProperForm(final SteadyStateEvolutionState state)
-        { return; }
+        {
+        }
     
     }

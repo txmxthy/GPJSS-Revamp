@@ -15,7 +15,7 @@ public class SurrogateEvaluator extends SimpleEvaluator {
 
     public static final String P_ARCHIVE_SIZE = "archive-size";
 
-    public int archiveSizes[];
+    public int[] archiveSizes;
 
     public void setup(final EvolutionState state, final Parameter base) {
         super.setup(state, base);

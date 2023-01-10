@@ -92,7 +92,7 @@ import ec.vector.*;
 
         public int problemType = PROB_ROSENBROCK;  // defaults on Rosenbrock
 
-        public static final String problemName[] = new String[]
+        public static final String[] problemName = new String[]
         {
         V_ROSENBROCK,
         V_RASTRIGIN,
@@ -114,7 +114,7 @@ import ec.vector.*;
         V_LUNACEK
         };
 
-        public static final double minRange[] = new double[]
+        public static final double[] minRange = new double[]
         {
         -2.048,         // rosenbrock
         -5.12,          // rastrigin
@@ -136,7 +136,7 @@ import ec.vector.*;
         -5.0,       // lunacek
         };
 
-        public static final double maxRange[] = new double[]
+        public static final double[] maxRange = new double[]
         {
         2.048,          // rosenbrock
         5.12,           // rastrigin
@@ -582,7 +582,7 @@ import ec.vector.*;
 
         // magic arrays for the Langerman problem
 
-        private double[][] afox10 =
+        private final double[][] afox10 =
             {
             {9.681, 0.667, 4.783, 9.095, 3.517, 9.325, 6.544, 0.211, 5.122, 2.020},
                 {9.400, 2.041, 3.788, 7.931, 2.882, 2.672, 3.568, 1.284, 7.033, 7.374},
@@ -616,7 +616,7 @@ import ec.vector.*;
                 {4.138, 2.562, 2.532, 9.661, 5.611, 5.500, 6.886, 2.341, 9.699, 6.500}
             };
 
-        private double[] cfox10 =
+        private final double[] cfox10 =
             {
             0.806,  0.517,  1.5,    0.908,  0.965,
             0.669,  0.524,  0.902,  0.531,  0.876,
@@ -626,7 +626,7 @@ import ec.vector.*;
             0.817,  0.632,  0.883,  0.608,  0.326
             };
 
-        private double langerman(double genome[])
+        private double langerman(double[] genome)
             {
 
             double  sum = 0 ;
@@ -738,7 +738,7 @@ import ec.vector.*;
             for(int i = 0; i < 624 * 4; i++) // prime the MT for 4 full sample iterations to get it warmed up
                 rand.nextInt();
 
-            double o[ /* row */ ][ /* column */ ] = new double[N][N];
+            double[][] o /* row */  /* column */ = new double[N][N];
 
             // make random values
             for(int i = 0; i < N; i++)
@@ -750,8 +750,7 @@ import ec.vector.*;
                 {
                 // extract o[i] -> no
                 double[] no = new double[N];
-                for(int k=0; k < N; k++)
-                    no[k] = o[i][k];
+                    System.arraycopy(o[i], 0, no, 0, N);
 
                 // go through o[i] and o[j], modifying no
                 for(int j = 0; j < i; j++)

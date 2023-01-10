@@ -125,9 +125,9 @@ public class ADFStack implements Prototype
             myobj.context_proto = (ADFContext)(context_proto.clone());
 
             // clone the stack arrays -- dunno if this is faster than new ADFContext[...]
-            myobj.stack = (ADFContext[])(stack.clone());
-            myobj.substack = (ADFContext[])(substack.clone());
-            myobj.reserve = (ADFContext[])(reserve.clone());
+            myobj.stack = stack.clone();
+            myobj.substack = substack.clone();
+            myobj.reserve = reserve.clone();
 
             // fill 'em up
             for(int x=0;x<onStack;x++)

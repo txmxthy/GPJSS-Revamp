@@ -10,8 +10,8 @@ import java.util.List;
  */
 public class RoutingDecisionSituation extends DecisionSituation {
 
-    private List<OperationOption> queue;
-    private SystemState systemState;
+    private final List<OperationOption> queue;
+    private final SystemState systemState;
 
     public RoutingDecisionSituation(List<OperationOption> operationOptions, SystemState systemState) {
         this.queue = operationOptions;

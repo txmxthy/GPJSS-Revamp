@@ -102,7 +102,7 @@ public class RandomBranch extends GPNodeBuilder
             (triedTerminals = true) &&                                                  // [first set triedTerminals]
             terminals.length != 0)                                                      // AND if there are available terminal
             {
-            GPNode n = (GPNode)(terminals[state.random[thread].nextInt(terminals.length)].lightClone());
+            GPNode n = terminals[state.random[thread].nextInt(terminals.length)].lightClone();
             n.resetNode(state,thread);  // give ERCs a chance to randomize
             n.argposition = (byte)argposition;
             n.parent = parent;
@@ -122,7 +122,7 @@ public class RandomBranch extends GPNodeBuilder
                 if (terminals.length == 0) 
                     errorAboutNoNodeWithType(type, state);   // total failure
                                 
-                GPNode n = (GPNode)(terminals[state.random[thread].nextInt(terminals.length)].lightClone());
+                GPNode n = terminals[state.random[thread].nextInt(terminals.length)].lightClone();
                 n.resetNode(state,thread);  // give ERCs a chance to randomize
                 n.argposition = (byte)argposition;
                 n.parent = parent;
@@ -130,7 +130,7 @@ public class RandomBranch extends GPNodeBuilder
                 }
             else // we've got nonterminals, pick one at random
                 {
-                GPNode n = (GPNode)(okayNonterms[state.random[thread].nextInt(okayNonterms.length)].lightClone());
+                GPNode n = okayNonterms[state.random[thread].nextInt(okayNonterms.length)].lightClone();
                 n.resetNode(state,thread);  // give ERCs a chance to randomize
                 n.argposition = (byte)argposition;
                 n.parent = parent;

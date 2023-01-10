@@ -282,14 +282,14 @@ public class RandomChoice
 
         for(int x=0;x<objs.length;x++)
             chooser.setProbability(objs[x],
-                (double)(chooser.getProbability(objs[x]) / sum));
+                    chooser.getProbability(objs[x]) / sum);
 
         // now sum
         sum=0.0;
         for(int x=0;x<objs.length;x++)
             {
             sum += chooser.getProbability(objs[x]);
-            chooser.setProbability(objs[x],(double)sum);
+            chooser.setProbability(objs[x], sum);
             }
 
         // now we need to work backwards setting 0 values

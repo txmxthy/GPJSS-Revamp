@@ -115,7 +115,7 @@ public class MajorityGA extends Problem implements SimpleProblemForm
     // and make sure that nobody is using them at the moment.
 
     int lockCount = 0;
-    private Object[] lock = new Object[0];
+    private final Object[] lock = new Object[0];
 
     public void prepareToEvaluate(final EvolutionState state, final int threadnum)
         {
@@ -253,7 +253,7 @@ public class MajorityGA extends Problem implements SimpleProblemForm
         bvi.fitness = new ec.simple.SimpleFitness();
         bvi.genome = new boolean[128];
         for(int i = 0; i < 128; i++)
-            bvi.genome[i] = (ABK[i] == 0 ? false : true);
+            bvi.genome[i] = (ABK[i] != 0);
         ga.evaluate(state, bvi, 0, 0);
         System.err.println("ABK Rule");
         ga.describe(state, bvi, 0, 0, 1);

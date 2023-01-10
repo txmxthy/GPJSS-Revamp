@@ -158,7 +158,7 @@ public class Semantic extends GPProblem implements SimpleProblemForm
                     }
                 if (xCount >= nCount && xCount > 0)
                     {
-                    p.add((SemanticNode) nodes.get(lastXNode));
+                    p.add(nodes.get(lastXNode));
                     }
                 }
             }

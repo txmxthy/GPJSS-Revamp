@@ -23,9 +23,9 @@ import static simulation.jss.helper.GridResultCleaner.writeLine;
 public class TestResultCleaner {
     private static final char DEFAULT_SEPARATOR = ',';
     private static final String GRID_PATH = "/Users/dyska/Desktop/Uni/COMP489/GPJSS/grid_results/";
-    private String dataPath;
-    private String outPath;
-    private boolean doOutput;
+    private final String dataPath;
+    private final String outPath;
+    private final boolean doOutput;
 
     public TestResultCleaner(String dataPath, String outPath, boolean doOutput) {
         this.dataPath = dataPath;
@@ -63,7 +63,7 @@ public class TestResultCleaner {
                 if (path.toFile().isDirectory()) {
                     List<String> fileNames = getFileNames(new ArrayList(), path, ".csv");
                     for (String fileName: fileNames) {
-                        double[][] fitnesses = parseFitnesses(fileName.toString());
+                        double[][] fitnesses = parseFitnesses(fileName);
                         if (doOutput) {
                             writeToFile(fileName, fitnesses);
                         } else {

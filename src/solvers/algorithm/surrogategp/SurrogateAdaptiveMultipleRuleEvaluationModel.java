@@ -112,21 +112,21 @@ public class SurrogateAdaptiveMultipleRuleEvaluationModel extends MultipleRuleEv
  				}
  				else {
 					//int numJobs = (int) Math.pow(5000*state.generation/(state.numGenerations-1), 1+state.generation/(state.numGenerations-1));
-				    surrogateSet = schedulingSet.surrogate(2, 5000*state.generation/(state.numGenerations-1), (1/5)*5000*state.generation/(state.numGenerations-1), objectives);
+				    surrogateSet = schedulingSet.surrogate(2, 5000*state.generation/(state.numGenerations-1), 0 /(state.numGenerations-1), objectives);
 					//System.out.println("before generation 25");  
 				}
 				//System.out.println("before generation 10");
 			} else if (state.generation >= 10 & state.generation < 20) {
-				 surrogateSet = schedulingSet.surrogate(4, 5000*state.generation/(state.numGenerations-1), (1/5)*5000*state.generation/(state.numGenerations-1), objectives);
+				 surrogateSet = schedulingSet.surrogate(4, 5000*state.generation/(state.numGenerations-1), 0 /(state.numGenerations-1), objectives);
 				//System.out.println("generation from 10 to 20");
 			} else if (state.generation >= 20 & state.generation < 30) {
-				 surrogateSet = schedulingSet.surrogate(6, 5000*state.generation/(state.numGenerations-1), (1/5)*5000*state.generation/(state.numGenerations-1), objectives);
+				 surrogateSet = schedulingSet.surrogate(6, 5000*state.generation/(state.numGenerations-1), 0 /(state.numGenerations-1), objectives);
 				//System.out.println("generation from 20 to 30");
 			} else if (state.generation >= 30 & state.generation < 40) {
-				 surrogateSet = schedulingSet.surrogate(8, 5000*state.generation/(state.numGenerations-1), (1/5)*5000*state.generation/(state.numGenerations-1), objectives);
+				 surrogateSet = schedulingSet.surrogate(8, 5000*state.generation/(state.numGenerations-1), 0 /(state.numGenerations-1), objectives);
 				//System.out.println("generation from 30 to 40");
 			}else {
-				 surrogateSet = schedulingSet.surrogate(10, 5000*state.generation/(state.numGenerations-1), (1/5)*5000*state.generation/(state.numGenerations-1), objectives);
+				 surrogateSet = schedulingSet.surrogate(10, 5000*state.generation/(state.numGenerations-1), 0 /(state.numGenerations-1), objectives);
 				//System.out.println("generation from 40 to 50");
 			}			
 			simulations = surrogateSet.getSimulations();

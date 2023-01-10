@@ -152,9 +152,9 @@ public class AllIndexSwapProCrossoverPipeline extends CrossoverPipeline {
             // should change this to proto off of the main species prototype, but
             // we have to then copy so much stuff over; it's not worth it.
 
-            GPIndividual j1 = (GPIndividual)(parents[0].lightClone());
+            GPIndividual j1 = parents[0].lightClone();
             GPIndividual j2 = null;
-            if (n-(q-start)>=2 && !tossSecondParent) j2 = (GPIndividual)(parents[1].lightClone());
+            if (n-(q-start)>=2 && !tossSecondParent) j2 = parents[1].lightClone();
 
             // Fill in various tree information that didn't get filled in there
             j1.trees = new GPTree[parents[0].trees.length];
@@ -167,7 +167,7 @@ public class AllIndexSwapProCrossoverPipeline extends CrossoverPipeline {
                 {
                 if (x==t1 && res1)  // we've got a tree with a kicking cross position!
                     {
-                    j1.trees[x] = (GPTree)(parents[0].trees[x].lightClone());
+                    j1.trees[x] = parents[0].trees[x].lightClone();
                     j1.trees[x].owner = j1;
                     j1.trees[x].child = parents[0].trees[x].child.cloneReplacing(p2,p1); //p2 new, p1 old
                     j1.trees[x].child.parent = j1.trees[x];
@@ -181,14 +181,14 @@ public class AllIndexSwapProCrossoverPipeline extends CrossoverPipeline {
                 	double rnd1 = state.random[thread].nextDouble(); //probability  (0,1)
                 	if (rnd1 > 0.9)
                 	{
-                		j1.trees[x] = (GPTree)(parents[0].trees[x].lightClone());
+                		j1.trees[x] = parents[0].trees[x].lightClone();
                         j1.trees[x].owner = j1;
                         j1.trees[x].child = (GPNode)(parents[0].trees[x].child.clone());
                         j1.trees[x].child.parent = j1.trees[x];
                         j1.trees[x].child.argposition = 0;
                 	}
                 	else {
-                		j1.trees[x] = (GPTree)(parents[1].trees[x].lightClone());
+                		j1.trees[x] = parents[1].trees[x].lightClone();
                         j1.trees[x].owner = j1;
                         j1.trees[x].child = (GPNode)(parents[1].trees[x].child.clone());
                         j1.trees[x].child.parent = j1.trees[x];
@@ -201,7 +201,7 @@ public class AllIndexSwapProCrossoverPipeline extends CrossoverPipeline {
 				for (int x = 0; x < j2.trees.length; x++) {
 					if (x == t2 && res2) // we've got a tree with a kicking cross position!
 					{
-						j2.trees[x] = (GPTree) (parents[1].trees[x].lightClone());
+						j2.trees[x] = parents[1].trees[x].lightClone();
 						j2.trees[x].owner = j2;
 						j2.trees[x].child = parents[1].trees[x].child.cloneReplacing(p1, p2);
 						j2.trees[x].child.parent = j2.trees[x];
@@ -212,15 +212,15 @@ public class AllIndexSwapProCrossoverPipeline extends CrossoverPipeline {
 						double rnd2 = state.random[thread].nextDouble(); // probability (0,1)
 						if (rnd2 > 0.9) {
 							{
-								j2.trees[x] = (GPTree) (parents[1].trees[x].lightClone());
+								j2.trees[x] = parents[1].trees[x].lightClone();
 								j2.trees[x].owner = j2;
 								j2.trees[x].child = (GPNode) (parents[1].trees[x].child.clone());
 								j2.trees[x].child.parent = j2.trees[x];
 								j2.trees[x].child.argposition = 0;
 							}
 						} else {
-							j2.trees[x] = (GPTree) (parents[0].trees[x].lightClone());
-							j2.trees[x] = (GPTree) (parents[0].trees[x].lightClone());
+							j2.trees[x] = parents[0].trees[x].lightClone();
+							j2.trees[x] = parents[0].trees[x].lightClone();
 							j2.trees[x].owner = j2;
 							j2.trees[x].child = (GPNode) (parents[0].trees[x].child.clone());
 							j2.trees[x].child.parent = j2.trees[x];

@@ -84,7 +84,7 @@ public class LongVectorIndividual extends VectorIndividual
         LongVectorIndividual myobj = (LongVectorIndividual) (super.clone());
 
         // must clone the genome
-        myobj.genome = (long[])(genome.clone());
+        myobj.genome = genome.clone();
         
         return myobj;
         } 
@@ -339,11 +339,11 @@ public class LongVectorIndividual extends VectorIndividual
                     switch(s.mutationType(x))
                         {
                         case IntegerVectorSpecies.C_RESET_MUTATION:
-                            genome[x] = randomValueFromClosedInterval((long)s.minGene(x), (long)s.maxGene(x), state.random[thread]);
+                            genome[x] = randomValueFromClosedInterval(s.minGene(x), s.maxGene(x), state.random[thread]);
                             break;
                         case IntegerVectorSpecies.C_RANDOM_WALK_MUTATION:
-                            long min = (long)s.minGene(x);
-                            long max = (long)s.maxGene(x);
+                            long min = s.minGene(x);
+                            long max = s.maxGene(x);
                             if (!s.mutationIsBounded(x))
                                 {
                                 // okay, technically these are still bounds, but we can't go beyond this without weird things happening

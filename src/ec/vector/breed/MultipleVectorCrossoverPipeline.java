@@ -65,7 +65,7 @@ public class MultipleVectorCrossoverPipeline extends BreedingPipeline {
         MultipleVectorCrossoverPipeline c = (MultipleVectorCrossoverPipeline)(super.clone());
 
         // deep-cloned stuff
-        c.parents = (VectorIndividual[]) parents.clone();
+        c.parents = parents.clone();
 
         return c;
         }
@@ -170,7 +170,7 @@ public class MultipleVectorCrossoverPipeline extends BreedingPipeline {
             VectorSpecies species = (VectorSpecies)parents[0].species;
 
             // an array of the split points (width = 1)
-            int[] points = new int[(int)parents[0].genomeLength() - 1];
+            int[] points = new int[parents[0].genomeLength() - 1];
             for(int i = 0; i < points.length; i++){
                 points[i] = i+1;    // first split point/index = 1
                 }
@@ -213,7 +213,7 @@ public class MultipleVectorCrossoverPipeline extends BreedingPipeline {
                 parents[i].evaluated = false;
                 if(q<inds.length) // just in case
                     {               
-                    inds[q] = (VectorIndividual)parents[i];
+                    inds[q] = parents[i];
                     }
                 }
             }
@@ -289,7 +289,7 @@ public class MultipleVectorCrossoverPipeline extends BreedingPipeline {
             parents[i].evaluated = false;
             if(q<inds.length) // just in case
                 {           
-                inds[q] = (BitVectorIndividual)parents[i];
+                inds[q] = parents[i];
                 }
             }       
         return n;       
@@ -363,7 +363,7 @@ public class MultipleVectorCrossoverPipeline extends BreedingPipeline {
             parents[i].evaluated = false;
             if(q<inds.length) // just in case
                 {           
-                inds[q] = (ByteVectorIndividual)parents[i];
+                inds[q] = parents[i];
                 }
             }       
         return n;       
@@ -437,7 +437,7 @@ public class MultipleVectorCrossoverPipeline extends BreedingPipeline {
             parents[i].evaluated = false;
             if(q<inds.length) // just in case
                 {           
-                inds[q] = (DoubleVectorIndividual)parents[i];
+                inds[q] = parents[i];
                 }
             }       
         return n;       
@@ -511,7 +511,7 @@ public class MultipleVectorCrossoverPipeline extends BreedingPipeline {
             parents[i].evaluated = false;
             if(q<inds.length) // just in case
                 {           
-                inds[q] = (FloatVectorIndividual)parents[i];
+                inds[q] = parents[i];
                 }
             }       
         return n;       
@@ -585,7 +585,7 @@ public class MultipleVectorCrossoverPipeline extends BreedingPipeline {
             parents[i].evaluated = false;
             if(q<inds.length) // just in case
                 {           
-                inds[q] = (GeneVectorIndividual)parents[i];
+                inds[q] = parents[i];
                 }
             }       
         return n;       
@@ -661,7 +661,7 @@ public class MultipleVectorCrossoverPipeline extends BreedingPipeline {
             parents[i].evaluated = false;
             if(q<inds.length) // just in case
                 {           
-                inds[q] = (IntegerVectorIndividual)parents[i];
+                inds[q] = parents[i];
                 }
             }       
         return n;       
@@ -734,7 +734,7 @@ public class MultipleVectorCrossoverPipeline extends BreedingPipeline {
             parents[i].evaluated = false;
             if(q<inds.length) // just in case
                 {           
-                inds[q] = (LongVectorIndividual)parents[i];
+                inds[q] = parents[i];
                 }
             }       
         return n;       
@@ -808,7 +808,7 @@ public class MultipleVectorCrossoverPipeline extends BreedingPipeline {
             parents[i].evaluated = false;
             if(q<inds.length) // just in case
                 {           
-                inds[q] = (ShortVectorIndividual)parents[i];
+                inds[q] = parents[i];
                 }
             }       
         return n;       

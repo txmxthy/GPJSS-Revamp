@@ -525,9 +525,9 @@ public class SystemState {
         SystemState that = (SystemState) o;
 
         if (Double.compare(that.clockTime, clockTime) != 0) return false;
-        if (workCenters != null ? !workCenters.equals(that.workCenters) : that.workCenters != null) return false;
-        if (jobsInSystem != null ? !jobsInSystem.equals(that.jobsInSystem) : that.jobsInSystem != null) return false;
-        return jobsCompleted != null ? jobsCompleted.equals(that.jobsCompleted) : that.jobsCompleted == null;
+        if (!Objects.equals(workCenters, that.workCenters)) return false;
+        if (!Objects.equals(jobsInSystem, that.jobsInSystem)) return false;
+        return Objects.equals(jobsCompleted, that.jobsCompleted);
     }
 
     @Override

@@ -86,8 +86,7 @@ public class MultiplexerData extends GPData
     public void copyTo(final GPData gpd)
         { 
         MultiplexerData md = ((MultiplexerData)gpd);
-        for(int x=0;x<MULTI_11_NUM_BITSTRINGS;x++)
-            md.dat_11[x] = dat_11[x];
+            System.arraycopy(dat_11, 0, md.dat_11, 0, MULTI_11_NUM_BITSTRINGS);
         md.dat_6 = dat_6;
         md.status = status;
         }

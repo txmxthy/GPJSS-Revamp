@@ -212,7 +212,7 @@ public class MutateDemotePipeline extends GPBreedingPipeline
                     if (numDemotable==demoteItem)
                         {
                         // clone the node
-                        GPNode cnode = (GPNode)(set.nonterminals[t.type][x].lightClone());
+                        GPNode cnode = set.nonterminals[t.type][x].lightClone();
 
                         // choose a spot to hang the old parent under
                         int numSpots=0;
@@ -249,9 +249,9 @@ public class MutateDemotePipeline extends GPBreedingPipeline
                                 else 
                                     {
                                     // hang a randomly-generated terminal off of cnode
-                                    GPNode term = (GPNode)(set.terminals[chityp[z].type][
+                                    GPNode term = set.terminals[chityp[z].type][
                                             state.random[thread].nextInt(
-                                                set.terminals[chityp[z].type].length)].lightClone());
+                                                set.terminals[chityp[z].type].length)].lightClone();
                                     cnode.children[z] = term;
                                     term.parent = cnode; // just in case
                                     term.argposition = (byte)z;  // just in case
@@ -264,9 +264,9 @@ public class MutateDemotePipeline extends GPBreedingPipeline
                             else
                                 {
                                 // hang a randomly-generated terminal off of cnode
-                                GPNode term = (GPNode)(set.terminals[chityp[z].type][
+                                GPNode term = set.terminals[chityp[z].type][
                                         state.random[thread].nextInt(
-                                            set.terminals[chityp[z].type].length)].lightClone());
+                                            set.terminals[chityp[z].type].length)].lightClone();
                                 cnode.children[z] = term;
                                 term.parent = cnode; // just in case
                                 term.argposition = (byte)z;  // just in case
@@ -299,7 +299,7 @@ public class MutateDemotePipeline extends GPBreedingPipeline
         // find it
 
         // clone the node
-        GPNode cnode = (GPNode)(set.nonterminals[0][demoteItem].lightClone());
+        GPNode cnode = set.nonterminals[0][demoteItem].lightClone();
         
         GPType[] chityp = cnode.constraints(((GPInitializer)state.initializer)).childtypes;
 
@@ -323,10 +323,9 @@ public class MutateDemotePipeline extends GPBreedingPipeline
             else 
                 {
                 // hang a randomly-generated terminal off of cnode
-                GPNode term = (GPNode)(
-                    set.terminals[chityp[z].type][
-                        state.random[thread].nextInt(
-                            set.terminals[chityp[z].type].length)].lightClone());
+                GPNode term = set.terminals[chityp[z].type][
+                    state.random[thread].nextInt(
+                        set.terminals[chityp[z].type].length)].lightClone();
                 cnode.children[z] = term;
                 term.parent = cnode; // just in case
                 term.argposition = (byte)z;  // just in case
@@ -409,10 +408,9 @@ public class MutateDemotePipeline extends GPBreedingPipeline
         // to be exactly that.  So don't bother.
 
         // next check to see if inner1 can be demoted
-        if (inner1.depth()+inner1.atDepth()+1 > maxDepth) return false;
+            return inner1.depth() + inner1.atDepth() + 1 <= maxDepth;
 
         // checks done!
-        return true;
         }
 
 
@@ -453,14 +451,14 @@ public class MutateDemotePipeline extends GPBreedingPipeline
                 }
             else // need to copy it
                 {
-                j = (GPIndividual)(i.lightClone());
+                j = i.lightClone();
                 
                 // Fill in various tree information that didn't get filled in there
                 j.trees = new GPTree[i.trees.length];
                 
                 for(int x=0;x<j.trees.length;x++)
                     {
-                    j.trees[x] = (GPTree)(i.trees[x].lightClone());
+                    j.trees[x] = i.trees[x].lightClone();
                     j.trees[x].owner = j;
                     j.trees[x].child = (GPNode)(i.trees[x].child.clone());
                     j.trees[x].child.parent = j.trees[x];

@@ -292,9 +292,9 @@ public class MuCommaLambdaBreeder extends Breeder
             state.output.warnOnce("Largest lambda size (" + numThreads +") is smaller than number of breedthreads (" + state.breedthreads +
                 "), so fewer breedthreads will be created.");
             
-        int numinds[][] = 
+        int[][] numinds =
             new int[numThreads][state.population.subpops.length];
-        int from[][] = 
+        int[][] from =
             new int[numThreads][state.population.subpops.length];
         
         for(int x=0;x<state.population.subpops.length;x++)

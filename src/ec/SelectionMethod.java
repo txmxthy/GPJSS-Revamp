@@ -58,13 +58,15 @@ public abstract class SelectionMethod extends BreedingSource
     public void prepareToProduce(final EvolutionState s,
         final int subpopulation,
         final int thread)
-        { return; }
+        {
+        }
 
     /** A default version of finishProducing, which does nothing. */
     public void finishProducing(final EvolutionState s,
         final int subpopulation,
         final int thread)
-        { return; }
+        {
+        }
 
     public int produce(final int min, //produce here means get two individuals for crossover
         final int max, 

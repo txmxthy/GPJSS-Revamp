@@ -405,8 +405,7 @@ public class Console extends JFrame
                             if ( extension != null )
                                 
                                 {
-                                if ( extension.equals( "gz" ) )
-                                    return true;
+                                    return extension.equals("gz");
                                 }
                             
                             return false;
@@ -837,8 +836,8 @@ public class Console extends JFrame
         
         Runnable run = new Runnable() 
             {
-            Vector listeners = new Vector();
-            boolean restoreFromCheckpoint = rfc;
+            final Vector listeners = new Vector();
+            final boolean restoreFromCheckpoint = rfc;
             
             void addListener(EvolutionStateListener l) 
                 {

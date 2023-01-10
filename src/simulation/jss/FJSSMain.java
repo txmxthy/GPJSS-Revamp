@@ -371,7 +371,7 @@ public class FJSSMain {
             Path directoryName = directoryNames.get(i);
             List<String> instanceFileNames = getFileNames(new ArrayList(), directoryName, ".fjs");
             int numInstances = instanceFileNames.size();
-            System.out.println(numInstances +" FJSS instances in "+directoryName.toString());
+            System.out.println(numInstances +" FJSS instances in "+ directoryName);
             double[] makeSpanRatios = new double[numInstances];
             for (int j = 0; j < numInstances; ++j) {
                 String instanceFileName = instanceFileNames.get(j);

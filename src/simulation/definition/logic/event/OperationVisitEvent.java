@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class OperationVisitEvent extends AbstractEvent {
 
-    private OperationOption operationOption;
+    private final OperationOption operationOption;
 
     public OperationVisitEvent(double time, OperationOption operationOption) {
         super(time);

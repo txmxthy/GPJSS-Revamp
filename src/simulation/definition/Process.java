@@ -1,15 +1,17 @@
 package simulation.definition;
 
+import java.util.Objects;
+
 /**
  * Created by yimei on 22/09/16.
  */
 public class Process implements Comparable<Process> {
 
-    private WorkCenter workCenter;
-    private int machineId;
-    private OperationOption operationOption;
-    private double startTime;
-    private double finishTime;
+    private final WorkCenter workCenter;
+    private final int machineId;
+    private final OperationOption operationOption;
+    private final double startTime;
+    private final double finishTime;
 
     public Process(WorkCenter workCenter, int machineId, OperationOption operationOption, double startTime) {
         this.workCenter = workCenter;
@@ -72,8 +74,8 @@ public class Process implements Comparable<Process> {
         if (machineId != process.machineId) return false;
         if (Double.compare(process.startTime, startTime) != 0) return false;
         if (Double.compare(process.finishTime, finishTime) != 0) return false;
-        if (workCenter != null ? !workCenter.equals(process.workCenter) : process.workCenter != null) return false;
-        return operationOption != null ? operationOption.equals(process.operationOption) : process.operationOption == null;
+        if (!Objects.equals(workCenter, process.workCenter)) return false;
+        return Objects.equals(operationOption, process.operationOption);
     }
 
     @Override

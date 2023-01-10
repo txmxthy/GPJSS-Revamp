@@ -34,7 +34,7 @@ public class GPMain {
             gpRunArgs.add("eval.problem.eval-model.objectives.0="+objective);
             gpRunArgs.add("-p");
             for (int i = 1; i <= 30 && i <= maxTests; ++i) {
-                gpRunArgs.add("seed.0="+String.valueOf(i));
+                gpRunArgs.add("seed.0="+ i);
                 //convert list to array
                 GPRun.main(gpRunArgs.toArray(new String[0]));
                 //now remove the seed, we will add new value in next loop
@@ -69,7 +69,7 @@ public class GPMain {
                 gpRunArgs.add("filePath="+fileName);
                 gpRunArgs.add("-p");
                 for (int i = 1; i <= 30 && i <= maxTests; ++i) {
-                    gpRunArgs.add("seed.0="+String.valueOf(i));
+                    gpRunArgs.add("seed.0="+ i);
                     //convert list to array
                     GPRun.main(gpRunArgs.toArray(new String[0]));
                     //now remove the seed, we will add new value in next loop

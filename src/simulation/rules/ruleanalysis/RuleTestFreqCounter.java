@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class RuleTestFreqCounter extends RuleTest {
 
-    private String featureSetName;
+    private final String featureSetName;
     private List<GPNode> features;
 
     public RuleTestFreqCounter(String trainPath,

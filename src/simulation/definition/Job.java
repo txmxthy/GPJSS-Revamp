@@ -5,6 +5,7 @@ import simulation.definition.logic.event.ProcessFinishEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A job.
@@ -14,8 +15,8 @@ import java.util.List;
 public class Job implements Comparable<Job> {
 
     private final int id;
-    private List<Operation> operations;
-    private List<ProcessFinishEvent> processFinishEvents;
+    private final List<Operation> operations;
+    private final List<ProcessFinishEvent> processFinishEvents;
     private final double arrivalTime;
     private final double releaseTime;
     private double dueDate;
@@ -242,8 +243,8 @@ public class Job implements Comparable<Job> {
         if (Double.compare(job.totalProcTime, totalProcTime) != 0) return false;
         if (Double.compare(job.avgProcTime, avgProcTime) != 0) return false;
         if (Double.compare(job.completionTime, completionTime) != 0) return false;
-        if (operations != null ? !operations.equals(job.operations) : job.operations != null) return false;
-        return processFinishEvents != null ? processFinishEvents.equals(job.processFinishEvents) : job.processFinishEvents == null;
+        if (!Objects.equals(operations, job.operations)) return false;
+        return Objects.equals(processFinishEvents, job.processFinishEvents);
     }
 
     @Override
