@@ -289,7 +289,5 @@ eval.problem.eval-model.rotate-sim-seed = true
 terminals-from = relative
 #terminals-from = systemstate
 
-filePath = ./TextData/Monaldo/Fjsp/Job_Data/Barnes/Text/mt10c1.fjs
-#filePath = ./TextData/Monaldo/Fjsp/Job_Data/Brandimarte_Data/Text/Mk01.fjs
-#filePath = ./TextData/Monaldo/Fjsp/Job_Data/Dauzere_Data/Text/01a.fjs
-#filePath = ./TextData/Monaldo/Fjsp/Job_Data/Hurink_Data/Text/edata/abz5.fjs
+# Append the path to the instance with the grid script
+filePath = ./instances/flexible/abz5.fjs
