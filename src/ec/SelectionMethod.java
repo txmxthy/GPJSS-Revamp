@@ -15,7 +15,7 @@ package ec;
  */
 
 import ec.util.Parameter;
-import yimei.jss.feature.FeatureUtil;
+import simulation.jss.feature.FeatureUtil;
 
 /**
  * A SelectionMethod is a BreedingSource which provides direct IMMUTABLE pointers

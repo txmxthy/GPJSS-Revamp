@@ -5,87 +5,16 @@
 */
 
 
-package ec.coevolve;
+package simulation.jss.algorithm.coevolutiongp;
 
 import ec.*;
+import ec.coevolve.GroupedProblemForm;
+import ec.gp.GPIndividual;
 import ec.simple.*;
 import ec.util.*;
+import simulation.util.lisp.LispParser;
 
-/**
- * MultiPopCoevolutionaryEvaluator.java
- *
-
- <p>MultiPopCoevolutionaryEvaluator is an Evaluator which performs <i>competitive or cooperative multi-population
- coevolution</i>.  Competitive coevolution is where individuals' fitness is determined by
- testing them against individuals from other subpopulation.  Cooperative coevolution is where individuals
- form teams together with members of other subpopulations, and the individuals' fitness is computed based
- on the performance of such teams.  This evaluator assumes that the problem can only evaluate groups of
- individuals containing one individual from each subpopulation.  Individuals are evaluated regardless of
- whether or not they've been evaluated in the past.
-
- <p>Your Problem is responsible for updating up the fitness appropriately with values usually obtained
- from teaming up the individual with different partners from the other subpopulations.
- MultiPopCoevolutionaryEvaluator expects to use Problems which adhere to the GroupedProblemForm
- interface, which defines a new evaluate(...) function, plus a preprocess(...) and postprocess(...) function.
-
- <p>This coevolutionary evaluator is single-threaded -- maybe we'll hack in multithreading later.  It allows
- any number of subpopulations (implicitly, any number of individuals being evaluated together). The order of
- individuals in the subpopulation may be changed during the evaluation process.
-
- <p>Ordinarily MultiPopCoevolutionaryEvaluator does "parallel" coevolution: all subpopulations are evaluated
- simultaneously, then bred simultaneously.  But if you set the "sequential" parameter in the class
- ec.simple.SimpleBreeder, then MultiPopCoevolutionary behaves in a sequential fashion common in the "classic"
- version of cooperative coevolution: only one subpopulation is evaluated and bred per generation.
- The subpopulation index to breed is determined by taking the generation number, modulo the
- total number of subpopulations.
-
- <p><b>Parameters</b><br>
- <table>
- <tr><td valign=top><b>breed</b>.sequential</tt><br>
- <font size=-1>boolean (default = false)</font></td>
- <td valign=top>(should we evaluate and breed a single subpopulation each generation?  Note that this is a SimpleBreeder parameter. )
- </td></tr>
-
- <tr><td valign=top><i>base.</i><tt>subpop.num-current</tt><br>
- <font size=-1> int &gt;= 0</font></td>
- <td valign=top>(the number of random individuals from any given subpopulation fropm the current population to be selected as collaborators)
- </td></tr>
-
- <tr><td valign=top><i>base.</i><tt>subpop.num-elites</tt><br>
- <font size=-1> int &gt;= 0</font></td>
- <td valign=top>(the number of elite individuals from any given subpopulation from the previous population to be selected as collaborators. For generation 0, random individuals from the current population will be used.  )
- </td></tr>
-
- <tr><td valign=top><i>base.</i><tt>subpop.num-prev</tt><br>
- <font size=-1> int &gt;= 0</font></td>
- <td valign=top>(the number of random individuals from any given subpopulation from the previous population to be selected as collaborators.   For generation 0, random individuals from the current population will be used)
- </td></tr>
-
- <tr><td valign=top><i>base.</i><tt>subpop.X.select-prev</tt><br>
- <font size=-1> instance of ec.SelectionMethod</font></td>
- <td valign=top>(the SelectionMethod used to select partners from the individuals in subpopulation X at the previous generation)
- </td></tr>
-
- <tr><td valign=top><i>base.</i><tt>subpop.X.select-current</tt><br>
- <font size=-1> instance of ec.SelectionMethod</font></td>
- <td valign=top>(the SelectionMethod used to select partners from the individuals in subpopulation X at the current generation.
- <b>WARNING.</b>  This SelectionMethod must not select based on fitness, since fitness hasn't been set yet.
- RandomSelection is a good choice. )
-
- <tr><td valign=top><i>base.</i><tt>shuffling</tt><br>
- <font size=-1> boolean (default = false)</font></td>
- <td valign=top>(instead of selecting individuals from )
- </td></tr>
-
-
- </table>
-
- *
- * @author Liviu Panait and Sean Luke
- * @version 2.0
- */
-
-public class MultiPopCoevolutionaryEvaluator extends Evaluator
+public class MultiPopCoevolutionaryEvaluator1 extends Evaluator
     {
     private static final long serialVersionUID = 1;
 
@@ -117,18 +46,6 @@ public class MultiPopCoevolutionaryEvaluator extends Evaluator
     // the selection method used to select the other partners from the current generation
     public static final String P_SELECTION_METHOD_CURRENT = "select-current";
     SelectionMethod[] selectionMethodCurrent;
-
-    //fzhang 2019.5.24
-    //create a new object should use this one, this is construct function
-   /* public  MultiPopCoevolutionaryEvaluator(){
-
-    }*/
-
-   //fzhang 2019.5.28 in order to use these values in children classes
-   public static final String P_POP_ADAPT_FRAC_ELITES = "pop-adapt-frac-elites";
-   //public static final String P_POP_ADAPT_FRAC_ADAPTED = "pop-adapt-frac-adapted";
-   public double fracElites;
-   //public double fracAdapted;
 
     public void setup( final EvolutionState state, final Parameter base )
         {
@@ -199,13 +116,7 @@ public class MultiPopCoevolutionaryEvaluator extends Evaluator
         if( numElite + numCurrent + numPrev + numShuffled <= 0 )
             state.output.error( "The total number of partners to be selected should be > 0." );
         state.output.exitIfErrors();
-
-            fracElites = state.parameters.getDoubleWithDefault(
-                    new Parameter(P_POP_ADAPT_FRAC_ELITES), null, 0.0); //0.0
-            /*fracAdapted = state.parameters.getDoubleWithDefault(
-                    new Parameter(P_POP_ADAPT_FRAC_ADAPTED), null, 1.0); //0.1*/
         }
-
 
         //fzhang 2019.6.16
         @Override
@@ -237,22 +148,21 @@ public class MultiPopCoevolutionaryEvaluator extends Evaluator
             //System.out.println(shouldEvaluateSubpop(state, i, 0));  //true  true
             preAssessFitness[i] = postAssessFitness[i] || (state.generation == 0);  // always prepare (set up trials) on generation 0
             }
+        //System.out.println(postAssessFitness[0]); //true
+        //System.out.println(postAssessFitness[1]); //true
+        //System.out.println(preAssessFitness[0]); //true
+        //System.out.println(preAssessFitness[1]); //true
 
         // do evaluation
         beforeCoevolutionaryEvaluation( state, state.population, (GroupedProblemForm)p_problem );
 
         ((GroupedProblemForm)p_problem).preprocessPopulation(state,state.population, preAssessFitness, false);
-          performCoevolutionaryEvaluation( state, state.population, (GroupedProblemForm)p_problem );
-
-          //change the elites for cooperative coevolution
+        performCoevolutionaryEvaluation( state, state.population, (GroupedProblemForm)p_problem );
         ((GroupedProblemForm)p_problem).postprocessPopulation(state, state.population, postAssessFitness, false);
 
-        afterCoevolutionaryEvaluation( state, state.population, (GroupedProblemForm)p_problem );//change the elites
+        afterCoevolutionaryEvaluation( state, state.population, (GroupedProblemForm)p_problem );
         }
 
-        /**fzhang 2019.5.25 this prepares elites for cooperative coevolution before the evaluation process
-         * that means
-        */
     protected void beforeCoevolutionaryEvaluation( final EvolutionState state,
         final Population population,
         final GroupedProblemForm prob )
@@ -270,11 +180,14 @@ public class MultiPopCoevolutionaryEvaluator extends Evaluator
             //System.out.println(state.population.subpops.length); //2
             //System.out.println(numElite); //4
             //System.out.println(eliteIndividuals.length); //2
-           /* ((GPIndividual)state.population.subpops[0].individuals[0]).trees[0] = LispParser.parseJobShopRule("PT");
-            ((GPIndividual)state.population.subpops[1].individuals[0]).trees[0] = LispParser.parseJobShopRule("WIQ");*/
 
             //System.out.println(state.population.subpops[0].individuals.length );  //512
-            for( int i = 0 ; i < eliteIndividuals.length ; i++ )//2
+
+          ((GPIndividual)state.population.subpops[0].individuals[0]).trees[0] = LispParser.parseJobShopRule("PT");
+          ((GPIndividual)state.population.subpops[1].individuals[0]).trees[0] = LispParser.parseJobShopRule("WIQ");
+
+          //System.out.println(eliteIndividuals.length);
+            for( int i = 0 ; i < eliteIndividuals.length ; i++ )//always equals 2
                 {
                 if( numElite > state.population.subpops[i].individuals.length )
                     state.output.fatal( "Number of elite partners is greater than the size of the subpopulation." );
@@ -282,11 +195,21 @@ public class MultiPopCoevolutionaryEvaluator extends Evaluator
                     eliteIndividuals[i][j] = (Individual)(state.population.subpops[i].individuals[j].clone());  // just take the first N individuals of each subpopulation
                 }
 
-          /*  for( int i = 0 ; i < eliteIndividuals.length ; i++ )//2
+           /* for( int i = 0 ; i < eliteIndividuals.length ; i++ )//2
             {
             for( int j = 0; j < numElite ; j++ )
                 System.out.println(eliteIndividuals[i][j]);
             }*/
+
+            /*ec.gp.GPIndividual@1525037790{1627821328}
+            ec.gp.GPIndividual@1132547352{1549409160}
+            ec.gp.GPIndividual@922872566{1651855898}
+            ec.gp.GPIndividual@727001376{660143759}
+            ec.gp.GPIndividual@523691575{1468303042}
+            ec.gp.GPIndividual@1427810650{902919958}
+            ec.gp.GPIndividual@503195940{1857816005}
+            ec.gp.GPIndividual@1852584274{1354011845}*/
+
 
             //System.out.println(numShuffled); //0
             // test for shuffled
@@ -443,9 +366,10 @@ public class MultiPopCoevolutionaryEvaluator extends Evaluator
 
         //==========================useful and important part=======================================
         //step 4: for each subpopulation, j means subPopulation   2*512*4*2= 8192  cost
-        for (int j = 0; j < state.population.subpops.length; j++) //0,1
+        for (int j = 0; j < state.population.subpops.length; j++) //2
             {
             // now do elites and randoms
+
         	//System.out.println(!shouldEvaluateSubpop(state, j, 0)); //false
         	//System.out.println(eliteIndividuals[j].length); //4
         	//System.out.println(inds.length); //2
@@ -459,29 +383,22 @@ public class MultiPopCoevolutionaryEvaluator extends Evaluator
                 Individual individual = state.population.subpops[j].individuals[i];
 
                 // Test against all the elites
-                for (int k = 0; k < eliteIndividuals[j].length; k++) { //2
+                for (int k = 0; k < eliteIndividuals[j].length; k++) { //4
                     for (int ind = 0; ind < inds.length; ind++) { //2
-                        if (ind == j) {   //j = 0, 1  (ind j) ---> (0 0) or (1 1) that is to say, this is the subpopulation1
+                        if (ind == j) {   //j = 0, 1  (ind j) ---> (0 0) or (1 1)
                             inds[ind] = individual; //inds[0] = individual = state.population.subpops[0].individuals[0];
                                                     //inds[1] = individual = state.population.subpops[1].individuals[1];
                                                     //the individuals to evaluate together
                             updates[ind] = true;   // updates[0] = true    updates[1] = true   evaluate
                         }
-                        else {  // this is subpopulation2
+                        else {
                             inds[ind] = eliteIndividuals[ind][k];   // (ind j) ---> (0 1) or (1 0)
                                                                     //inds[1] = eliteIndividuals[1][*]   inds[0] = eliteIndividuals[0][*]
                             updates[ind] = false;  // do not evaluate
                         }
-
-                    /*    System.out.println("ind "+ ind);
-                        System.out.println("i "+ i);
-                        System.out.println("j "+ j);
-                        System.out.println("k "+ k);*/
                     }
 
                     prob.evaluate(state,inds,updates, false, subpops, 0);
-                   /* System.out.println("Evaluated finished: population "+ j);
-                    System.out.println("individual "+ i);*/
                     evaluations++;
                 }
                 //System.out.println(evaluations);  //4  8  12 16 20 24 28 32 ... 4096   2*512*4 = 4096  inds[] is used to save the individuals we want to evaluated.
@@ -621,10 +538,6 @@ public class MultiPopCoevolutionaryEvaluator extends Evaluator
             }
         }
 
-        //fzhang 2019.5.25 in order to get the value from this class
-        public Individual[][] getEliteindividual(){
-           return this.eliteIndividuals;
-        }
     }
 
 class EliteComparator implements SortComparatorL
@@ -636,3 +549,4 @@ class EliteComparator implements SortComparatorL
     public boolean gt(long a, long b)
         { return inds[(int)b].fitness.betterThan(inds[(int)a].fitness); }
     }
+
