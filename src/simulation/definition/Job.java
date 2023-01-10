@@ -9,7 +9,7 @@ import java.util.Objects;
 
 /**
  * A job.
- *
+ * <p>
  * Created by yimei on 22/09/16.
  */
 public class Job implements Comparable<Job> {
@@ -19,9 +19,8 @@ public class Job implements Comparable<Job> {
     private final List<ProcessFinishEvent> processFinishEvents;
     private final double arrivalTime;
     private final double releaseTime;
-    private double dueDate;
     private final double weight;
-
+    private double dueDate;
     private double totalProcTime;
     private double avgProcTime;
 
@@ -39,7 +38,7 @@ public class Job implements Comparable<Job> {
         this.releaseTime = releaseTime;
         this.dueDate = dueDate;
         this.weight = weight;
-        this.processFinishEvents = new ArrayList<ProcessFinishEvent>();
+        this.processFinishEvents = new ArrayList<>();
     }
 
     public Job(int id, List<Operation> operations) {
@@ -55,7 +54,9 @@ public class Job implements Comparable<Job> {
         return operations;
     }
 
-    public List<ProcessFinishEvent> getProcessFinishEvents() { return processFinishEvents; }
+    public List<ProcessFinishEvent> getProcessFinishEvents() {
+        return processFinishEvents;
+    }
 
     public void addProcessFinishEvent(ProcessFinishEvent processFinishEvent) {
 //        for (ProcessFinishEvent p: processFinishEvents) {
@@ -83,6 +84,10 @@ public class Job implements Comparable<Job> {
         return dueDate;
     }
 
+    public void setDueDate(double dueDate) {
+        this.dueDate = dueDate;
+    }
+
     public double getWeight() {
         return weight;
     }
@@ -99,13 +104,9 @@ public class Job implements Comparable<Job> {
     public double getWaitingTime() {
         return this.flowTime() - totalProcTime;
     }
-    
+
     public double getCompletionTime() {
         return completionTime; //completionTime: the finish time(a time points)
-    }
-
-    public void setDueDate(double dueDate) {
-        this.dueDate = dueDate;
     }
 
     public void setCompletionTime(double completionTime) {
@@ -155,7 +156,7 @@ public class Job implements Comparable<Job> {
 
         double workRemaining = 0.0;
         int numOpsRemaining = 0;
-        for (int i = operations.size()-1; i > -1; i--) {
+        for (int i = operations.size() - 1; i > -1; i--) {
             Operation operation = operations.get(i);
 
             double medianProcTime;
@@ -167,17 +168,16 @@ public class Job implements Comparable<Job> {
             }
             Arrays.sort(procTimes);
             //get the median value
-            if (procTimes.length % 2 == 0){
+            if (procTimes.length % 2 == 0) {
                 //halfway between two points, as even number of elements
-                medianProcTime = (procTimes[procTimes.length/2]
-                        + procTimes[procTimes.length/2 - 1])/2;
-            }
-            else {
+                medianProcTime = (procTimes[procTimes.length / 2]
+                        + procTimes[procTimes.length / 2 - 1]) / 2;
+            } else {
                 medianProcTime = procTimes[procTimes.length / 2];
             }
 
             //set every option to the same values
-            for (OperationOption option: operation.getOperationOptions()) {
+            for (OperationOption option : operation.getOperationOptions()) {
 
                 option.setWorkRemaining(workRemaining + medianProcTime);
 
@@ -204,13 +204,13 @@ public class Job implements Comparable<Job> {
 
     @Override
     public String toString() {
-        String string = String.format("Job %d, arrives at %.1f, due at %.1f, weight is %.1f. It has %d operations:\n",
-                id, arrivalTime, dueDate, weight, operations.size());
-        for (Operation operation: operations) {
-            string += operation.toString();
+        StringBuilder string = new StringBuilder(String.format("Job %d, arrives at %.1f, due at %.1f, weight is %.1f. It has %d operations:\n",
+                id, arrivalTime, dueDate, weight, operations.size()));
+        for (Operation operation : operations) {
+            string.append(operation.toString());
         }
 
-        return string;
+        return string.toString();
     }
 
     public boolean equals(Job other) {
@@ -219,13 +219,8 @@ public class Job implements Comparable<Job> {
 
     @Override
     public int compareTo(Job other) {
-        if (arrivalTime < other.arrivalTime)
-            return -1;
+        return Double.compare(arrivalTime, other.arrivalTime);
 
-        if (arrivalTime > other.arrivalTime)
-            return 1;
-
-        return 0;
     }
 
     @Override

@@ -1,7 +1,9 @@
 package simulation.jss.helper;
 
-import java.io.*;
-import java.nio.charset.Charset;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -13,7 +15,7 @@ import static simulation.jss.FJSSMain.getFileNames;
 
 /**
  * Created by dyska on 5/10/17.
- *
+ * <p>
  * This class should read in a job.x.out.stat file, discard the 51-99th generations
  * and update the best rules.
  */
@@ -32,14 +34,14 @@ public class GridResultFixer {
     }
 
     public static void updateResults(Path path) {
-        List<String> jobFileNames = getFileNames(new ArrayList(), path, ".out.stat");
+        List<String> jobFileNames = getFileNames(new ArrayList<>(), path, ".out.stat");
 
-        for (String jobFileName: jobFileNames) {
+        for (String jobFileName : jobFileNames) {
             File jobFile = new File(jobFileName);
             List<String> lines = readInLines(jobFile);
             if (lines != null) {
                 writeToFile(jobFile, lines);
-                System.out.println("Updated "+jobFileName);
+                System.out.println("Updated " + jobFileName);
             }
             //will be null if file already updated
         }
@@ -65,7 +67,7 @@ public class GridResultFixer {
                 }
                 if (sCurrentLine.startsWith("Fitness")) {
                     //line should be in format "Fitness: [0.8386540120793787]"
-                    String fitnessString = sCurrentLine.substring(sCurrentLine.indexOf("[")+1, sCurrentLine.length()-1);
+                    String fitnessString = sCurrentLine.substring(sCurrentLine.indexOf("[") + 1, sCurrentLine.length() - 1);
                     double fitness = Double.parseDouble(fitnessString);
                     if (numFound == 0) {
                         if (fitness <= bestFitnessSubpop1) {
@@ -90,11 +92,11 @@ public class GridResultFixer {
                     bestIndividualLines.add("Best Individual of Run:");
                     for (int i = 0; i < lines.size(); ++i) {
                         String line = lines.get(i);
-                        if (line.startsWith("Generation: "+bestSubPop1Gen)) {
+                        if (line.startsWith("Generation: " + bestSubPop1Gen)) {
                             //get subpop1 best
                             i += 2; //skip 2 lines
                             for (int j = 0; j < 7; ++j) {
-                                String sline = lines.get(i+j);
+                                String sline = lines.get(i + j);
                                 bestIndividualLines.add(sline);
                             }
                             break;
@@ -103,11 +105,11 @@ public class GridResultFixer {
 
                     for (int i = 0; i < lines.size(); ++i) {
                         String line = lines.get(i);
-                        if (line.startsWith("Generation: "+bestSubPop2Gen)) {
+                        if (line.startsWith("Generation: " + bestSubPop2Gen)) {
                             //get subpop2 best
-                            i+=9; //skip lines
+                            i += 9; //skip lines
                             for (int j = 0; j < 7; ++j) {
-                                String sline = lines.get(i+j);
+                                String sline = lines.get(i + j);
                                 bestIndividualLines.add(sline);
                             }
                             break;
@@ -119,8 +121,6 @@ public class GridResultFixer {
                 }
                 lines.add(sCurrentLine);
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -142,10 +142,10 @@ public class GridResultFixer {
         }
     }
 
-    /**
-     * This method should read in every line from a file, then close it.
-     * These lines should be analysed and edited. Then the file should be
-     * written to with the new lines.
+    /*
+      This method should read in every line from a file, then close it.
+      These lines should be analysed and edited. Then the file should be
+      written to with the new lines.
      */
 //    public Double[] GetFitnesses(String fileName) {
 //        BufferedReader br = null;

@@ -16,10 +16,10 @@ import simulation.jss.helper.PopulationUtils;
 import simulation.jss.niching.ClearingEvaluator;
 import simulation.jss.niching.MultiPopCoevolutionaryClearingEvaluator;
 import simulation.jss.niching.PhenoCharacterisation;
+import simulation.jss.surrogate.Surrogate;
 import simulation.rules.rule.RuleType;
 import simulation.rules.rule.operation.evolved.GPRule;
 import simulation.rules.ruleoptimisation.RuleOptimizationProblem;
-import simulation.jss.surrogate.Surrogate;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -42,27 +42,21 @@ public class FSGPRuleEvolutionState extends GPRuleEvolutionState implements Term
     public static final String P_DO_ADAPT = "feature-selection-adapt-population";
     public static final String P_NUMCLUSTERS1 = "numClusters1";
     public static final String P_NUMCLUSTERS2 = "numClusters2";
-
+    final ArrayList<Double> saveFitDistanceSubPop0 = new ArrayList<>();
+    final ArrayList<Double> saveFitDistanceSubPop1 = new ArrayList<>();
+    final ArrayList<Double> PheDistanceSubPop0 = new ArrayList<>();
+    final ArrayList<Double> PheDistanceSubPop1 = new ArrayList<>();
+    final ArrayList<Integer> numSelIndividual = new ArrayList<>();
+    private final double fitUB = Double.NEGATIVE_INFINITY;
+    private final double fitLB = Double.POSITIVE_INFINITY;
+    ArrayList<Double> saveOldFitSubPop0 = new ArrayList<>();
+    ArrayList<Double> saveOldFitSubPop1 = new ArrayList<>();
     private Ignorer ignorer;
     private int preGenerations;
     private double fracElites;
-    private double fracAdapted;
     private boolean doAdapt;
     private int numClusters1;
     private int numClusters2;
-
-    private final double fitUB = Double.NEGATIVE_INFINITY;
-    private final double fitLB = Double.POSITIVE_INFINITY;
-
-    ArrayList<Double> saveOldFitSubPop0 = new ArrayList<>();
-    ArrayList<Double> saveOldFitSubPop1 = new ArrayList<>();
-    final ArrayList<Double> saveFitDistanceSubPop0 = new ArrayList<>();
-    final ArrayList<Double> saveFitDistanceSubPop1 = new ArrayList<>();
-
-    final ArrayList<Double> PheDistanceSubPop0 = new ArrayList<>();
-    final ArrayList<Double> PheDistanceSubPop1 = new ArrayList<>();
-
-    final ArrayList<Integer> numSelIndividual = new ArrayList<>();
 
     @Override
     public Ignorer getIgnorer() {
@@ -78,15 +72,15 @@ public class FSGPRuleEvolutionState extends GPRuleEvolutionState implements Term
     public void setup(EvolutionState state, Parameter base) {
         super.setup(state, base);
 
-        ignorer = (Ignorer)(state.parameters.getInstanceForParameter(
+        ignorer = (Ignorer) (state.parameters.getInstanceForParameter(
                 new Parameter(P_IGNORER), null, Ignorer.class)); //ignorer = yimei.jss.feature.ignore.SimpleIgnorer
         preGenerations = state.parameters.getIntWithDefault(
                 new Parameter(P_PRE_GENERATIONS), null, -1);  //50
         fracElites = state.parameters.getDoubleWithDefault(
                 new Parameter(P_POP_ADAPT_FRAC_ELITES), null, 0.0); //0.0
-        fracAdapted = state.parameters.getDoubleWithDefault(
+        double fracAdapted = state.parameters.getDoubleWithDefault(
                 new Parameter(P_POP_ADAPT_FRAC_ADAPTED), null, 1.0); //0.1
-        doAdapt = state.parameters.getBoolean(new Parameter(P_DO_ADAPT),  
+        doAdapt = state.parameters.getBoolean(new Parameter(P_DO_ADAPT),
                 null, true);
         numClusters1 = state.parameters.getIntWithDefault(new Parameter(P_NUMCLUSTERS1), null, 1);
         numClusters2 = state.parameters.getIntWithDefault(new Parameter(P_NUMCLUSTERS2), null, 1);
@@ -95,7 +89,7 @@ public class FSGPRuleEvolutionState extends GPRuleEvolutionState implements Term
     @Override
     public int evolve() {
         //if (generation > 0)
-            output.message("Generation " + generation);
+        output.message("Generation " + generation);
         if (generation == preGenerations) {
 
             evaluator.evaluatePopulation(this); //evaluate each individual, and then clear poor individuals
@@ -104,88 +98,86 @@ public class FSGPRuleEvolutionState extends GPRuleEvolutionState implements Term
             //fzhang 2019.6.5 in order to measure the consistence of pgenotype strategy
         /*    saveOldFitSubPop0 = ((multiPopCoevolutionaryClearingEvaluator)(this.evaluator)).getSaveOldFitSubPop0();
             saveOldFitSubPop1 = ((multiPopCoevolutionaryClearingEvaluator)(this.evaluator)).getSaveOldFitSubPop1();*/
-            
-           for (int i = 0; i < population.subpops.length; i++) { //before here is ++i
+
+            for (int i = 0; i < population.subpops.length; i++) { //before here is ++i
                 /*Individual[] individuals = population.subpops[i].individuals;*/
 
-               Individual[] individuals = new Individual[(int)(population.subpops[i].individuals.length*0.3)];
-               System.arraycopy(population.subpops[i].individuals, 0, individuals, 0, (int)(population.subpops[i].individuals.length*0.3));
+                Individual[] individuals = new Individual[(int) (population.subpops[i].individuals.length * 0.3)];
+                System.arraycopy(population.subpops[i].individuals, 0, individuals, 0, (int) (population.subpops[i].individuals.length * 0.3));
 
                 //===================================original=============================================
                 //actually this part is used to select top 10 individuals
-               //================================start=================================
+                //================================start=================================
               /*  List<GPIndividual> selIndis =
                         FeatureUtil.selectDiverseIndis(this, individuals, i, 10); // i: which subpopulation  30: the number of individuals in the diverse set.*/
-               //================================end===================================
-               List<GPIndividual> selIndis;
-               if( i == 0){
-                   selIndis = saveBestCenInds(individuals, numClusters1);
-               }else
-               {
-                   selIndis = saveBestCenInds(individuals, numClusters2);
-               }
+                //================================end===================================
+                List<GPIndividual> selIndis;
+                if (i == 0) {
+                    selIndis = saveBestCenInds(individuals, numClusters1);
+                } else {
+                    selIndis = saveBestCenInds(individuals, numClusters2);
+                }
 
-               numSelIndividual.add(selIndis.size());
+                numSelIndividual.add(selIndis.size());
 
-               //fzhang 2019.6.26 calculate voting weights
-               //=======================start====================
-               double fitLB = selIndis.get(0).fitness.fitness();
-               double fitUB = selIndis.get(0).fitness.fitness();
+                //fzhang 2019.6.26 calculate voting weights
+                //=======================start====================
+                double fitLB = selIndis.get(0).fitness.fitness();
+                double fitUB = selIndis.get(0).fitness.fitness();
 
-               for(int ind = 1; ind < selIndis.size(); ind ++)
-               {
-                   if (selIndis.get(ind).fitness.fitness() < fitLB){
-                       fitLB = selIndis.get(ind).fitness.fitness();
-                   }
+                for (int ind = 1; ind < selIndis.size(); ind++) {
+                    if (selIndis.get(ind).fitness.fitness() < fitLB) {
+                        fitLB = selIndis.get(ind).fitness.fitness();
+                    }
 
-                   if(selIndis.get(ind).fitness.fitness() > fitUB){
-                       fitUB = selIndis.get(ind).fitness.fitness();
-                   }
-               }
+                    if (selIndis.get(ind).fitness.fitness() > fitUB) {
+                        fitUB = selIndis.get(ind).fitness.fitness();
+                    }
+                }
 
                /*fitLB = 1 / (1 + maxFit);
                fitUB = 1 / (1 + minFit);*/
-               //========================end=======================
+                //========================end=======================
 
-               //fzhang 2019.6.25 original normalisation method
-               //===============================start=========================
+                //fzhang 2019.6.25 original normalisation method
+                //===============================start=========================
                 /*fitUB = selIndis.get(0).fitness.fitness();  //the upper bound of fitness   //the best one, the smallest fitness in the individuals  1475.0335218025866
                 fitLB = 1 - fitUB;  //the lower bound of fitness  -1474.0335218025866*/
-               //==========================end=============================
+                //==========================end=============================
 
                 //====================feture selection, after this we can get features=======================
                 GPNode[] selFeatures =
                         FeatureUtil.featureSelection(this, selIndis,
                                 ruleTypes[i], fitUB, fitLB);
-  
+
                 //if we do not want to use doAdapt and only use this for mutation, we only do it in this way
-                setTerminals(selFeatures,i);
+                setTerminals(selFeatures, i);
                 if (doAdapt) {
-	                //adaptPopulation(i); //three part  original one --- already redefined in the method adaptPopulation(i) as shown below  --- mimic 20% inds and 80% randomly generated
+                    //adaptPopulation(i); //three part  original one --- already redefined in the method adaptPopulation(i) as shown below  --- mimic 20% inds and 80% randomly generated
 
                     //that means mimic selected individuals and randomly initialise others
                     adaptPopulationWithClustering(selIndis, i); //the input is the selcted individuals, when we mimic the selected individuals, the process is the same as clustering
                     //FeatureUtil.adaptPopulationWithClusteringReplacedByOne(this, selIndis, i);
-                   }
+                }
 
-               //FeatureUtil.savePheDistance(this);
+                //FeatureUtil.savePheDistance(this);
 
              /*  if(i == 0)
                    PheDistanceSubPop0 = FeatureUtil.getPheDistance(i);
                else
                    PheDistanceSubPop1 = FeatureUtil.getPheDistance(i);*/
-                }
+            }
 
-           saveNumSelectedIndstoFile();
+            saveNumSelectedIndstoFile();
 //            //for niching
             //((multiPopCoevolutionaryClearingEvaluator)evaluator).setClear(false); //for calculate the phenotype distance
-            ((MultiPopCoevolutionaryClearingEvaluator)evaluator).setClear(false);
+            ((MultiPopCoevolutionaryClearingEvaluator) evaluator).setClear(false);
 
-             //((ClearingEvaluator)evaluator).setClear(false); //this is for simpleGP
-             ((Surrogate)((RuleOptimizationProblem)evaluator.p_problem)
-                     .getEvaluationModel()).useOriginal(); //use original simulation, 5000 jobs...   surrogate only use 500
+            //((ClearingEvaluator)evaluator).setClear(false); //this is for simpleGP
+            ((Surrogate) ((RuleOptimizationProblem) evaluator.p_problem)
+                    .getEvaluationModel()).useOriginal(); //use original simulation, 5000 jobs...   surrogate only use 500
         }
-        
+
         // EVALUATION
         statistics.preEvaluationStatistics(this); //after adaptive population, here still the old population, maybe because we change the evalutor and model
         evaluator.evaluatePopulation(this); //Feature selection, firstly, evaluate population as usual; then clear population
@@ -206,21 +198,19 @@ public class FSGPRuleEvolutionState extends GPRuleEvolutionState implements Term
             }
             savePheFitDistance();
         }*/
-    //================================================end===============================================
+        //================================================end===============================================
 
         statistics.postEvaluationStatistics(this); //here, the best individual is print out to out.stat file
 
         // SHOULD WE QUIT?
-        if (evaluator.runComplete(this) && quitOnRunComplete)
-        {
+        if (evaluator.runComplete(this) && quitOnRunComplete) {
             output.message("Found Ideal Individual");
             return R_SUCCESS;
         }
 
         // SHOULD WE QUIT?
-        if (generation == numGenerations-1)
-        {
-        	generation++;
+        if (generation == numGenerations - 1) {
+            generation++;
             return R_FAILURE;
         }
 
@@ -230,8 +220,7 @@ public class FSGPRuleEvolutionState extends GPRuleEvolutionState implements Term
         statistics.postPreBreedingExchangeStatistics(this);
 
         String exchangerWantsToShutdown = exchanger.runComplete(this);
-        if (exchangerWantsToShutdown!=null)
-        {
+        if (exchangerWantsToShutdown != null) {
             output.message(exchangerWantsToShutdown);
             return R_SUCCESS;
         }
@@ -257,8 +246,7 @@ public class FSGPRuleEvolutionState extends GPRuleEvolutionState implements Term
 
         // INCREMENT GENERATION AND CHECKPOINT
         generation++;
-        if (checkpoint && generation%checkpointModulo == 0)
-        {
+        if (checkpoint && generation % checkpointModulo == 0) {
             output.message("Checkpointing");
             statistics.preCheckpointStatistics(this);
             Checkpoint.setCheckpoint(this);
@@ -271,10 +259,10 @@ public class FSGPRuleEvolutionState extends GPRuleEvolutionState implements Term
     @Override
     public void adaptPopulation(int subPopNum) {
         //FeatureUtil.adaptPopulationBasedOnPhenotype(this,fracElites,subPopNum);
-        FeatureUtil.adaptPopulationBasedOnPhenotypeWhole(this,fracElites,subPopNum);//after get the whole generated population, evaluate them together
+        FeatureUtil.adaptPopulationBasedOnPhenotypeWhole(this, fracElites, subPopNum);//after get the whole generated population, evaluate them together
     }
 
-    public void savePheFitDistance(){
+    public void savePheFitDistance() {
         //fzhang 2019.5.21 save the weight values
         long jobSeed = this.getJobSeed();
         File pheFitDistanceFile = new File("job." + jobSeed + ".pheFitDistance.csv"); // jobSeed = 0
@@ -294,41 +282,41 @@ public class FSGPRuleEvolutionState extends GPRuleEvolutionState implements Term
         }
     }
 
-   public List<GPIndividual> saveBestCenInds(Individual[] individuals, int k){
-       //clustering
-       KMeansPlusPlusClustererTemp<Point> kMeansPlusPlusClusterer = new KMeansPlusPlusClustererTemp<Point>(k,100);
-       //create points for clustering
-       List<Point> points = new ArrayList<Point>();
-       for(Individual ind: individuals){
-           double[] pos = new double[]{ind.fitness.fitness()};
-           points.add(new Point(pos));
-       }
+    public List<GPIndividual> saveBestCenInds(Individual[] individuals, int k) {
+        //clustering
+        KMeansPlusPlusClustererTemp<Point> kMeansPlusPlusClusterer = new KMeansPlusPlusClustererTemp<>(k, 100);
+        //create points for clustering
+        List<Point> points = new ArrayList<>();
+        for (Individual ind : individuals) {
+            double[] pos = new double[]{ind.fitness.fitness()};
+            points.add(new Point(pos));
+        }
 
-       // now perform clustering
-       List<CentroidCluster<Point>> centroids = kMeansPlusPlusClusterer.cluster(this, points);
+        // now perform clustering
+        List<CentroidCluster<Point>> centroids = kMeansPlusPlusClusterer.cluster(this, points);
 
-       //find the smallest centroid
-       CentroidCluster<Point> minCentroid = null;
-       for(int c = 0; c < centroids.size(); c++){
-           if(minCentroid == null ||
-                   centroids.get(c).getCenter().getPoint()[0] < minCentroid.getCenter().getPoint()[0])
-               minCentroid = centroids.get(c);
-       }
-       int minIndex = centroids.indexOf(minCentroid);
+        //find the smallest centroid
+        CentroidCluster<Point> minCentroid = null;
+        for (CentroidCluster<Point> centroid : centroids) {
+            if (minCentroid == null ||
+                    centroid.getCenter().getPoint()[0] < minCentroid.getCenter().getPoint()[0])
+                minCentroid = centroid;
+        }
+        int minIndex = centroids.indexOf(minCentroid);
 
-       List<GPIndividual> saveBestCenInds = new ArrayList<GPIndividual>();
-       for(int index=0; index<points.size(); index++){
-           Point point = points.get(index);
-           int centroidIndex = kMeansPlusPlusClusterer.getNearestCluster(centroids, point);
-           if (centroidIndex == minIndex)
-               saveBestCenInds.add((GPIndividual) individuals[index]);
-       }
+        List<GPIndividual> saveBestCenInds = new ArrayList<>();
+        for (int index = 0; index < points.size(); index++) {
+            Point point = points.get(index);
+            int centroidIndex = kMeansPlusPlusClusterer.getNearestCluster(centroids, point);
+            if (centroidIndex == minIndex)
+                saveBestCenInds.add((GPIndividual) individuals[index]);
+        }
 
-       return saveBestCenInds;
-   }
+        return saveBestCenInds;
+    }
 
-   //fzhang 2019.6.26 adapt individuals based on selected individuals by clustering
-    public void adaptPopulationWithClustering(List<GPIndividual> individuals, int subPopNum){
+    //fzhang 2019.6.26 adapt individuals based on selected individuals by clustering
+    public void adaptPopulationWithClustering(List<GPIndividual> individuals, int subPopNum) {
 
         Individual[] newPop = population.subpops[subPopNum].individuals;
 
@@ -345,20 +333,23 @@ public class FSGPRuleEvolutionState extends GPRuleEvolutionState implements Term
         RuleType ruleType = ruleTypes[subPopNum];
         for (int ind = 0; ind < individuals.size(); ind++) {
             GPIndividual gpIndi = individuals.get(ind); //check the individual one by one
-            int[] charList = pc.characterise(new GPRule(ruleType,gpIndi.trees[0]));//the measured rule
+            int[] charList = new int[0];//the measured rule
+            if (pc != null) {
+                charList = pc.characterise(new GPRule(ruleType, gpIndi.trees[0]));
+            }
             GPIndividual newInd;
-            double distance = 0.0;
+            double distance;
             int i = 0;
             double tempDistance = Double.MAX_VALUE;
             GPIndividual tempNewInd = null;
             do {
                 i++;
-                newInd = (GPIndividual) population.subpops[subPopNum].species.newIndividual(this,0);
+                newInd = (GPIndividual) population.subpops[subPopNum].species.newIndividual(this, 0);
                 int[] charListNewInd = pc.characterise(new GPRule(ruleType, newInd.trees[0]));//the measured rule
                 distance = PhenoCharacterisation.distance(charList, charListNewInd); //calculate the distance
 //                System.out.println("distance "+ distance);
 
-                if(distance < tempDistance){
+                if (distance < tempDistance) {
                     tempDistance = distance;
                     tempNewInd = newInd;
                 }
@@ -366,7 +357,9 @@ public class FSGPRuleEvolutionState extends GPRuleEvolutionState implements Term
             } while (distance != 0 && i != 10000);
 
             newPop[ind] = tempNewInd;
-            newPop[ind].evaluated = false;
+            if (newPop[ind] != null) {
+                newPop[ind].evaluated = false;
+            }
         }
 
         //randomly initialize other individuals
@@ -386,7 +379,7 @@ public class FSGPRuleEvolutionState extends GPRuleEvolutionState implements Term
 
             for (int i = 0; i < numSelIndividual.size(); i += 2) { //every two into one generation
                 //writer.newLine();
-                writer.write(jobSeed + ", " + numSelIndividual.get(i) + ", " + numSelIndividual.get(i+1));
+                writer.write(jobSeed + ", " + numSelIndividual.get(i) + ", " + numSelIndividual.get(i + 1));
             }
             writer.close();
         } catch (IOException e) {

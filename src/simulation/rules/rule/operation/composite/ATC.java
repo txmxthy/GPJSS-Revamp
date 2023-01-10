@@ -2,9 +2,9 @@ package simulation.rules.rule.operation.composite;
 
 import simulation.definition.OperationOption;
 import simulation.definition.WorkCenter;
+import simulation.definition.logic.state.SystemState;
 import simulation.rules.rule.AbstractRule;
 import simulation.rules.rule.RuleType;
-import simulation.definition.logic.state.SystemState;
 
 import java.util.List;
 
@@ -12,10 +12,12 @@ import java.util.List;
  * Created by YiMei on 28/09/16.
  */
 public class ATC extends AbstractRule {
+    protected double slackNorm;
+    protected double expWaitingTime;
     private double k;
     private double b;
 
-    public ATC(RuleType type,double k, double b) {
+    public ATC(RuleType type, double k, double b) {
         name = "ATC";
         this.type = type;
         setK(k);
@@ -23,7 +25,7 @@ public class ATC extends AbstractRule {
     }
 
     public ATC(RuleType type) {
-        this(type,3, 2);
+        this(type, 3, 2);
     }
 
     @Override
@@ -31,24 +33,21 @@ public class ATC extends AbstractRule {
         return "\"" + name + "(k=" + getK() + ",b=" + getB() + ")\"";
     }
 
-    public void setK(double k) {
-        this.k = k;
-    }
-
-    public void setB(double b) {
-        this.b = b;
-    }
-
     public double getK() {
         return k;
+    }
+
+    public void setK(double k) {
+        this.k = k;
     }
 
     public double getB() {
         return b;
     }
 
-    protected double slackNorm;
-    protected double expWaitingTime;
+    public void setB(double b) {
+        this.b = b;
+    }
 
     public void calcSlackNorm(OperationOption op, WorkCenter workCenter, SystemState systemState) {
         slackNorm = 0.0d;

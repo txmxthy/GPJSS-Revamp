@@ -14,15 +14,14 @@ public class fracReproductionPipeline extends ReproductionPipeline {
             final int subpopulation,
             final Individual[] inds,
             final EvolutionState state,
-            final int thread)
-    {
+            final int thread) {
         // grab individuals from our source and stick 'em right into inds.
         // we'll modify them from there
-        int n = sources[0].produceFrac(min,max,start,subpopulation,inds,state,thread);
+        int n = sources[0].produceFrac(min, max, start, subpopulation, inds, state, thread);
 
         if (mustClone || sources[0] instanceof SelectionMethod)
-            for(int q=start; q < n+start; q++)
-                inds[q] = (Individual)(inds[q].clone());
+            for (int q = start; q < n + start; q++)
+                inds[q] = (Individual) (inds[q].clone());
         return n;
     }
 }

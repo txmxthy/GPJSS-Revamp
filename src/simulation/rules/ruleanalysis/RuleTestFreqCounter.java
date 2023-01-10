@@ -2,9 +2,9 @@ package simulation.rules.ruleanalysis;
 
 import ec.gp.GPNode;
 import org.apache.commons.lang3.math.NumberUtils;
+import simulation.definition.Objective;
 import simulation.jss.gp.terminal.AttributeGPNode;
 import simulation.jss.gp.terminal.JobShopAttribute;
-import simulation.definition.Objective;
 import simulation.rules.rule.operation.evolved.GPRule;
 
 import java.io.BufferedWriter;
@@ -45,6 +45,38 @@ public class RuleTestFreqCounter extends RuleTest {
                 new ArrayList<>(), featureSetName, numPopulations);
     }
 
+    public static void main(String[] args) {
+        String dir = "/local/scratch/Dropbox/Research/JobShopScheduling/ExpResults/";
+        String[] algos = new String[]{"simple-gp-basic-terminals", "simple-gp-relative-terminals"};
+        String[] fsNames = new String[]{"basic-terminals", "relative-terminals"};
+        String[] scenarios = new String[]{"max-tardiness-0.85-4", "max-tardiness-0.95-4",
+                "mean-tardiness-0.85-4", "mean-tardiness-0.95-4",
+                "mean-weighted-tardiness-0.85-4", "mean-weighted-tardiness-0.95-4"};
+
+        String trainPath;
+        RuleType ruleType = RuleType.get("simple-rule");
+        int numRuns = 30;
+        String testScenario = "";
+        String testSetName = "";
+        int numObjectives = 0;
+        int numPopulations = 1;
+        List<Objective> objectives = new ArrayList<>();
+        String featureSetName;
+        for (int i = 0; i < algos.length; i++) {
+            for (String scenario : scenarios) {
+                trainPath = dir + algos[i] + "/" + scenario + "/";
+                featureSetName = fsNames[i];
+
+                RuleTestFreqCounter ruleTest = new RuleTestFreqCounter(trainPath,
+                        ruleType, numRuns, testScenario, testSetName, objectives, featureSetName, numPopulations);
+
+                ruleTest.writeToCSV();
+            }
+        }
+
+
+    }
+
     public List<GPNode> featuresFromSetName() {
         List<GPNode> features = new ArrayList<>();
 
@@ -79,9 +111,8 @@ public class RuleTestFreqCounter extends RuleTest {
                 }
             }
 
-            featureFreq[idx] ++;
-        }
-        else {
+            featureFreq[idx]++;
+        } else {
             for (GPNode child : tree.children)
                 countFeatureFreq(featureFreq, child);
         }
@@ -134,38 +165,5 @@ public class RuleTestFreqCounter extends RuleTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public static void main(String[] args) {
-        String dir = "/local/scratch/Dropbox/Research/JobShopScheduling/ExpResults/";
-        String[] algos = new String[]{"simple-gp-basic-terminals", "simple-gp-relative-terminals"};
-        String[] fsNames = new String[]{"basic-terminals", "relative-terminals"};
-        String[] scenarios = new String[]{"max-tardiness-0.85-4", "max-tardiness-0.95-4",
-                "mean-tardiness-0.85-4", "mean-tardiness-0.95-4",
-                "mean-weighted-tardiness-0.85-4", "mean-weighted-tardiness-0.95-4"};
-
-        String trainPath = "";
-        RuleType ruleType = RuleType.get("simple-rule");
-        int numRuns = 30;
-        String testScenario = "";
-        String testSetName = "";
-        int numObjectives = 0;
-        int numPopulations = 1;
-        List<Objective> objectives = new ArrayList<>();
-        String featureSetName = "";
-        for (int i = 0; i < algos.length; i++) {
-            for (String scenario : scenarios) {
-                trainPath = dir + algos[i] + "/" + scenario + "/";
-                featureSetName = fsNames[i];
-
-                RuleTestFreqCounter ruleTest = new RuleTestFreqCounter(trainPath,
-                        ruleType, numRuns, testScenario, testSetName, objectives, featureSetName, numPopulations);
-
-                ruleTest.writeToCSV();
-            }
-        }
-
-
-
     }
 }

@@ -4,14 +4,15 @@ import ec.multiobjective.MultiObjectiveFitness;
 import simulation.definition.Objective;
 import simulation.definition.SchedulingSet;
 import simulation.definition.StaticInstance;
+import simulation.definition.logic.Simulation;
+import simulation.definition.logic.StaticSimulation;
 import simulation.rules.rule.AbstractRule;
 import simulation.rules.rule.RuleType;
 import simulation.rules.rule.operation.basic.EDD;
 import simulation.rules.rule.operation.basic.FDD;
 import simulation.rules.rule.operation.basic.SPT;
 import simulation.rules.rule.operation.evolved.GPRule;
-import simulation.definition.logic.Simulation;
-import simulation.definition.logic.StaticSimulation;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -19,7 +20,7 @@ import java.util.Random;
 
 /**
  * The main program of job shop scheduling, for basic testing.
- *
+ * <p>
  * Created by YiMei on 27/09/16.
  */
 public class JSSMain {

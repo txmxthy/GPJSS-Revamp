@@ -6,13 +6,14 @@
 
 
 package ec.multiobjective.spea2;
-import ec.*;
-import ec.select.*;
-import ec.simple.*;
 
-/* 
+import ec.EvolutionState;
+import ec.select.TournamentSelection;
+import ec.simple.SimpleBreeder;
+
+/*
  * SPEA2TournamentSelection.java
- * 
+ *
  * Created: Sat Oct 16 11:24:43 EDT 2010
  * By: Sean Luke
  * Replaces earlier class by: Robert Hubley, with revisions by Gabriel Balan and Keith Sullivan
@@ -24,14 +25,12 @@ import ec.simple.*;
  */
 
 // This all assumes that the archive is the LAST N INDIVIDUALS in the individuals array
-public class SPEA2TournamentSelection extends TournamentSelection
-    {
-    public int getRandomIndividual(int number, int subpopulation, EvolutionState state, int thread)
-        {
+public class SPEA2TournamentSelection extends TournamentSelection {
+    public int getRandomIndividual(int number, int subpopulation, EvolutionState state, int thread) {
         //Individual[] oldinds = state.population.subpops[subpopulation].individuals;
-        int archiveSize = ((SimpleBreeder)(state.breeder)).numElites(state, subpopulation);
+        int archiveSize = ((SimpleBreeder) (state.breeder)).numElites(state, subpopulation);
         int archiveStart = state.population.subpops[subpopulation].individuals.length - archiveSize;
 
         return archiveStart + state.random[thread].nextInt(archiveSize);
-        }
     }
+}

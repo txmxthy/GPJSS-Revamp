@@ -17,12 +17,12 @@ public abstract class TerminalERC extends ERC {
 
     protected GPNode terminal;
 
-    public void setTerminal(GPNode terminal) {
-        this.terminal = terminal;
-    }
-
     public GPNode getTerminal() {
         return terminal;
+    }
+
+    public void setTerminal(GPNode terminal) {
+        this.terminal = terminal;
     }
 
     @Override

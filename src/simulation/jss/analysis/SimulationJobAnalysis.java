@@ -1,12 +1,12 @@
 package simulation.jss.analysis;
 
 import simulation.definition.Job;
+import simulation.definition.logic.DynamicSimulation;
 import simulation.rules.rule.RuleType;
 import simulation.rules.rule.operation.basic.FCFS;
 import simulation.rules.rule.operation.evolved.GPRule;
 import simulation.rules.rule.operation.weighted.WATC;
 import simulation.rules.rule.workcenter.basic.WIQ;
-import simulation.definition.logic.DynamicSimulation;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -52,14 +52,14 @@ public class SimulationJobAnalysis {
         writeJobsToCSV(simulation1, csvFile1);
 
         DynamicSimulation simulation2 = DynamicSimulation.standardMissing(72334,
-                new FCFS(RuleType.SEQUENCING), new WIQ(RuleType.ROUTING),10, 5000, 0, 0.9, 4.0);
+                new FCFS(RuleType.SEQUENCING), new WIQ(RuleType.ROUTING), 10, 5000, 0, 0.9, 4.0);
         simulation2.run();
         File csvFile2 = new File("jobs-missing-0.9-4-FCFS.csv");
         writeJobsToCSV(simulation2, csvFile2);
 
         GPRule rule = GPRule.readFromLispExpression(RuleType.SEQUENCING, "(* (max (- (+ PT (min (+ (+ NOR PT) WINQ) (max NOR SL))) (/ WKR W)) (/ (+ PT (min (/ WINQ NOR) (min (max NPT W) (max NPT SL)))) W)) (/ (+ PT (min (/ WINQ (/ WIQ PT)) (max NPT W))) W))");
         DynamicSimulation simulation3 = DynamicSimulation.standardMissing(72334,
-                rule, new WIQ(RuleType.ROUTING),10, 5000, 0, 0.9, 4.0);
+                rule, new WIQ(RuleType.ROUTING), 10, 5000, 0, 0.9, 4.0);
         simulation3.run();
         File csvFile3 = new File("jobs-missing-0.9-4-GPRule.csv");
         writeJobsToCSV(simulation3, csvFile3);

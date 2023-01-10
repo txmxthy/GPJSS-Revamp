@@ -1,27 +1,34 @@
 package simulation.jss;
 
 import ec.multiobjective.MultiObjectiveFitness;
-import simulation.definition.*;
-import simulation.rules.rule.AbstractRule;
-import simulation.rules.rule.RuleType;
-import simulation.rules.rule.operation.basic.*;
-import simulation.rules.rule.operation.evolved.GPRule;
-import simulation.rules.rule.operation.weighted.*;
-import simulation.rules.rule.workcenter.basic.*;
+import simulation.definition.FlexibleStaticInstance;
+import simulation.definition.Objective;
+import simulation.definition.SchedulingSet;
 import simulation.definition.logic.DynamicSimulation;
 import simulation.definition.logic.Simulation;
 import simulation.definition.logic.StaticSimulation;
+import simulation.rules.rule.AbstractRule;
+import simulation.rules.rule.RuleType;
+import simulation.rules.rule.operation.basic.FCFS;
+import simulation.rules.rule.operation.evolved.GPRule;
+import simulation.rules.rule.operation.weighted.WSPT;
+import simulation.rules.rule.workcenter.basic.WIQ;
 
 import java.io.*;
-import java.nio.file.*;
-import java.util.*;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
-import static simulation.jss.helper.GridResultCleaner.roundMakespan;
 import static simulation.definition.Objective.*;
+import static simulation.jss.helper.GridResultCleaner.roundMakespan;
 
 /**
  * The main program of job shop scheduling, for basic testing.
- *
+ * <p>
  * Created by YiMei on 27/09/16.
  */
 public class FJSSMain {
@@ -80,8 +87,7 @@ public class FJSSMain {
         List<Simulation> simulations = new ArrayList<>();
         simulations.add(new StaticSimulation(sequencingRule, routingRule, instance));
         SchedulingSet set = new SchedulingSet(simulations, replications, objectives);
-        int objectiveValue = calcObjective(sequencingRule, routingRule, fitness, set, objectives);
-        return objectiveValue;
+        return calcObjective(sequencingRule, routingRule, fitness, set, objectives);
 //                String fitnessResult = calcFitness(doStore, sequencingRule, routingRule, fitness, set, objectives);
 //
 //                //store fitness result with sequencing rule and routing rule
@@ -108,8 +114,8 @@ public class FJSSMain {
         //replace /data/ with /out/test/
         String[] pathComponents = filePath.split("/data/");
         //to avoid heavy nesting in output, replace nested directory with filenames
-       
-        String output = pathComponents[0] + "/out/rule_comparisons/" + pathComponents[1].replace("/","-");
+
+        String output = pathComponents[0] + "/out/rule_comparisons/" + pathComponents[1].replace("/", "-");
 
         File file = new File(output);
         try {
@@ -141,10 +147,10 @@ public class FJSSMain {
 
         sequencingRule.calcFitness(fitness, null, set, routingRule, objectives);
 
-        double benchmarkMakeSpan = set.getObjectiveLowerBound(0,0);
-        output += "Benchmark makespan: "+benchmarkMakeSpan+"\n";
-        double ruleMakespan = fitness.fitness()*benchmarkMakeSpan;
-        output += "Rule makespan: "+ruleMakespan+"\n";
+        double benchmarkMakeSpan = set.getObjectiveLowerBound(0, 0);
+        output += "Benchmark makespan: " + benchmarkMakeSpan + "\n";
+        double ruleMakespan = fitness.fitness() * benchmarkMakeSpan;
+        output += "Rule makespan: " + ruleMakespan + "\n";
 
         output += "Fitness = " + fitness.fitnessToStringForHumans();
         System.out.println(output);
@@ -152,15 +158,14 @@ public class FJSSMain {
     }
 
     private static int calcObjective(AbstractRule sequencingRule,
-                                      AbstractRule routingRule,
-                                      MultiObjectiveFitness fitness,
-                                      SchedulingSet set,
-                                      List<Objective> objectives) {
+                                     AbstractRule routingRule,
+                                     MultiObjectiveFitness fitness,
+                                     SchedulingSet set,
+                                     List<Objective> objectives) {
         sequencingRule.calcFitness(fitness, null, set, routingRule, objectives);
 
-        double benchmarkObjectiveValue = set.getObjectiveLowerBound(0,0);
-        int ruleObjectiveValue = roundMakespan(fitness.fitness()*benchmarkObjectiveValue);
-        return ruleObjectiveValue;
+        double benchmarkObjectiveValue = set.getObjectiveLowerBound(0, 0);
+        return roundMakespan(fitness.fitness() * benchmarkObjectiveValue);
     }
 
     public static List<String> getFileNames(List<String> fileNames, Path dir, String ext) {
@@ -178,15 +183,14 @@ public class FJSSMain {
                         }
                     }
                 }
-            }
-            catch(IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
         return fileNames;
     }
 
-    public static List<Path> getDirectoryNames(List directoryNames, Path dir, String ext) {
+    public static List getDirectoryNames(List directoryNames, Path dir, String ext) {
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir)) {
             for (Path path : stream) {
                 if (path.toFile().isDirectory()) {
@@ -222,17 +226,17 @@ public class FJSSMain {
     public static String formatFileName(String fileName) {
         String path = (new File("")).getAbsolutePath() + "/data/FJSS/";
         String outputName = fileName.substring(path.length());
-        outputName = outputName.substring(0,outputName.length()-4); //remove ".fjs"
-        return outputName.replace('/','-');
+        outputName = outputName.substring(0, outputName.length() - 4); //remove ".fjs"
+        return outputName.replace('/', '-');
     }
 
     public static HashMap<String, Integer> readInFJSSBounds() {
         File csvFile = new File((new File("")).getAbsolutePath()
-                +"/fjss_bounds/fjss_bounds.csv");
+                + "/fjss_bounds/fjss_bounds.csv");
         HashMap<String, Integer> bounds = new HashMap<>();
 
         BufferedReader br = null;
-        String line = "";
+        String line;
 
         try {
             br = new BufferedReader(new FileReader(csvFile));
@@ -241,10 +245,8 @@ public class FJSSMain {
                 String[] vals = line.split(",");
                 String fileName = vals[0];
                 Integer lowerBound = Integer.valueOf(vals[1]);
-                bounds.put(fileName,lowerBound);
+                bounds.put(fileName, lowerBound);
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -286,14 +288,14 @@ public class FJSSMain {
                 double utilLevel = utilLevels[i];
                 for (int j = 0; j < 3; ++j) {
                     Objective o = objectives[j];
-                    System.out.println("Objective: "+o.getName()+", Utilisation level: "+utilLevel);
-                    System.out.println("Sequencing rule: "+sequencingRule.getName());
+                    System.out.println("Objective: " + o.getName() + ", Utilisation level: " + utilLevel);
+                    System.out.println("Sequencing rule: " + sequencingRule.getName());
                     //System.out.println("Routing rule: "+routingRule.getName());
                     runDynamicSimulation(o, utilLevel, sequencingRule, routingRule);
                 }
             }
         } else {
-            System.out.println("Invalid argument of "+simulationType+" specified");
+            System.out.println("Invalid argument of " + simulationType + " specified");
         }
     }
 
@@ -313,9 +315,9 @@ public class FJSSMain {
         //AbstractRule sequencingRule = new FCFS(RuleType.SEQUENCING);
         AbstractRule sequencingRule = new FCFS(RuleType.SEQUENCING);
         AbstractRule routingRule = new WIQ(RuleType.ROUTING);
-        System.out.println("Running static simulation for objective: "+objective.getName());
-        System.out.println("Sequencing rule: "+sequencingRule.getName());
-        System.out.println("Routing rule: "+routingRule.getName());
+        System.out.println("Running static simulation for objective: " + objective.getName());
+        System.out.println("Sequencing rule: " + sequencingRule.getName());
+        System.out.println("Routing rule: " + routingRule.getName());
 
         //routingRules.add(GPRule.readFromLispExpression(RuleType.ROUTING," (+ (max WIQ DD) (- (/ AT PT) (min SL NOR)))"));
 
@@ -364,14 +366,13 @@ public class FJSSMain {
 //        routingRules.add(new WIQ(RuleType.ROUTING));
 
         //get the Filenames of all static FJSS instances in the relevant directory
-        List<Path> directoryNames = getDirectoryNames(new ArrayList(), Paths.get(path),".fjs");
+        List<Path> directoryNames = getDirectoryNames(new ArrayList(), Paths.get(path), ".fjs");
 
         //List<String> instanceFileNames = getFileNames(new ArrayList(), Paths.get(path), ".fjs");
-        for (int i = 0; i < directoryNames.size(); ++i) {
-            Path directoryName = directoryNames.get(i);
-            List<String> instanceFileNames = getFileNames(new ArrayList(), directoryName, ".fjs");
+        for (Path directoryName : directoryNames) {
+            List<String> instanceFileNames = getFileNames(new ArrayList<>(), directoryName, ".fjs");
             int numInstances = instanceFileNames.size();
-            System.out.println(numInstances +" FJSS instances in "+ directoryName);
+            System.out.println(numInstances + " FJSS instances in " + directoryName);
             double[] makeSpanRatios = new double[numInstances];
             for (int j = 0; j < numInstances; ++j) {
                 String instanceFileName = instanceFileNames.get(j);
@@ -380,14 +381,14 @@ public class FJSSMain {
                         calculateFitness(instanceFileName, objective, sequencingRule, routingRule);
                 String formattedFileName = formatFileName(instanceFileName);
                 double lowerBound = lowerBounds.get(formattedFileName);
-                double ratio = objectiveVal/lowerBound;
+                double ratio = objectiveVal / lowerBound;
                 makeSpanRatios[j] = ratio;
             }
             double ratioSum = 0.0;
             for (int j = 0; j < numInstances; ++j) {
                 ratioSum += makeSpanRatios[j];
             }
-            System.out.println("Mean lb/objective value is: "+ratioSum/numInstances);
+            System.out.println("Mean lb/objective value is: " + ratioSum / numInstances);
             System.out.println();
         }
 
@@ -411,7 +412,7 @@ public class FJSSMain {
         List<Objective> objectives = new ArrayList<>();
         objectives.add(o);
         int seed = 0;
-        SchedulingSet set = createSchedulingSet(seed,o,utilLevel);
+        SchedulingSet set = createSchedulingSet(seed, o, utilLevel);
 
         int numRuns = 30;
         double[] results = new double[numRuns];
@@ -421,11 +422,11 @@ public class FJSSMain {
             set.rotateSeed(objectives);
         }
 
-        String resultString = "";
+        StringBuilder resultString = new StringBuilder();
         for (int i = 0; i < numRuns; ++i) {
-            resultString += results[i] +",";
+            resultString.append(results[i]).append(",");
         }
-        System.out.println(resultString.substring(0,resultString.length()-1));
+        System.out.println(resultString.substring(0, resultString.length() - 1));
 
         //System.out.println("Fitness averaged across "+numRuns+ " runs: "+(fitnessSum/numRuns));
         System.out.println();
@@ -445,19 +446,18 @@ public class FJSSMain {
         // Min number of operations
         int minNumOperations = 1;
         // Max number of operations
-        int maxNumOperations = numMachines;
         // Due date factor
         double dueDateFactor = 4.0;
         // Number of replications
         int rep = 1;
         //Seed
         Simulation simulation = new DynamicSimulation(seed,
-                    null, null, numMachines, numJobs, warmupJobs,
-                    minNumOperations, maxNumOperations,
-                    utilLevel, dueDateFactor, false);
+                null, null, numMachines, numJobs, warmupJobs,
+                minNumOperations, numMachines,
+                utilLevel, dueDateFactor, false);
 
         trainSimulations.add(simulation);
-        replications.add(new Integer(rep));
+        replications.add(rep);
 
         return new SchedulingSet(trainSimulations, replications, objectives);
     }

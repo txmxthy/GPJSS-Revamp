@@ -1,7 +1,7 @@
 package simulation.definition.logic.event;
 
-import simulation.definition.*;
 import simulation.definition.Process;
+import simulation.definition.*;
 import simulation.definition.logic.RoutingDecisionSituation;
 import simulation.definition.logic.SequencingDecisionSituation;
 import simulation.definition.logic.Simulation;
@@ -58,7 +58,7 @@ public class ProcessFinishEvent extends AbstractEvent {
             Job job = process.getOperationOption().getJob();
             job.setCompletionTime(process.getFinishTime());
             simulation.completeJob(job);
-            
+
             //fzhang 29.8.2018 when a job is finished, record the completion time of this job. So, we have 5000 jobs, 5000 information
             //too much information. This is suitable in test process and set the job number a relative smaller number.
             /*System.out.println("Job ID: "+job.getId());
@@ -69,13 +69,12 @@ public class ProcessFinishEvent extends AbstractEvent {
             System.out.println("Average Processing Time: "+job.getAvgProcTime()); //getTotalProcTime/numOfOperations
             System.out.println("Flow Time: "+job.flowTime());
             System.out.println("Waiting Time: "+job.getWaitingTime());*/
-        }
-        else {
+        } else {
             simulation.addEvent(new OperationVisitEvent(time, nextOp));
         }
     }
 
-	// modified by fzhang 26.4.2018 write bad run times to *.csv
+    // modified by fzhang 26.4.2018 write bad run times to *.csv
 /* 	public void WriteCompletionTime(EvolutionState state, final Parameter base) {
  		Parameter p;
  		// Get the job seed.
@@ -93,11 +92,11 @@ public class ProcessFinishEvent extends AbstractEvent {
  			e.printStackTrace();
  		}
  	}*/
- 	
+
     @Override
     public void addSequencingDecisionSituation(Simulation simulation,
-                                     List<SequencingDecisionSituation> situations,
-                                     int minQueueLength) {
+                                               List<SequencingDecisionSituation> situations,
+                                               int minQueueLength) {
         WorkCenter workCenter = process.getWorkCenter();
         process.getOperationOption().getJob().addProcessFinishEvent(this);
 
@@ -130,16 +129,15 @@ public class ProcessFinishEvent extends AbstractEvent {
             Job job = process.getOperationOption().getJob();
             job.setCompletionTime(process.getFinishTime());
             simulation.completeJob(job);
-        }
-        else {
+        } else {
             simulation.addEvent(new OperationVisitEvent(time, nextOp));
         }
     }
 
     @Override
     public void addRoutingDecisionSituation(Simulation simulation,
-                                               List<RoutingDecisionSituation> situations,
-                                               int minOptions) {
+                                            List<RoutingDecisionSituation> situations,
+                                            int minOptions) {
         WorkCenter workCenter = process.getWorkCenter();
         process.getOperationOption().getJob().addProcessFinishEvent(this);
 
@@ -177,8 +175,7 @@ public class ProcessFinishEvent extends AbstractEvent {
             Job job = process.getOperationOption().getJob();
             job.setCompletionTime(process.getFinishTime());
             simulation.completeJob(job);
-        }
-        else {
+        } else {
             simulation.addEvent(new OperationVisitEvent(time, nextOp));
         }
     }
@@ -202,13 +199,13 @@ public class ProcessFinishEvent extends AbstractEvent {
             return 1;
 
         if (other instanceof ProcessFinishEvent) {
-            ProcessFinishEvent otherPFE = (ProcessFinishEvent)other;
+            ProcessFinishEvent otherPFE = (ProcessFinishEvent) other;
 
             if (process.getWorkCenter().getId() < otherPFE.process.getWorkCenter().getId())
                 return -1;
 
             if (process.getWorkCenter().getId() > otherPFE.process.getWorkCenter().getId())
-            return 1;
+                return 1;
         }
 
         return 1;

@@ -61,10 +61,10 @@ public class RuleCoevolutionProblem extends RuleOptimizationProblem implements G
                                      Population pop,
                                      boolean[] prepareForFitnessAssessment,
                                      boolean countVictoriesOnly) {
-        for (int i = 0 ; i < pop.subpops.length; i++) {
+        for (int i = 0; i < pop.subpops.length; i++) {
             if (prepareForFitnessAssessment[i]) {
                 for (int j = 0; j < pop.subpops[i].individuals.length; j++) {
-                	//System.out.println("i = " + i + ", j = " + j);
+                    //System.out.println("i = " + i + ", j = " + j);
                     pop.subpops[i].individuals[j].fitness.trials = new ArrayList();
                 }
             }
@@ -83,7 +83,7 @@ public class RuleCoevolutionProblem extends RuleOptimizationProblem implements G
 
                     double[] objectiveFitness = new double[1];
                     //can use fitness from first trial, as this will always be least
-                    objectiveFitness[0] = ((Double) (fit.trials.get(0))).doubleValue();
+                    objectiveFitness[0] = (Double) (fit.trials.get(0));
                     fit.setObjectives(state, objectiveFitness);
                     pop.subpops[i].individuals[j].evaluated = true;
                 }
@@ -107,15 +107,15 @@ public class RuleCoevolutionProblem extends RuleOptimizationProblem implements G
                     " but number of individuals provided to RuleCoevolutionProblem is 1.");
         }
 
-        List<AbstractRule> rules = new ArrayList<AbstractRule>();
-        List<Fitness> fitnesses = new ArrayList<Fitness>();
+        List<AbstractRule> rules = new ArrayList<>();
+        List<Fitness> fitnesses = new ArrayList<>();
 
         //step 1: setup sequencing rule for the first GPtree
-        rules.add(new GPRule(RuleType.SEQUENCING,((GPIndividual)ind[0]).trees[0])); //the first one always the best one
+        rules.add(new GPRule(RuleType.SEQUENCING, ((GPIndividual) ind[0]).trees[0])); //the first one always the best one
         fitnesses.add(ind[0].fitness);
 
         //setup routing rule for the second GPTree
-        rules.add(new GPRule(RuleType.ROUTING,((GPIndividual)ind[1]).trees[0])); //the first one always the best one
+        rules.add(new GPRule(RuleType.ROUTING, ((GPIndividual) ind[1]).trees[0])); //the first one always the best one
         fitnesses.add(ind[1].fitness);
 
         evaluationModel.evaluate(fitnesses, rules, state);  // yimei.jss.ruleevaluation.MultipleRuleEvaluationModel
@@ -138,15 +138,14 @@ public class RuleCoevolutionProblem extends RuleOptimizationProblem implements G
                         coind.fitness.setContext(ind, i);
                     }
                     coind.fitness.trials.add(trialValue);
-                }
-                else if (((Double)(coind.fitness.trials.get(0))).doubleValue() > trialValue)  // best trial is presently #0
+                } else if ((Double) (coind.fitness.trials.get(0)) > trialValue)  // best trial is presently #0
                 {
                     if (shouldSetContext) {
                         //this is the new best trial, update context
                         coind.fitness.setContext(ind, i);
                     }
                     // put me at position 0
-                    Double t = (Double)(coind.fitness.trials.get(0));
+                    Double t = (Double) (coind.fitness.trials.get(0));
                     coind.fitness.trials.set(0, trialValue);  // put me at 0
                     coind.fitness.trials.add(t);  // move him to the end
                 }
@@ -158,5 +157,5 @@ public class RuleCoevolutionProblem extends RuleOptimizationProblem implements G
                 ((MultiObjectiveFitness) coind.fitness).setObjectives(state, objectiveFitness);
             }
         }
-    }  
+    }
 }

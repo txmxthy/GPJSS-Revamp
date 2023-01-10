@@ -2,9 +2,9 @@ package simulation.rules.rule.operation.weighted;
 
 import simulation.definition.OperationOption;
 import simulation.definition.WorkCenter;
+import simulation.definition.logic.state.SystemState;
 import simulation.rules.rule.RuleType;
 import simulation.rules.rule.operation.composite.ATC;
-import simulation.definition.logic.state.SystemState;
 
 /**
  * Created by YiMei on 27/09/16.

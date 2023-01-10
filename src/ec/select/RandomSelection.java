@@ -6,13 +6,17 @@
 
 
 package ec.select;
-import ec.*;
-import ec.util.*;
-import ec.steadystate.*;
 
-/* 
+import ec.EvolutionState;
+import ec.Individual;
+import ec.SelectionMethod;
+import ec.steadystate.SteadyStateBSourceForm;
+import ec.steadystate.SteadyStateEvolutionState;
+import ec.util.Parameter;
+
+/*
  * RandomSelection.java
- * 
+ *
  * Created: Tue Sep 3 2002
  * By: Liviu Panait
  */
@@ -21,65 +25,59 @@ import ec.steadystate.*;
  * Picks a random individual in the subpopulation.  This is mostly
  * for testing purposes.
  *
-
- <p><b>Default Base</b><br>
- select.random
-
+ *
+ * <p><b>Default Base</b><br>
+ * select.random
  *
  * @author Sean Luke
- * @version 1.0 
+ * @version 1.0
  */
 
-public class RandomSelection extends SelectionMethod implements SteadyStateBSourceForm
-    {
-    /** default base */
+public class RandomSelection extends SelectionMethod implements SteadyStateBSourceForm {
+    /**
+     * default base
+     */
     public static final String P_RANDOM = "random";
 
-    public Parameter defaultBase()
-        {
+    public Parameter defaultBase() {
         return SelectDefaults.base().push(P_RANDOM);
-        }
+    }
 
     // I hard-code both produce(...) methods for efficiency's sake
 
     public int produce(final int subpopulation,
-        final EvolutionState state,
-        final int thread)
-        {
-        return state.random[thread].nextInt( state.population.subpops[subpopulation].individuals.length );
-        }
+                       final EvolutionState state,
+                       final int thread) {
+        return state.random[thread].nextInt(state.population.subpops[subpopulation].individuals.length);
+    }
 
     // I hard-code both produce(...) methods for efficiency's sake
 
-    public int produce(final int min, 
-        final int max, 
-        final int start,
-        final int subpopulation,
-        final Individual[] inds,
-        final EvolutionState state,
-        final int thread) 
-        {
+    public int produce(final int min,
+                       final int max,
+                       final int start,
+                       final int subpopulation,
+                       final Individual[] inds,
+                       final EvolutionState state,
+                       final int thread) {
         int n = 1;
-        if (n>max) n = max;
-        if (n<min) n = min;
+        if (n > max) n = max;
+        if (n < min) n = min;
 
-        for(int q = 0; q < n; q++)
-            {
+        for (int q = 0; q < n; q++) {
             Individual[] oldinds = state.population.subpops[subpopulation].individuals;
-            inds[start+q] = oldinds[state.random[thread].nextInt( state.population.subpops[subpopulation].individuals.length )];
-            }
-        return n;
+            inds[start + q] = oldinds[state.random[thread].nextInt(state.population.subpops[subpopulation].individuals.length)];
         }
+        return n;
+    }
 
     public void individualReplaced(final SteadyStateEvolutionState state,
-        final int subpopulation,
-        final int thread,
-        final int individual)
-        {
-        }
-    
-    public void sourcesAreProperForm(final SteadyStateEvolutionState state)
-        {
-        }
-    
+                                   final int subpopulation,
+                                   final int thread,
+                                   final int individual) {
     }
+
+    public void sourcesAreProperForm(final SteadyStateEvolutionState state) {
+    }
+
+}

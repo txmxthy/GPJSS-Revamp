@@ -11,18 +11,8 @@ import java.util.Map;
 public enum RuleType {
 
     SIMPLE_RULE("simple-rule"),
-	//fzhang 17.11.2018  test rule in multi-objective
-	MULTIOBJECTIVE_RULE("multiobjective-rule");
-
-    private final String name;
-
-    RuleType(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
+    //fzhang 17.11.2018  test rule in multi-objective
+    MULTIOBJECTIVE_RULE("multiobjective-rule");
 
     // Reverse-lookup map
     private static final Map<String, RuleType> lookup = new HashMap<>();
@@ -33,18 +23,26 @@ public enum RuleType {
         }
     }
 
+    private final String name;
+
+    RuleType(String name) {
+        this.name = name;
+    }
+
     public static RuleType get(String name) {
         return lookup.get(name);
     }
 
-    public boolean isMultiobjective() 
-    {
+    public String getName() {
+        return name;
+    }
+
+    public boolean isMultiobjective() {
         switch (this) {
-            case SIMPLE_RULE:
-                return false;
             //fzhang 17.11.2018  test rule in multi-objective
             case MULTIOBJECTIVE_RULE:
-            	return true;
+                return true;
+            case SIMPLE_RULE:
             default:
                 return false;
         }

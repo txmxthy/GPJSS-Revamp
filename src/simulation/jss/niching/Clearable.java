@@ -6,5 +6,6 @@ package simulation.jss.niching;
 public interface Clearable {
 
     void clear();
+
     boolean isCleared();
 }

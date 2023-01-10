@@ -16,7 +16,7 @@ public class BuildingBlock extends GPNode {
 
     public BuildingBlock(GPNode root) {
         super();
-        this.root = (GPNode)root.clone();
+        this.root = (GPNode) root.clone();
     }
 
     public GPNode getRoot() {
@@ -30,15 +30,14 @@ public class BuildingBlock extends GPNode {
     private String subTreeString(GPNode node) {
         if (node.children.length == 0) {
             return node.toString();
-        }
-        else {
-            String string = "(" + node;
+        } else {
+            StringBuilder string = new StringBuilder("(" + node);
             for (GPNode child : node.children) {
-                string += " " + subTreeString(child);
+                string.append(" ").append(subTreeString(child));
             }
-            string += ")";
+            string.append(")");
 
-            return string;
+            return string.toString();
         }
     }
 

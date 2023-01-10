@@ -39,8 +39,8 @@ public class JSSInstanceCompleter {
             // Read the number of jobs and machines
             line = br.readLine();
             segments = line.split("\\s+");
-            int numJobs = Integer.valueOf(segments[0]);
-            int numWorkCenters = Integer.valueOf(segments[1]);
+            int numJobs = Integer.parseInt(segments[0]);
+            int numWorkCenters = Integer.parseInt(segments[1]);
 
             instance = new StaticInstance(numWorkCenters, numJobs);
 
@@ -55,13 +55,12 @@ public class JSSInstanceCompleter {
                 double arrivalTime = 0;
                 double totalProcTime = 0;
                 double weight = 1;
-                int numOps = numWorkCenters;
                 List<Integer> route = new ArrayList<>();
                 List<Double> procTimes = new ArrayList<>();
 
                 for (int i = 0; i < numWorkCenters; i++) {
-                    int wcid = Integer.valueOf(segments[2 * i + 1]);
-                    double procTime = Double.valueOf(segments[2 * i + 2]);
+                    int wcid = Integer.parseInt(segments[2 * i + 1]);
+                    double procTime = Double.parseDouble(segments[2 * i + 2]);
                     totalProcTime += procTime;
 
                     route.add(wcid);
@@ -70,7 +69,7 @@ public class JSSInstanceCompleter {
 
                 double dueDate = arrivalTime + 4 * totalProcTime;
 
-                instance.addJob(arrivalTime, dueDate, weight, numOps, route, procTimes);
+                instance.addJob(arrivalTime, dueDate, weight, numWorkCenters, route, procTimes);
             }
         } catch (IOException e) {
             e.printStackTrace();

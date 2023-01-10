@@ -11,7 +11,8 @@ import ec.EvolutionState;
 import ec.Individual;
 import ec.SelectionMethod;
 import ec.util.Parameter;
-import ec.vector.*;
+import ec.vector.VectorDefaults;
+import ec.vector.VectorIndividual;
 
 /**
  * <p>GeneDuplicationPipeline is designed to duplicate a sequence of genes from the chromosome and append
@@ -29,30 +30,29 @@ import ec.vector.*;
  * @author Sean Luke, Joseph Zelibor III, and Eric Kangas
  * @version 1.0
  */
-public class GeneDuplicationPipeline extends BreedingPipeline
-    {
+public class GeneDuplicationPipeline extends BreedingPipeline {
     public static final String P_DUPLICATION = "duplicate";
     public static final int NUM_SOURCES = 1;
 
-    public Parameter defaultBase()
-        {
+    public Parameter defaultBase() {
         return VectorDefaults.base().push(P_DUPLICATION);
-        }
+    }
 
-    public int numSources() { return NUM_SOURCES; }
+    public int numSources() {
+        return NUM_SOURCES;
+    }
 
-    public int produce(int min, 
-        int max, 
-        int start, 
-        int subpopulation,
-        Individual[] inds, 
-        EvolutionState state, 
-        int thread) 
-        {
+    public int produce(int min,
+                       int max,
+                       int start,
+                       int subpopulation,
+                       Individual[] inds,
+                       EvolutionState state,
+                       int thread) {
 
         // grab individuals from our source and stick 'em right into inds.
         // we'll modify them from there
-        int n = sources[0].produce(min,max,start,subpopulation,inds,state,thread);
+        int n = sources[0].produce(min, max, start, subpopulation, inds, state, thread);
 
 
         // should we bother?
@@ -61,61 +61,57 @@ public class GeneDuplicationPipeline extends BreedingPipeline
 
 
         // now let's mutate 'em
-        for(int q=start; q < n+start; q++)
-            {
+        for (int q = start; q < n + start; q++) {
             if (sources[0] instanceof SelectionMethod)
-                inds[q] = (Individual)(inds[q].clone());
+                inds[q] = (Individual) (inds[q].clone());
 
             //duplicate from the genome between a random begin and end point,
             //and put that at the end of the new genome.
-            VectorIndividual ind = (VectorIndividual)(inds[q]);
-            
+            VectorIndividual ind = (VectorIndividual) (inds[q]);
+
             int len = ind.genomeLength();
 
             //zero length individual, just return
-            if (len == 0)
-                {
+            if (len == 0) {
                 return n;
-                }
+            }
 
             int end = 0;
-            int begin = state.random[thread].nextInt(len+1);
-            do 
-                {
-                end = state.random[thread].nextInt(len+1);
-                } 
+            int begin = state.random[thread].nextInt(len + 1);
+            do {
+                end = state.random[thread].nextInt(len + 1);
+            }
             while (begin == end);  //because the end is exclusive, start cannot be
             //equal to end.
-            
 
-            if (end < begin) 
-                {
+
+            if (end < begin) {
                 int temp = end;  //swap if necessary
                 end = begin;
                 begin = temp;
-                }
+            }
 
             // copy the original into a new array.
             Object[] original = new Object[2];
-            ind.split(new int[] {0, len}, original);
-                        
+            ind.split(new int[]{0, len}, original);
+
             // copy the splice into a new array
             Object[] splice = new Object[3];
-            ind.split(new int[] {begin, end}, splice);
-                        
+            ind.split(new int[]{begin, end}, splice);
+
             // clone the genes in splice[1] (which we'll concatenate back in) in case we're using GeneVectorIndividual
             ind.cloneGenes(splice[1]);
-            
+
             // appends the pieces together with the splice at the end.
-            ind.join(new Object[] {original[1], splice[1]});
-            }
+            ind.join(new Object[]{original[1], splice[1]});
+        }
         return n;  // number of individuals produced, 1 here.
-        }
-
-        //fzhang 2019.6.15
-        @Override
-        public int produceFrac(int min, int max, int start, int subpopulation, Individual[] inds, EvolutionState state, int thread) {
-            return 0;
-        }
-
     }
+
+    //fzhang 2019.6.15
+    @Override
+    public int produceFrac(int min, int max, int start, int subpopulation, Individual[] inds, EvolutionState state, int thread) {
+        return 0;
+    }
+
+}

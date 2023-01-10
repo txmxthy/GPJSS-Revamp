@@ -6,9 +6,9 @@
 
 
 package ec.simple;
-import ec.*;
+
+import ec.EvolutionState;
 import ec.util.Checkpoint;
-import ec.util.Parameter;
 
 /*
  * SimpleEvolutionState.java
@@ -39,15 +39,13 @@ import ec.util.Parameter;
  * @version 1.0
  */
 
-public class SimpleEvolutionState extends EvolutionState
-    {
+public class SimpleEvolutionState extends EvolutionState {
     /**
      *
      */
-    public void startFresh()
-        {
+    public void startFresh() {
         output.message("Setting up");
-        setup(this,null);  // a garbage Parameter  setup checkpoint, evaluations/generations, quit-on-run-complete,
+        setup(this, null);  // a garbage Parameter  setup checkpoint, evaluations/generations, quit-on-run-complete,
         //setup a singletons (initializer, finisher, breeder,  evaluator, statistics, exchanger)
 
         // POPULATION INITIALIZATION
@@ -59,41 +57,35 @@ public class SimpleEvolutionState extends EvolutionState
         statistics.postInitializationStatistics(this);
 
         // Compute generations from evaluations if necessary
-        if (numEvaluations > UNDEFINED)
-            {
+        if (numEvaluations > UNDEFINED) {
             // compute a generation's number of individuals
             int generationSize = 0;
-            for (int sub=0; sub < population.subpops.length; sub++)
-                {
+            for (int sub = 0; sub < population.subpops.length; sub++) {
                 generationSize += population.subpops[sub].individuals.length;  // so our sum total 'generationSize' will be the initial total number of individuals
-                }
+            }
 
-            if (numEvaluations < generationSize)
-                {
+            if (numEvaluations < generationSize) {
                 numEvaluations = generationSize;
                 numGenerations = 1;
                 output.warning("Using evaluations, but evaluations is less than the initial total population size (" + generationSize + ").  Setting to the populatiion size.");
-                }
-            else
-                {
+            } else {
                 if (numEvaluations % generationSize != 0)
                     output.warning("Using evaluations, but initial total population size does not divide evenly into it.  Modifying evaluations to a smaller value ("
-                        + ((numEvaluations / generationSize) * generationSize) +") which divides evenly.");  // note integer division
-                numGenerations = (int)(numEvaluations / generationSize);  // note integer division
+                            + ((numEvaluations / generationSize) * generationSize) + ") which divides evenly.");  // note integer division
+                numGenerations = (int) (numEvaluations / generationSize);  // note integer division
                 numEvaluations = (long) numGenerations * generationSize;
-                }
-            output.message("Generations will be " + numGenerations);
             }
+            output.message("Generations will be " + numGenerations);
+        }
 
         // INITIALIZE CONTACTS -- done after initialization to allow
         // a hook for the user to do things in Initializer before
         // an attempt is made to connect to island models etc.
         exchanger.initializeContacts(this);
         evaluator.initializeContacts(this);
-        }
-    
-    public int evolve()
-        {
+    }
+
+    public int evolve() {
         if (generation > 0)
             output.message("Generation " + generation);
 
@@ -103,26 +95,23 @@ public class SimpleEvolutionState extends EvolutionState
         statistics.postEvaluationStatistics(this);
 
         // SHOULD WE QUIT?
-        if (evaluator.runComplete(this) && quitOnRunComplete)
-            {
+        if (evaluator.runComplete(this) && quitOnRunComplete) {
             output.message("Found Ideal Individual");
             return R_SUCCESS;
-            }
+        }
 
         // SHOULD WE QUIT?
-        if (generation == numGenerations-1)
-            {
+        if (generation == numGenerations - 1) {
             return R_FAILURE;
-            }
+        }
 
         // PRE-BREEDING EXCHANGING
         statistics.prePreBreedingExchangeStatistics(this);
-        population = exchanger.preBreedingExchangePopulation(this);  
+        population = exchanger.preBreedingExchangePopulation(this);
         statistics.postPreBreedingExchangeStatistics(this);
 
         String exchangerWantsToShutdown = exchanger.runComplete(this);
-        if (exchangerWantsToShutdown!=null)
-            {
+        if (exchangerWantsToShutdown != null) {
             output.message(exchangerWantsToShutdown);
             /*
              * Don't really know what to return here.  The only place I could
@@ -137,7 +126,7 @@ public class SimpleEvolutionState extends EvolutionState
              */
 
             return R_SUCCESS;
-            }
+        }
 
         // BREEDING
         statistics.preBreedingStatistics(this);
@@ -154,28 +143,26 @@ public class SimpleEvolutionState extends EvolutionState
 
         // INCREMENT GENERATION AND CHECKPOINT
         generation++;
-        if (checkpoint && generation%checkpointModulo == 0)
-            {
+        if (checkpoint && generation % checkpointModulo == 0) {
             output.message("Checkpointing");
             statistics.preCheckpointStatistics(this);
             Checkpoint.setCheckpoint(this);
             statistics.postCheckpointStatistics(this);
-            }
+        }
 
         return R_NOTDONE;
-        }
+    }
 
     /**
-     * @param result
+     *
      */
-    public void finish(int result)
-        {
+    public void finish(int result) {
         //Output.message("Finishing");
         /* finish up -- we completed. */
-        statistics.finalStatistics(this,result);
-        finisher.finishPopulation(this,result);
-        exchanger.closeContacts(this,result);
-        evaluator.closeContacts(this,result);
-        }
-
+        statistics.finalStatistics(this, result);
+        finisher.finishPopulation(this, result);
+        exchanger.closeContacts(this, result);
+        evaluator.closeContacts(this, result);
     }
+
+}

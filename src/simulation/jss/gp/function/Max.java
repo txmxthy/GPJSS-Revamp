@@ -16,52 +16,50 @@ import ec.gp.GPNode;
 import simulation.jss.gp.data.DoubleData;
 
 /**
- *
  * Functional GPNode: Max. Given two children, it returns the larger one.
  *
  * @author yimei
- *
  */
 
 public class Max extends GPNode {
 
-	public String toString() {
-		return "Max";
-	}
+    public String toString() {
+        return "Max";
+    }
 
-/*
-  public void checkConstraints(final EvolutionState state,
-  final int tree,
-  final GPIndividual typicalIndividual,
-  final Parameter individualBase)
-  {
-  super.checkConstraints(state,tree,typicalIndividual,individualBase);
-  if (children.length!=2)
-  state.output.error("Incorrect number of children for node " +
-  toStringForError() + " at " +
-  individualBase);
-  }
-*/
+    /*
+      public void checkConstraints(final EvolutionState state,
+      final int tree,
+      final GPIndividual typicalIndividual,
+      final Parameter individualBase)
+      {
+      super.checkConstraints(state,tree,typicalIndividual,individualBase);
+      if (children.length!=2)
+      state.output.error("Incorrect number of children for node " +
+      toStringForError() + " at " +
+      individualBase);
+      }
+    */
     public int expectedChildren() {
-    	return 2;
+        return 2;
     }
 
     public void eval(final EvolutionState state,
-    		final int thread,
-    		final GPData input,
-    		final ADFStack stack,
-    		final GPIndividual individual,
-    		final Problem problem) {
+                     final int thread,
+                     final GPData input,
+                     final ADFStack stack,
+                     final GPIndividual individual,
+                     final Problem problem) {
 
         double result;
-        DoubleData rd = ((DoubleData)(input));
+        DoubleData rd = ((DoubleData) (input));
 
-		children[0].eval(state,thread,input,stack,individual,problem);
-		result = rd.value;
+        children[0].eval(state, thread, input, stack, individual, problem);
+        result = rd.value;
 
-		children[1].eval(state,thread,input,stack,individual,problem);
-		if (rd.value < result)
-			rd.value = result;
+        children[1].eval(state, thread, input, stack, individual, problem);
+        if (rd.value < result)
+            rd.value = result;
     }
 }
 

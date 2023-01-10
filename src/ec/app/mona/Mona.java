@@ -6,14 +6,17 @@
 
 package ec.app.mona;
 
-import ec.*;
-import ec.util.*;
-import ec.vector.*;
-import ec.simple.*;
-import java.io.*;
+import ec.EvolutionState;
+import ec.Individual;
+import ec.Problem;
+import ec.simple.SimpleFitness;
+import ec.simple.SimpleProblemForm;
+import ec.util.Parameter;
+import ec.vector.DoubleVectorIndividual;
 
-public class Mona extends Problem implements SimpleProblemForm
-    {
+import java.io.File;
+
+public class Mona extends Problem implements SimpleProblemForm {
     public static final String P_IN = "in";
     public static final String P_OUT = "out";
     public static final String P_VERTICES = "num-vertices";
@@ -23,62 +26,57 @@ public class Mona extends Problem implements SimpleProblemForm
     public File out;
     public int numVertices;
 
-    public Object clone()
-        {
-        Mona m = (Mona)(super.clone());
-        m.pic = (Picture)(pic.clone());
+    public Object clone() {
+        Mona m = (Mona) (super.clone());
+        m.pic = (Picture) (pic.clone());
         return m;
-        }
+    }
 
-    public void setup(EvolutionState state, Parameter base)
-        {
+    public void setup(EvolutionState state, Parameter base) {
         super.setup(state, base);
         in = state.parameters.getFile(base.push(P_IN), null);
         out = state.parameters.getFile(base.push(P_OUT), null);
         numVertices = state.parameters.getInt(base.push(P_VERTICES), null, 3);
         if (numVertices < 3) state.output.fatal("Number of vertices must be >= 3");
         pic.load(in);
-        }
+    }
 
-    public void evaluate(final EvolutionState state, final Individual ind, final int subpopulation, final int threadnum)
-        {
+    public void evaluate(final EvolutionState state, final Individual ind, final int subpopulation, final int threadnum) {
         if (ind.evaluated) return;
 
-        DoubleVectorIndividual _ind = (DoubleVectorIndividual)ind;
+        DoubleVectorIndividual _ind = (DoubleVectorIndividual) ind;
         int vertexSkip = numVertices * 2 + 4;  // for four colors
 
         pic.clear();
-        for(int i = 0; i < _ind.genome.length; i+=vertexSkip)
+        for (int i = 0; i < _ind.genome.length; i += vertexSkip)
             pic.addPolygon(_ind.genome, i, numVertices);
 
         double error = pic.error();
-        ((SimpleFitness)(_ind.fitness)).setFitness(state, (1.0 - error), error == 0);
+        ((SimpleFitness) (_ind.fitness)).setFitness(state, (1.0 - error), error == 0);
         ind.evaluated = true;
-        }
+    }
 
-    public void finishEvaluating(final EvolutionState state, final int threadnum)
-        {
+    public void finishEvaluating(final EvolutionState state, final int threadnum) {
         pic.disposeGraphics();  // dutifully
-        }
+    }
 
     public void describe(
-        final EvolutionState state,
-        final Individual ind,
-        final int threadnum,
-        final int subpopulation,
-        final int log)
-        {
+            final EvolutionState state,
+            final Individual ind,
+            final int threadnum,
+            final int subpopulation,
+            final int log) {
         ind.evaluated = false;
-        evaluate(state, ind, subpopulation,threadnum);
+        evaluate(state, ind, subpopulation, threadnum);
         pic.save(new File(out.getParentFile(), "" + (state.generation) + "-" + out.getName()));  // not sure if "." is acceptable in Windows
         pic.display("Best So Far, Generation " + state.generation);
         // System.out.println("Filled Polygons: " + pic.getLatestFilledPolygonCount() + " of " + pic.getLatestTotalCount());
         ind.evaluated = true;
-        }
-
-	@Override
-	public void normObjective(EvolutionState state, Individual ind, int subpopulation, int threadnum) {
-		// TODO Auto-generated method stub
-
-	}
     }
+
+    @Override
+    public void normObjective(EvolutionState state, Individual ind, int subpopulation, int threadnum) {
+        // TODO Auto-generated method stub
+
+    }
+}

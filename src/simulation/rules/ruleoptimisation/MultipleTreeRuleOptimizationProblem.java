@@ -1,8 +1,5 @@
 package simulation.rules.ruleoptimisation;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import ec.EvolutionState;
 import ec.Individual;
 import ec.gp.GPIndividual;
@@ -12,72 +9,76 @@ import simulation.rules.rule.RuleType;
 import simulation.rules.rule.operation.evolved.GPRule;
 import simulation.rules.ruleevaluation.AbstractEvaluationModel;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MultipleTreeRuleOptimizationProblem extends RuleOptimizationProblem {
 
-	   public static final String P_EVAL_MODEL = "eval-model";
+    public static final String P_EVAL_MODEL = "eval-model";
 
-	    private AbstractEvaluationModel evaluationModel;
+    private AbstractEvaluationModel evaluationModel;
 
-	    public List<Objective> getObjectives() {
-	        return evaluationModel.getObjectives();
-	    }
+    public List<Objective> getObjectives() {
+        return evaluationModel.getObjectives();
+    }
 
-	    public AbstractEvaluationModel getEvaluationModel() {
-	        return evaluationModel;
-	    }
+    public AbstractEvaluationModel getEvaluationModel() {
+        return evaluationModel;
+    }
 
-	    public void rotateEvaluationModel() {
-	        evaluationModel.rotate();
-	    }
-	 @Override
-	    public void setup(final EvolutionState state, final Parameter base) {
-	        super.setup(state, base);  //about ADFStack and ADFContext
+    public void rotateEvaluationModel() {
+        evaluationModel.rotate();
+    }
 
-	        Parameter p = base.push(P_EVAL_MODEL);  //yimei.jss.ruleevaluation.MultipleRuleEvaluationModel  here is different with before.
-	        evaluationModel = (AbstractEvaluationModel)(
-	                state.parameters.getInstanceForParameter(
-	                        p, null, AbstractEvaluationModel.class));
+    @Override
+    public void setup(final EvolutionState state, final Parameter base) {
+        super.setup(state, base);  //about ADFStack and ADFContext
 
-	        evaluationModel.setup(state, p);
-	    }
+        Parameter p = base.push(P_EVAL_MODEL);  //yimei.jss.ruleevaluation.MultipleRuleEvaluationModel  here is different with before.
+        evaluationModel = (AbstractEvaluationModel) (
+                state.parameters.getInstanceForParameter(
+                        p, null, AbstractEvaluationModel.class));
 
-	 public void normObjective(EvolutionState state, Individual indi, int subpopulation, int threadnum) {
+        evaluationModel.setup(state, p);
+    }
 
-		 GPRule sequencingRule = new GPRule(RuleType.SEQUENCING, ((GPIndividual) indi).trees[0]);
-		 GPRule routingRule = new GPRule(RuleType.ROUTING, ((GPIndividual) indi).trees[1]);
+    public void normObjective(EvolutionState state, Individual indi, int subpopulation, int threadnum) {
 
-		 List rules = new ArrayList();
-		 List fitnesses = new ArrayList();
+        GPRule sequencingRule = new GPRule(RuleType.SEQUENCING, ((GPIndividual) indi).trees[0]);
+        GPRule routingRule = new GPRule(RuleType.ROUTING, ((GPIndividual) indi).trees[1]);
 
-		 rules.add(sequencingRule);
-		 rules.add(routingRule);
+        List rules = new ArrayList();
+        List fitnesses = new ArrayList();
 
-		 fitnesses.add(indi.fitness);
+        rules.add(sequencingRule);
+        rules.add(routingRule);
 
-		 evaluationModel.normObjective(fitnesses, rules, state);
-	 }
+        fitnesses.add(indi.fitness);
+
+        evaluationModel.normObjective(fitnesses, rules, state);
+    }
 
 
-	public void evaluate(EvolutionState state, Individual indi, int subpopulation, int threadnum) {
+    public void evaluate(EvolutionState state, Individual indi, int subpopulation, int threadnum) {
 
-		//GPRule rule = new GPRule(RuleType.SEQUENCING, ((GPIndividual) indi).trees[0]);
+        //GPRule rule = new GPRule(RuleType.SEQUENCING, ((GPIndividual) indi).trees[0]);
 
-		//modified by fzhang 23.5.2018  read two rules from one individual
-		GPRule sequencingRule = new GPRule(RuleType.SEQUENCING, ((GPIndividual) indi).trees[0]);
-		GPRule routingRule = new GPRule(RuleType.ROUTING, ((GPIndividual) indi).trees[1]);
+        //modified by fzhang 23.5.2018  read two rules from one individual
+        GPRule sequencingRule = new GPRule(RuleType.SEQUENCING, ((GPIndividual) indi).trees[0]);
+        GPRule routingRule = new GPRule(RuleType.ROUTING, ((GPIndividual) indi).trees[1]);
 
-		List rules = new ArrayList();
-		List fitnesses = new ArrayList();
+        List rules = new ArrayList();
+        List fitnesses = new ArrayList();
 
-		//rules.add(rule);
-		//modified by fzhang  to save two rules for evaluating from one individual
-		rules.add(sequencingRule);
-		rules.add(routingRule);
+        //rules.add(rule);
+        //modified by fzhang  to save two rules for evaluating from one individual
+        rules.add(sequencingRule);
+        rules.add(routingRule);
 
-		fitnesses.add(indi.fitness);
+        fitnesses.add(indi.fitness);
 
-		evaluationModel.evaluate(fitnesses, rules, state);
+        evaluationModel.evaluate(fitnesses, rules, state);
 
-		indi.evaluated = true;
-	}
+        indi.evaluated = true;
+    }
 }

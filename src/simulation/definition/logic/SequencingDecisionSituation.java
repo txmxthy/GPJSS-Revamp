@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * A decision situation.
- *
+ * <p>
  * Created by YiMei on 3/10/16.
  */
 public class SequencingDecisionSituation extends DecisionSituation {
@@ -39,6 +39,7 @@ public class SequencingDecisionSituation extends DecisionSituation {
     }
 
     public SequencingDecisionSituation clone() {
+        SequencingDecisionSituation sequencingDecisionSituation = (SequencingDecisionSituation) clone();
         List<OperationOption> clonedQ = new ArrayList<>(queue);
         WorkCenter clonedWC = workCenter.clone();
         SystemState clonedState = systemState.clone();

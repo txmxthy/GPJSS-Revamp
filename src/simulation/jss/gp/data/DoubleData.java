@@ -7,27 +7,26 @@
 
 package simulation.jss.gp.data;
 
-import ec.gp.*;
+import ec.gp.GPData;
 
 /**
  * The GPData that stores double value.
  *
  * @author yimei
- *
  */
 
 public class DoubleData extends GPData {
 
     /**
-	 *
-	 */
-	private static final long serialVersionUID = 1L;
+     *
+     */
+    private static final long serialVersionUID = 1L;
 
 
-	public double value;    // return value
+    public double value;    // return value
 
     public void copyTo(final GPData gpd) {
-    	((DoubleData)gpd).value = value;
+        ((DoubleData) gpd).value = value;
     }
 }
 

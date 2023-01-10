@@ -13,12 +13,12 @@ import java.util.List;
 
 /**
  * The clearing method for niching.
- *
+ * <p>
  * Created by YiMei on 4/10/16.
  */
 public class Clearing {
 
-	// delete the poor individuals      radius: control the range of each niche   capacity: determines the number of individuals in each niche.
+    // delete the poor individuals      radius: control the range of each niche   capacity: determines the number of individuals in each niche.
     public static void clearPopulation(final EvolutionState state,
                                        double radius, int capacity,
                                        PhenoCharacterisation[] pc) {
@@ -28,8 +28,8 @@ public class Clearing {
             RuleType ruleType = ruleTypes[subpopNum];  //ruleType is a rule type---ruleType[0] = SEQUENCING  ruleType[1] = ROUTING
             PhenoCharacterisation phenoCharacterisation = pc[subpopNum];//fzhang 2018.10.02  define two phenotype characteristic---phenoCharacterisation
             //this is a defined type, 1---decisionSituations is an arraylist (length = 20)
-                                   // 2---referenceIndexes:[6, 6, 5, 6, 3, 5, 5, 6, 6, 5, 6, 6, 6, 6, 5, 7, 5, 3, 4, 6] 19 elements
-                                   // 3---referenceRule: WSPT, this will be replaced later. this is default rule
+            // 2---referenceIndexes:[6, 6, 5, 6, 3, 5, 5, 6, 6, 5, 6, 6, 6, 6, 5, 7, 5, 3, 4, 6] 19 elements
+            // 3---referenceRule: WSPT, this will be replaced later. this is default rule
 
             // sort the individuals from best to worst
             Individual[] sortedPop = subpop.individuals; //should according to the fitness value
@@ -37,7 +37,7 @@ public class Clearing {
 
             //We are setting the reference rule of the phenotype to the rule of the individual
             //with the best fitness of this subpop
-            phenoCharacterisation.setReferenceRule(new GPRule(ruleType,((GPIndividual)sortedPop[0]).trees[0]));
+            phenoCharacterisation.setReferenceRule(new GPRule(ruleType, ((GPIndividual) sortedPop[0]).trees[0]));
 
             //fzhang 2018.10.2 calculate the distance of each individual and the reference rule
             List<int[]> sortedPopCharLists = new ArrayList<>();
@@ -47,21 +47,21 @@ public class Clearing {
 
                 //where the examined rule set the chosen operation by reference rule  for example: 3. means examined rule set the chosen operation by reference rule as the third one
                 int[] charList = phenoCharacterisation.characterise(  //.characterise: calculate the distance
-                        new GPRule(ruleType,((GPIndividual)indi).trees[0]));
+                        new GPRule(ruleType, ((GPIndividual) indi).trees[0]));
                 sortedPopCharLists.add(charList); //charList:  [2, 1, 2, 3, 1, 2, 3, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1]
             }
 
             // clear this subpopulation
             for (int i = 0; i < sortedPop.length; i++) {
                 // skip the cleared individuals
-                if (((Clearable)sortedPop[i].fitness).isCleared()) {
+                if (((Clearable) sortedPop[i].fitness).isCleared()) {
                     continue;
                 }
 
                 int numWinners = 1;
-                for (int j = i+1; j < sortedPop.length; j++) {
+                for (int j = i + 1; j < sortedPop.length; j++) {
                     // skip the cleared individuals
-                    if (((Clearable)sortedPop[j].fitness).isCleared()) {
+                    if (((Clearable) sortedPop[j].fitness).isCleared()) {
                         continue;
                     }
 
@@ -74,11 +74,10 @@ public class Clearing {
                     }
 
                     if (numWinners < capacity) {
-                        numWinners ++;
-                    }
-                    else {
+                        numWinners++;
+                    } else {
                         // Clear the fitness of individual j
-                        ((Clearable)sortedPop[j].fitness).clear();
+                        ((Clearable) sortedPop[j].fitness).clear();
                     }
                 }
             }

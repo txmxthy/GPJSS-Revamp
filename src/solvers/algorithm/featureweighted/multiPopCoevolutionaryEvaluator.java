@@ -6,7 +6,6 @@ import ec.Population;
 import ec.coevolve.GroupedProblemForm;
 import ec.coevolve.MultiPopCoevolutionaryEvaluator;
 import ec.gp.GPNode;
-import ec.multiobjective.MultiObjectiveFitness;
 import ec.util.Parameter;
 import simulation.jss.gp.GPRuleEvolutionState;
 import simulation.jss.helper.Flag;
@@ -23,17 +22,14 @@ public class multiPopCoevolutionaryEvaluator extends MultiPopCoevolutionaryEvalu
     public static final String P_PRE_GENERATIONS = "pre-generations";
     public static final String P_NUM_TOP_INDS = "num-topinds";
     public final static String P_GENERATIONS = "generations";
-
-    private int preGenerations;
+    final ArrayList<double[]> saveWeights = new ArrayList<>();
+    final ArrayList<Integer> badInds = new ArrayList<>();
     protected long jobSeed;
-    private int generations;
-
     // individuals to evaluate together
     Individual[] inds = null;
     // which individual should have its fitness updated as a result
     boolean[] updates = null;
-
-    final ArrayList<double[]> saveWeights = new ArrayList<>();
+    private int preGenerations;
 
     public void evaluatePopulation(final EvolutionState state) {
         // determine who needs to be evaluated
@@ -58,24 +54,23 @@ public class multiPopCoevolutionaryEvaluator extends MultiPopCoevolutionaryEvalu
         if (state.generation >= preGenerations) {
             //calculateWeights(state);//after this, the populaiton is sorted by increment
             double[][] weights = new double[state.population.subpops.length][];
-            Weights.calculateWeights(state,topInds,weights,saveWeights);
-            ((GPRuleEvolutionState)state).setWeights(weights);
+            Weights.calculateWeights(state, topInds, weights, saveWeights);
+            ((GPRuleEvolutionState) state).setWeights(weights);
             removeBadInds(state);
         }
 
-        generations = state.parameters.getIntWithDefault(new Parameter(P_GENERATIONS),null,-1);
+        int generations = state.parameters.getIntWithDefault(new Parameter(P_GENERATIONS), null, -1);
 
         if (state.generation == generations - 1) {
-            jobSeed = ((GPRuleEvolutionState)state).getJobSeed();
-            writeBadIndsToFile(state,jobSeed);
-            saveWeights(state,jobSeed);
+            jobSeed = ((GPRuleEvolutionState) state).getJobSeed();
+            writeBadIndsToFile(state, jobSeed);
+            saveWeights(state, jobSeed);
         }
 
         //change the eliteIndividuals
         afterCoevolutionaryEvaluation(state, state.population, (GroupedProblemForm) p_problem);
     }
 
-    final ArrayList<Integer> badInds = new ArrayList<>();
     //fzhang 2019.5.22 delect bad individuals in the population and replaced by generating new individuals with weighted features
     public void removeBadInds(final EvolutionState state) {
 //		Population newpop = new Population();
@@ -94,7 +89,7 @@ public class multiPopCoevolutionaryEvaluator extends MultiPopCoevolutionaryEvalu
                     //newIndEvaluate = true; //if it is a generated new individual, do not increase badrun number
                     Individual newInd;
                     do {
-                        newInd = state.population.subpops[pop].species.newIndividual(state,0);
+                        newInd = state.population.subpops[pop].species.newIndividual(state, 0);
 
                         //read eliteIndividuals for coevolution. Must be here, because the new individual will be used inside.
                         for (int k = 0; k < eliteIndividuals[pop].length; k++) { //2
@@ -103,8 +98,7 @@ public class multiPopCoevolutionaryEvaluator extends MultiPopCoevolutionaryEvalu
                                     inds[ind1] = newInd; //inds[0] = individual = state.population.subpops[0].individuals[0];
                                     //the individuals to evaluate together
                                     updates[ind1] = true;   // updates[0] = true    updates[1] = true   evaluate
-                                }
-                                else {  // this is subpopulation2
+                                } else {  // this is subpopulation2
                                     inds[ind1] = eliteIndividuals[ind1][k];   // (ind j) ---> (0 1) or (1 0)
                                     updates[ind1] = false;  // do not evaluate
                                 }
@@ -113,7 +107,7 @@ public class multiPopCoevolutionaryEvaluator extends MultiPopCoevolutionaryEvalu
 
                         //evaluate new individuals
                         newInd.fitness.trials = new ArrayList();//this is always make trials.size == 1, actually useless
-                        ((GroupedProblemForm)(this.p_problem)).evaluate(state, inds
+                        ((GroupedProblemForm) (this.p_problem)).evaluate(state, inds
                                 , updates // Should the fitness of individuals be updated? Here it says yes and yes.
                                 , false
                                 , new int[]{0, 1} // Which subpopulation to use? Here we have two subpops and we want to use them both so it should be 0 and 1
@@ -130,7 +124,7 @@ public class multiPopCoevolutionaryEvaluator extends MultiPopCoevolutionaryEvalu
             i = 0;
         }
         state.population = newpop; //the new individuals are located in the last position of the population,
-                                   //the whole population is not sorted now(if there is bad individuals that are replaced).
+        //the whole population is not sorted now(if there is bad individuals that are replaced).
     }
 
     //before here, the bad individuals are already replaced, the frequency is based on new population.
@@ -168,7 +162,7 @@ public class multiPopCoevolutionaryEvaluator extends MultiPopCoevolutionaryEvalu
     public void saveWeights(final EvolutionState state, long jobSeed) {
         //fzhang 2019.5.21 save the weight values
         File weightFile = new File("job." + jobSeed + ".weight.csv"); // jobSeed = 0
-        GPNode[][] terminals = ((FreBadGPRuleEvolutionState)state).getTerminals();
+        GPNode[][] terminals = ((FreBadGPRuleEvolutionState) state).getTerminals();
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(weightFile));
             writer.write("Gen, sNIQ, sWIQ, sMWT, sPT, sNPT, sOWT, sWKR, sNOR, sW, sTIS, "
@@ -201,21 +195,21 @@ public class multiPopCoevolutionaryEvaluator extends MultiPopCoevolutionaryEvalu
             BufferedWriter writer = new BufferedWriter(new FileWriter(badindsFile));
             writer.write("Gen, sBadInds, rBadInds, totalBadInds");
             writer.newLine();
-            int [] zero = new int[state.population.subpops.length+1];
+            int[] zero = new int[state.population.subpops.length + 1];
 //			zero
 
             for (int i = 0; i < preGenerations; i++) {
                 //writer.newLine();
-                writer.write(i + "," + Arrays.toString(zero).replaceAll("\\[|\\]","")+"\n");
+                writer.write(i + "," + Arrays.toString(zero).replaceAll("\\[|\\]", "") + "\n");
                 //Returns a string representation of the contents of the specified array.
             }
             for (int i = 0; i < badInds.size(); i += 2) { //every two into one generation
                 //writer.newLine();
-                writer.write(i / 2 + preGenerations + "," + badInds.get(i) + "," + badInds.get(i+1) + "," + (badInds.get(i) + badInds.get(i+1)) +"\n");
+                writer.write(i / 2 + preGenerations + "," + badInds.get(i) + "," + badInds.get(i + 1) + "," + (badInds.get(i) + badInds.get(i + 1)) + "\n");
             }
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-   }
+}

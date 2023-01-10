@@ -24,14 +24,14 @@ public class TerminalERCUniform extends TerminalERC {
             subPopNum = 1;
         }
 
-        terminal = ((GPRuleEvolutionState)state).pickTerminalRandom(subPopNum);
+        terminal = ((GPRuleEvolutionState) state).pickTerminalRandom(subPopNum);
     }
 
     @Override
     public void resetNode(EvolutionState state, int thread) {
         //Assume here we are dealing with simple gp
         int subPopNum = 0;
-        terminal = ((GPRuleEvolutionState)state).pickTerminalRandom(subPopNum);
+        terminal = ((GPRuleEvolutionState) state).pickTerminalRandom(subPopNum);
 
         if (terminal instanceof ERC) {
             ERC ercTerminal = new DoubleERC();
@@ -51,7 +51,7 @@ public class TerminalERCUniform extends TerminalERC {
         }
 
         //fzhang random pick a terminal---original
-        terminal = ((GPRuleEvolutionState)state).pickTerminalRandom(subPopNum);
+        terminal = ((GPRuleEvolutionState) state).pickTerminalRandom(subPopNum);
 
         //fzhang 2019.5.27 another terminal with different parameters
         //terminal = ((GPRuleEvolutionState)state).pickTerminalRandom(state, subPopNum);

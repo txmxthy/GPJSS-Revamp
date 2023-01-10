@@ -23,35 +23,37 @@ public class RuleComparison {
         //ruleType = sequencingRule or routingRule
 
         String path = (new File("")).getAbsolutePath() + dirPath;
-        List<String> fileNames = getFileNames(new ArrayList(), Paths.get(path), ".fjs");
-        List<String> bestRulesTotal = new ArrayList<String>();
-        for (String fileName: fileNames) {
+        List<String> fileNames = getFileNames(new ArrayList<>(), Paths.get(path), ".fjs");
+        List<String> bestRulesTotal = new ArrayList<>();
+        for (String fileName : fileNames) {
             if (!fileName.contains("sdata")) {
                 //sdata is not FJSS data, shouldn't inform decision
                 //assess individual file
                 List<String> bestRules = EvaluateFile(fileName, ruleType);
-                String message = fileName + " best "+ruleType+" rule for this instance: ";
-                for (String rule: bestRules) {
-                    message += rule +", ";
+                StringBuilder message = new StringBuilder(fileName + " best " + ruleType + " rule for this instance: ");
+                if (bestRules != null) {
+                    for (String rule : bestRules) {
+                        message.append(rule).append(", ");
+                    }
                 }
-                System.out.println(message.substring(0, message.length()-2));
+                System.out.println(message.substring(0, message.length() - 2));
                 bestRulesTotal.addAll(bestRules);
             }
         }
 
-        HashMap<String, Integer> rules = new HashMap();
-        for (String rule: bestRulesTotal) {
+        HashMap<String, Integer> rules = new HashMap<>();
+        for (String rule : bestRulesTotal) {
             if (rules.containsKey(rule)) {
                 int count = rules.get(rule);
-                rules.put(rule, count+1);
+                rules.put(rule, count + 1);
             } else {
                 //add it if not already there
                 rules.put(rule, 1);
             }
         }
 
-        for (String rule: rules.keySet()) {
-            System.out.println(rule+" was the best "+rules.get(rule)+" times.");
+        for (String rule : rules.keySet()) {
+            System.out.println(rule + " was the best " + rules.get(rule) + " times.");
         }
 
         //List<String> bestOverallRules = getBestRules(bestRulesTotal);
@@ -100,7 +102,7 @@ public class RuleComparison {
                     bestResults.add(result);
                 }
             }
-            return getBestRules(bestResults,ruleType);
+            return getBestRules(bestResults, ruleType);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -120,16 +122,16 @@ public class RuleComparison {
     }
 
     public static RuleComparisonResult parseString(String input) {
-        String routingRule = input.substring("RR:".length()+1,input.indexOf("SR:")-2);
-        String dispatchingRule = input.substring(input.indexOf("SR:")+"SR:".length()+1,input.indexOf("-")-2);
-        double fitness = Double.parseDouble(input.substring(input.indexOf("Fitness:")+"Fitness: [".length(),
-                input.length()-2));
+        String routingRule = input.substring("RR:".length() + 1, input.indexOf("SR:") - 2);
+        String dispatchingRule = input.substring(input.indexOf("SR:") + "SR:".length() + 1, input.indexOf("-") - 2);
+        double fitness = Double.parseDouble(input.substring(input.indexOf("Fitness:") + "Fitness: [".length(),
+                input.length() - 2));
         return new RuleComparisonResult(routingRule, dispatchingRule, fitness);
     }
 
     public static List<String> getBestRules(List<RuleComparisonResult> bestResults, String ruleType) {
         Map<String, Integer> map = new HashMap<>();
-        for (RuleComparisonResult result: bestResults) {
+        for (RuleComparisonResult result : bestResults) {
             String rule = "";
             if (ruleType.equals("RR")) {
                 rule = result.getRoutingRule();
@@ -144,7 +146,7 @@ public class RuleComparison {
 
     public static List<String> getBestRules(List<String> bestRules) {
         Map<String, Integer> map = new HashMap<>();
-        for (String rule: bestRules) {
+        for (String rule : bestRules) {
             Integer val = map.get(rule);
             map.put(rule, val == null ? 1 : val + 1);
         }
@@ -152,18 +154,20 @@ public class RuleComparison {
     }
 
     public static List<String> getMaxOccuringEntry(Map<String, Integer> map) {
-        List<String> bestRules = new ArrayList<String>();
+        List<String> bestRules = new ArrayList<>();
         Map.Entry<String, Integer> max = null;
 
         for (Map.Entry<String, Integer> e : map.entrySet()) {
             if (max == null || e.getValue() > max.getValue())
                 max = e;
         }
-        bestRules.add(max.getKey());
+        if (max != null) {
+            bestRules.add(max.getKey());
+        }
 
         //check if any other rules had that many too
         for (Map.Entry<String, Integer> e : map.entrySet()) {
-            if (e.getValue() == max.getValue() && e.getKey() != max.getKey())
+            if (e.getValue().equals(max.getValue()) && !e.getKey().equals(max.getKey()))
                 bestRules.add(e.getKey());
         }
         return bestRules;
@@ -185,9 +189,13 @@ class RuleComparisonResult {
         this.fitness = fitness;
     }
 
-    public String getRoutingRule() { return routingRule; }
+    public String getRoutingRule() {
+        return routingRule;
+    }
 
-    public String getSequencingRule() { return sequencingRule; }
+    public String getSequencingRule() {
+        return sequencingRule;
+    }
 
     public String getRule(String ruleType) {
         if (ruleType.equals("RR")) {
@@ -196,8 +204,11 @@ class RuleComparisonResult {
         } else if (ruleType.equals("SR")) {
             //checking for sequencing rules, so compare with routing rules
             return routingRule;
-        } return null;
+        }
+        return null;
     }
 
-    public double getFitness() { return fitness; }
+    public double getFitness() {
+        return fitness;
+    }
 }

@@ -14,10 +14,10 @@ public abstract class DecisionSituation {
     private final SystemState systemState = null;
 
     public List<OperationOption> getQueue() {
-        return queue;
+        return null;
     }
 
     public SystemState getSystemState() {
-        return systemState;
+        return null;
     }
 }

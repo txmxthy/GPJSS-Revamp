@@ -54,13 +54,8 @@ public class Process implements Comparable<Process> {
 
     @Override
     public int compareTo(Process other) {
-        if (startTime < other.startTime)
-            return -1;
+        return Double.compare(startTime, other.startTime);
 
-        if (startTime > other.startTime)
-            return 1;
-
-        return 0;
     }
 
 

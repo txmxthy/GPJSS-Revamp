@@ -5,7 +5,7 @@ import ec.gp.koza.KozaFitness;
 /**
  * The Koza Fitness based on clearing.
  * The fitness is set to infinity if the individual is cleared.
- *
+ * <p>
  * Created by YiMei on 3/10/16.
  */
 public class ClearingKozaFitness extends KozaFitness implements Clearable {

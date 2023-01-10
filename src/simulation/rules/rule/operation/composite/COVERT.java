@@ -2,14 +2,15 @@ package simulation.rules.rule.operation.composite;
 
 import simulation.definition.OperationOption;
 import simulation.definition.WorkCenter;
+import simulation.definition.logic.state.SystemState;
 import simulation.rules.rule.AbstractRule;
 import simulation.rules.rule.RuleType;
-import simulation.definition.logic.state.SystemState;
 
 /**
  * Created by YiMei on 28/09/16.
  */
 public class COVERT extends AbstractRule {
+    protected double totalExpWaitingTime;
     private double k;
     private double b;
 
@@ -29,23 +30,21 @@ public class COVERT extends AbstractRule {
         return "\"" + name + "(k=" + getK() + ",b=" + getB() + ")\"";
     }
 
-    public void setK(double k) {
-        this.k = k;
-    }
-
-    public void setB(double b) {
-        this.b = b;
-    }
-
     public double getK() {
         return k;
+    }
+
+    public void setK(double k) {
+        this.k = k;
     }
 
     public double getB() {
         return b;
     }
 
-    protected double totalExpWaitingTime;
+    public void setB(double b) {
+        this.b = b;
+    }
 
     public void calcTotalExpWaitingTime(OperationOption op) {
         totalExpWaitingTime = b * op.getWorkRemaining();

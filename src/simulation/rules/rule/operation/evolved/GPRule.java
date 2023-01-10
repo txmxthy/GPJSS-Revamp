@@ -2,15 +2,15 @@ package simulation.rules.rule.operation.evolved;
 
 import ec.gp.GPNode;
 import ec.gp.GPTree;
-import simulation.jss.feature.ignore.Ignorer;
-import simulation.jss.gp.CalcPriorityProblem;
-import simulation.jss.gp.data.DoubleData;
-import simulation.jss.gp.GPNodeComparator;
 import simulation.definition.OperationOption;
 import simulation.definition.WorkCenter;
+import simulation.definition.logic.state.SystemState;
+import simulation.jss.feature.ignore.Ignorer;
+import simulation.jss.gp.CalcPriorityProblem;
+import simulation.jss.gp.GPNodeComparator;
+import simulation.jss.gp.data.DoubleData;
 import simulation.rules.rule.AbstractRule;
 import simulation.rules.rule.RuleType;
-import simulation.definition.logic.state.SystemState;
 import simulation.util.lisp.LispParser;
 
 /**
@@ -36,6 +36,12 @@ public class GPRule extends AbstractRule {
         this.type = t;
     }
 
+    public static GPRule readFromLispExpression(RuleType type, String expression) {
+        GPTree tree = LispParser.parseJobShopRule(expression);
+
+        return new GPRule(type, tree, expression);
+    }
+
     public GPTree getGPTree() {
         return gpTree;
     }
@@ -48,18 +54,12 @@ public class GPRule extends AbstractRule {
         return lispString;
     }
 
-    public static GPRule readFromLispExpression(RuleType type, String expression) {
-        GPTree tree = LispParser.parseJobShopRule(expression);
-
-        return new GPRule(type, tree, expression);
-    }
-
     public void ignore(GPNode tree, GPNode feature, Ignorer ignorer) {
-    	
-    	//System.out.println(tree.depth());
+
+        //System.out.println(tree.depth());
         //System.out.println(feature.depth());
-        
-        if (tree.depth() < feature.depth())       	
+
+        if (tree.depth() < feature.depth())
             return;
 
         if (GPNodeComparator.equals(tree, feature)) {

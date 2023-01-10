@@ -7,8 +7,6 @@ import ec.gp.GPNode;
 import ec.util.Checkpoint;
 import ec.util.Parameter;
 import org.apache.commons.math3.ml.clustering.CentroidCluster;
-import solvers.algorithm.onlyselectedfeatures.KMeansPlusPlusClustererTemp;
-import solvers.algorithm.onlyselectedfeatures.Point;
 import simulation.jss.feature.FeatureIgnorable;
 import simulation.jss.feature.FeatureUtil;
 import simulation.jss.feature.ignore.Ignorer;
@@ -18,10 +16,12 @@ import simulation.jss.helper.PopulationUtils;
 import simulation.jss.niching.ClearingEvaluator;
 import simulation.jss.niching.MultiPopCoevolutionaryClearingEvaluator;
 import simulation.jss.niching.PhenoCharacterisation;
+import simulation.jss.surrogate.Surrogate;
 import simulation.rules.rule.RuleType;
 import simulation.rules.rule.operation.evolved.GPRule;
 import simulation.rules.ruleoptimisation.RuleOptimizationProblem;
-import simulation.jss.surrogate.Surrogate;
+import solvers.algorithm.onlyselectedfeatures.KMeansPlusPlusClustererTemp;
+import solvers.algorithm.onlyselectedfeatures.Point;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -45,25 +45,17 @@ public class FSGPRuleEvolutionState extends GPRuleEvolutionState implements Term
     public static final String P_DO_ADAPT = "feature-selection-adapt-population";
     public static final String P_NUMCLUSTERS1 = "numClusters1";
     public static final String P_NUMCLUSTERS2 = "numClusters2";
-
+    final ArrayList<Double> saveFitDistanceSubPop0 = new ArrayList<>();
+    final ArrayList<Double> saveFitDistanceSubPop1 = new ArrayList<>();
+    final ArrayList<Double> PheDistanceSubPop0 = new ArrayList<>();
+    final ArrayList<Double> PheDistanceSubPop1 = new ArrayList<>();
+    final ArrayList<Integer> numSelIndividual = new ArrayList<>();
+    ArrayList<Double> saveOldFitSubPop0 = new ArrayList<>();
+    ArrayList<Double> saveOldFitSubPop1 = new ArrayList<>();
     private Ignorer ignorer;
     private int preGenerations;
     private double fracElites;
-    private double fracAdapted;
     private boolean doAdapt;
-
-    private final double fitUB = Double.NEGATIVE_INFINITY;
-    private final double fitLB = Double.POSITIVE_INFINITY;
-
-    ArrayList<Double> saveOldFitSubPop0 = new ArrayList<>();
-    ArrayList<Double> saveOldFitSubPop1 = new ArrayList<>();
-    final ArrayList<Double> saveFitDistanceSubPop0 = new ArrayList<>();
-    final ArrayList<Double> saveFitDistanceSubPop1 = new ArrayList<>();
-
-    final ArrayList<Double> PheDistanceSubPop0 = new ArrayList<>();
-    final ArrayList<Double> PheDistanceSubPop1 = new ArrayList<>();
-
-    final ArrayList<Integer> numSelIndividual = new ArrayList<>();
 
     @Override
     public Ignorer getIgnorer() {
@@ -79,28 +71,28 @@ public class FSGPRuleEvolutionState extends GPRuleEvolutionState implements Term
     public void setup(EvolutionState state, Parameter base) {
         super.setup(state, base);
 
-        ignorer = (Ignorer)(state.parameters.getInstanceForParameter(
+        ignorer = (Ignorer) (state.parameters.getInstanceForParameter(
                 new Parameter(P_IGNORER), null, Ignorer.class)); //ignorer = yimei.jss.feature.ignore.SimpleIgnorer
         preGenerations = state.parameters.getIntWithDefault(
                 new Parameter(P_PRE_GENERATIONS), null, -1);  //50
         fracElites = state.parameters.getDoubleWithDefault(
                 new Parameter(P_POP_ADAPT_FRAC_ELITES), null, 0.0); //0.0
-        fracAdapted = state.parameters.getDoubleWithDefault(
+        double fracAdapted = state.parameters.getDoubleWithDefault(
                 new Parameter(P_POP_ADAPT_FRAC_ADAPTED), null, 1.0); //0.1
-        doAdapt = state.parameters.getBoolean(new Parameter(P_DO_ADAPT),  
+        doAdapt = state.parameters.getBoolean(new Parameter(P_DO_ADAPT),
                 null, true);
     }
 
     @Override
     public int evolve() {
         //if (generation > 0)
-            output.message("Generation " + generation);
+        output.message("Generation " + generation);
         if (generation == preGenerations) {
 
             evaluator.evaluatePopulation(this); //evaluate each individual, and then clear poor individuals
             PopulationUtils.sort(population); //old population
 
-           for (int subIndex = 0; subIndex < population.subpops.length; subIndex++) { //before here is ++i
+            for (int subIndex = 0; subIndex < population.subpops.length; subIndex++) { //before here is ++i
                 Individual[] individuals = population.subpops[subIndex].individuals;
 
              /*  System.out.println("fitness of individuals \n" + subIndex);
@@ -108,12 +100,12 @@ public class FSGPRuleEvolutionState extends GPRuleEvolutionState implements Term
                    System.out.println(individuals[ind].fitness.fitness());
                }*/
 
-                ArrayList<IndexPoint> points = new ArrayList<IndexPoint>();
+                ArrayList<IndexPoint> points = new ArrayList<>();
 
-                for(int indIndex = 0; indIndex < population.subpops[subIndex].individuals.length; indIndex++){
+                for (int indIndex = 0; indIndex < population.subpops[subIndex].individuals.length; indIndex++) {
                     //System.out.println(individuals[indIndex].fitness.fitness());
-                    if(individuals[indIndex].fitness.fitness() != Double.POSITIVE_INFINITY & individuals[indIndex].fitness.fitness() != Double.MAX_VALUE)
-                       points.add(new IndexPoint(new double[]{indIndex,individuals[indIndex].fitness.fitness()}));
+                    if (individuals[indIndex].fitness.fitness() != Double.POSITIVE_INFINITY & individuals[indIndex].fitness.fitness() != Double.MAX_VALUE)
+                        points.add(new IndexPoint(new double[]{indIndex, individuals[indIndex].fitness.fitness()}));
                 }
 
               /* System.out.println("after delete inifinity fitness of individuals \n");
@@ -121,69 +113,71 @@ public class FSGPRuleEvolutionState extends GPRuleEvolutionState implements Term
                    System.out.println(points.get(ind).position[1]);
                }*/
 
-               IndexPoint p1 = points.get(0);  //the min Point
-               IndexPoint p2 = points.get(points.size() - 1); //the max point
+                IndexPoint p1 = points.get(0);  //the min Point
+                IndexPoint p2 = points.get(points.size() - 1); //the max point
 
-               //calculate the line factors
-               double a = p2.position[1] - p1.position[1];
-               double b = p1.position[0] - p2.position[0];
-               double c = p2.position[0]*p1.position[1] - p1.position[0]*p2.position[1];
+                //calculate the line factors
+                double a = p2.position[1] - p1.position[1];
+                double b = p1.position[0] - p2.position[0];
+                double c = p2.position[0] * p1.position[1] - p1.position[0] * p2.position[1];
               /* System.out.println(a*p1.position[0]+b*p1.position[1]+c);
                System.out.println(a*p2.position[0]+b*p2.position[1]+c);*/
 
-              double maxDistance = 0.0;
-              int kneePoint = -1;
+                double maxDistance = 0.0;
+                int kneePoint = -1;
 
-              for(int idxPoints = 1; idxPoints < points.size(); idxPoints++){
-                  IndexPoint p = points.get(idxPoints);
-                  double distance = Math.abs(a*p.position[0]+b*p.position[1]+c);
-                  if(distance > maxDistance){
-                      maxDistance = distance;
-                      kneePoint = idxPoints;
-                  }
+                for (int idxPoints = 1; idxPoints < points.size(); idxPoints++) {
+                    IndexPoint p = points.get(idxPoints);
+                    double distance = Math.abs(a * p.position[0] + b * p.position[1] + c);
+                    if (distance > maxDistance) {
+                        maxDistance = distance;
+                        kneePoint = idxPoints;
+                    }
                 }
 
-              //System.out.println("index of knee point: " + kneePoint);
+                //System.out.println("index of knee point: " + kneePoint);
 
-               Individual[] selIndis = new Individual[kneePoint+1];
-               System.arraycopy(individuals, 0, selIndis, 0, kneePoint+1);
+                Individual[] selIndis = new Individual[kneePoint + 1];
+                System.arraycopy(individuals, 0, selIndis, 0, kneePoint + 1);
 
-               numSelIndividual.add(selIndis.length);
+                numSelIndividual.add(selIndis.length);
 
                 //====================feture selection, after this we can get features=======================
-               Individual[] indsForFS = new Individual[10];
-               System.arraycopy(individuals, 0, indsForFS, 0, 10);
+                Individual[] indsForFS = new Individual[10];
+                System.arraycopy(individuals, 0, indsForFS, 0, 10);
 
-               //fzhang 2019.7.7 still use top 10 for feature selection
-               GPNode[] selFeatures =
-                       FeatureUtil.featureSelection(this, indsForFS,
-                               ruleTypes[subIndex], fitUB, fitLB);
+                //fzhang 2019.7.7 still use top 10 for feature selection
+                double fitLB = Double.POSITIVE_INFINITY;
+                double fitUB = Double.NEGATIVE_INFINITY;
+                GPNode[] selFeatures =
+                        FeatureUtil.featureSelection(this, indsForFS,
+                                ruleTypes[subIndex], fitUB, fitLB);
 
             /*    GPNode[] selFeatures =
                         FeatureUtil.featureSelection(this, selIndis,
                                 ruleTypes[subIndex], fitUB, fitLB);
   */
                 //if we do not want to use doAdapt and only use this for mutation, we only do it in this way
-                setTerminals(selFeatures,subIndex);
+                setTerminals(selFeatures, subIndex);
                 if (doAdapt) {
-	                //adaptPopulation(subIndex); //three part  original one --- already redefined in the method adaptPopulation(i) as shown below  --- mimic 20% inds and 80% randomly generated
-                     //FeatureUtil.adaptPopulationThreeParts(this, fracElites, fracAdapted, subIndex);
+                    //adaptPopulation(subIndex); //three part  original one --- already redefined in the method adaptPopulation(i) as shown below  --- mimic 20% inds and 80% randomly generated
+                    //FeatureUtil.adaptPopulationThreeParts(this, fracElites, fracAdapted, subIndex);
                     //that means mimic selected individuals and randomly initialise others
                     adaptPopulationWithKneePoint(selIndis, subIndex); //the input is the selcted individuals, when we mimic the selected individuals, the process is the same as clustering
                     //FeatureUtil.adaptPopulationReplacedByOne(this, selIndis, subIndex);
-                   }
                 }
+            }
 
-           saveNumSelectedIndstoFile();
+            saveNumSelectedIndstoFile();
 //            //for niching
             //((multiPopCoevolutionaryClearingEvaluator)evaluator).setClear(false); //for calculate the phenotype distance
-            ((MultiPopCoevolutionaryClearingEvaluator)evaluator).setClear(false);
+            ((MultiPopCoevolutionaryClearingEvaluator) evaluator).setClear(false);
 
-             //((ClearingEvaluator)evaluator).setClear(false); //this is for simpleGP
-             ((Surrogate)((RuleOptimizationProblem)evaluator.p_problem)
-                     .getEvaluationModel()).useOriginal(); //use original simulation, 5000 jobs...   surrogate only use 500
+            //((ClearingEvaluator)evaluator).setClear(false); //this is for simpleGP
+            ((Surrogate) ((RuleOptimizationProblem) evaluator.p_problem)
+                    .getEvaluationModel()).useOriginal(); //use original simulation, 5000 jobs...   surrogate only use 500
         }
-        
+
         // EVALUATION
         statistics.preEvaluationStatistics(this); //after adaptive population, here still the old population, maybe because we change the evalutor and model
         evaluator.evaluatePopulation(this); //Feature selection, firstly, evaluate population as usual; then clear population
@@ -191,16 +185,14 @@ public class FSGPRuleEvolutionState extends GPRuleEvolutionState implements Term
         statistics.postEvaluationStatistics(this); //here, the best individual is print out to out.stat file
 
         // SHOULD WE QUIT?
-        if (evaluator.runComplete(this) && quitOnRunComplete)
-        {
+        if (evaluator.runComplete(this) && quitOnRunComplete) {
             output.message("Found Ideal Individual");
             return R_SUCCESS;
         }
 
         // SHOULD WE QUIT?
-        if (generation == numGenerations-1)
-        {
-        	generation++;
+        if (generation == numGenerations - 1) {
+            generation++;
             return R_FAILURE;
         }
 
@@ -210,8 +202,7 @@ public class FSGPRuleEvolutionState extends GPRuleEvolutionState implements Term
         statistics.postPreBreedingExchangeStatistics(this);
 
         String exchangerWantsToShutdown = exchanger.runComplete(this);
-        if (exchangerWantsToShutdown!=null)
-        {
+        if (exchangerWantsToShutdown != null) {
             output.message(exchangerWantsToShutdown);
             return R_SUCCESS;
         }
@@ -237,8 +228,7 @@ public class FSGPRuleEvolutionState extends GPRuleEvolutionState implements Term
 
         // INCREMENT GENERATION AND CHECKPOINT
         generation++;
-        if (checkpoint && generation%checkpointModulo == 0)
-        {
+        if (checkpoint && generation % checkpointModulo == 0) {
             output.message("Checkpointing");
             statistics.preCheckpointStatistics(this);
             Checkpoint.setCheckpoint(this);
@@ -251,10 +241,10 @@ public class FSGPRuleEvolutionState extends GPRuleEvolutionState implements Term
     @Override
     public void adaptPopulation(int subPopNum) {
         //FeatureUtil.adaptPopulationBasedOnPhenotype(this,fracElites,subPopNum);
-        FeatureUtil.adaptPopulationBasedOnPhenotypeWhole(this,fracElites,subPopNum);//after get the whole generated population, evaluate them together
+        FeatureUtil.adaptPopulationBasedOnPhenotypeWhole(this, fracElites, subPopNum);//after get the whole generated population, evaluate them together
     }
 
-    public void savePheFitDistance(){
+    public void savePheFitDistance() {
         //fzhang 2019.5.21 save the weight values
         long jobSeed = this.getJobSeed();
         File pheFitDistanceFile = new File("job." + jobSeed + ".pheFitDistance.csv"); // jobSeed = 0
@@ -274,41 +264,41 @@ public class FSGPRuleEvolutionState extends GPRuleEvolutionState implements Term
         }
     }
 
-   public List<GPIndividual> saveBestCenInds(Individual[] individuals, int k){
-       //clustering
-       KMeansPlusPlusClustererTemp<Point> kMeansPlusPlusClusterer = new KMeansPlusPlusClustererTemp<Point>(k,100);
-       //create points for clustering
-       List<Point> points = new ArrayList<Point>();
-       for(Individual ind: individuals){
-           double[] pos = new double[]{ind.fitness.fitness()};
-           points.add(new Point(pos));
-       }
+    public List<GPIndividual> saveBestCenInds(Individual[] individuals, int k) {
+        //clustering
+        KMeansPlusPlusClustererTemp<Point> kMeansPlusPlusClusterer = new KMeansPlusPlusClustererTemp<>(k, 100);
+        //create points for clustering
+        List<Point> points = new ArrayList<>();
+        for (Individual ind : individuals) {
+            double[] pos = new double[]{ind.fitness.fitness()};
+            points.add(new Point(pos));
+        }
 
-       // now perform clustering
-       List<CentroidCluster<Point>> centroids = kMeansPlusPlusClusterer.cluster(this, points);
+        // now perform clustering
+        List<CentroidCluster<Point>> centroids = kMeansPlusPlusClusterer.cluster(this, points);
 
-       //find the smallest centroid
-       CentroidCluster<Point> minCentroid = null;
-       for(int c = 0; c < centroids.size(); c++){
-           if(minCentroid == null ||
-                   centroids.get(c).getCenter().getPoint()[0] < minCentroid.getCenter().getPoint()[0])
-               minCentroid = centroids.get(c);
-       }
-       int minIndex = centroids.indexOf(minCentroid);
+        //find the smallest centroid
+        CentroidCluster<Point> minCentroid = null;
+        for (CentroidCluster<Point> centroid : centroids) {
+            if (minCentroid == null ||
+                    centroid.getCenter().getPoint()[0] < minCentroid.getCenter().getPoint()[0])
+                minCentroid = centroid;
+        }
+        int minIndex = centroids.indexOf(minCentroid);
 
-       List<GPIndividual> saveBestCenInds = new ArrayList<GPIndividual>();
-       for(int index=0; index<points.size(); index++){
-           Point point = points.get(index);
-           int centroidIndex = kMeansPlusPlusClusterer.getNearestCluster(centroids, point);
-           if (centroidIndex == minIndex)
-               saveBestCenInds.add((GPIndividual) individuals[index]);
-       }
+        List<GPIndividual> saveBestCenInds = new ArrayList<>();
+        for (int index = 0; index < points.size(); index++) {
+            Point point = points.get(index);
+            int centroidIndex = kMeansPlusPlusClusterer.getNearestCluster(centroids, point);
+            if (centroidIndex == minIndex)
+                saveBestCenInds.add((GPIndividual) individuals[index]);
+        }
 
-       return saveBestCenInds;
-   }
+        return saveBestCenInds;
+    }
 
-   //fzhang 2019.6.26 adapt individuals based on selected individuals by clustering
-    public void adaptPopulationWithClustering(List<GPIndividual> individuals, int subPopNum){
+    //fzhang 2019.6.26 adapt individuals based on selected individuals by clustering
+    public void adaptPopulationWithClustering(List<GPIndividual> individuals, int subPopNum) {
 
         Individual[] newPop = population.subpops[subPopNum].individuals;
 
@@ -325,20 +315,23 @@ public class FSGPRuleEvolutionState extends GPRuleEvolutionState implements Term
         RuleType ruleType = ruleTypes[subPopNum];
         for (int ind = 0; ind < individuals.size(); ind++) {
             GPIndividual gpIndi = individuals.get(ind); //check the individual one by one
-            int[] charList = pc.characterise(new GPRule(ruleType,gpIndi.trees[0]));//the measured rule
+            int[] charList = new int[0];//the measured rule
+            if (pc != null) {
+                charList = pc.characterise(new GPRule(ruleType, gpIndi.trees[0]));
+            }
             GPIndividual newInd;
-            double distance = 0.0;
+            double distance;
             int i = 0;
             double tempDistance = Double.MAX_VALUE;
             GPIndividual tempNewInd = null;
             do {
                 i++;
-                newInd = (GPIndividual) population.subpops[subPopNum].species.newIndividual(this,0);
+                newInd = (GPIndividual) population.subpops[subPopNum].species.newIndividual(this, 0);
                 int[] charListNewInd = pc.characterise(new GPRule(ruleType, newInd.trees[0]));//the measured rule
                 distance = PhenoCharacterisation.distance(charList, charListNewInd); //calculate the distance
 //                System.out.println("distance "+ distance);
 
-                if(distance < tempDistance){
+                if (distance < tempDistance) {
                     tempDistance = distance;
                     tempNewInd = newInd;
                 }
@@ -346,7 +339,9 @@ public class FSGPRuleEvolutionState extends GPRuleEvolutionState implements Term
             } while (distance != 0 && i != 10000);
 
             newPop[ind] = tempNewInd;
-            newPop[ind].evaluated = false;
+            if (newPop[ind] != null) {
+                newPop[ind].evaluated = false;
+            }
         }
 
         //randomly initialize other individuals
@@ -358,7 +353,7 @@ public class FSGPRuleEvolutionState extends GPRuleEvolutionState implements Term
 
 
     //fzhang 2019.6.26 adapt individuals based on selected individuals by using knee point
-    public void adaptPopulationWithKneePoint(Individual[] individuals, int subPopNum){
+    public void adaptPopulationWithKneePoint(Individual[] individuals, int subPopNum) {
 
         Individual[] newPop = population.subpops[subPopNum].individuals;
 
@@ -379,23 +374,26 @@ public class FSGPRuleEvolutionState extends GPRuleEvolutionState implements Term
         double[] minTempDistance = new double[individuals.length];
         Individual[] bestInds = new Individual[individuals.length];
 
-        for(int tryTimes = 0; tryTimes < 2000; tryTimes++){
+        for (int tryTimes = 0; tryTimes < 2000; tryTimes++) {
 
             //double minTempDisatnce = Double.MAX_VALUE;
-            GPIndividual newInd = (GPIndividual) population.subpops[subPopNum].species.newIndividual(this,0);
-            int[] charListNewInd = pc.characterise(new GPRule(ruleType, newInd.trees[0]));//the measured rule
+            GPIndividual newInd = (GPIndividual) population.subpops[subPopNum].species.newIndividual(this, 0);
+            int[] charListNewInd = new int[0];//the measured rule
+            if (pc != null) {
+                charListNewInd = pc.characterise(new GPRule(ruleType, newInd.trees[0]));
+            }
             //int i = 0;
             //get which individual is the most similar one with new generated individual
-            for(int ind = 0; ind < individuals.length; ind++){
+            for (int ind = 0; ind < individuals.length; ind++) {
                 GPIndividual gpIndi = (GPIndividual) individuals[ind]; //check the individual one by one
-                int[] charList = pc.characterise(new GPRule(ruleType,gpIndi.trees[0]));//the measured rule
+                int[] charList = pc.characterise(new GPRule(ruleType, gpIndi.trees[0]));//the measured rule
                 double distance = PhenoCharacterisation.distance(charList, charListNewInd); //calculate the distance
 
                 minTempDistance[ind] = distance;
             }
 
-            for(int repInds  = 0; repInds < individuals.length; repInds++){
-                if(minTempDistance[repInds] < minDistance[repInds]){
+            for (int repInds = 0; repInds < individuals.length; repInds++) {
+                if (minTempDistance[repInds] < minDistance[repInds]) {
                     //i++;
                     minDistance[repInds] = minTempDistance[repInds];
                     bestInds[repInds] = newInd;
@@ -424,7 +422,7 @@ public class FSGPRuleEvolutionState extends GPRuleEvolutionState implements Term
 
             for (int i = 0; i < numSelIndividual.size(); i += 2) { //every two into one generation
                 //writer.newLine();
-                writer.write(jobSeed + ", " + numSelIndividual.get(i) + ", " + numSelIndividual.get(i+1));
+                writer.write(jobSeed + ", " + numSelIndividual.get(i) + ", " + numSelIndividual.get(i + 1));
             }
             writer.close();
         } catch (IOException e) {

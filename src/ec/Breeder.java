@@ -7,14 +7,12 @@
 
 package ec;
 
-/* 
+/*
  * Breeder.java
- * 
+ *
  * Created: Tue Aug 10 21:00:11 1999
  * By: Sean Luke
  */
-
-import com.sun.corba.se.impl.oa.poa.POAPolicyMediator;
 
 /**
  * A Breeder is a singleton object which is responsible for the breeding
@@ -29,7 +27,7 @@ import com.sun.corba.se.impl.oa.poa.POAPolicyMediator;
  * (excepting a parent "gathering" thread) is governed by the EvolutionState's
  * breedthreads value.
  *
- * <p>Be careful about spawning threads -- this system has no few synchronized 
+ * <p>Be careful about spawning threads -- this system has no few synchronized
  * methods for efficiency's sake, so you must either divvy up breeding in a
  * thread-safe fashion and assume that all individuals
  * in the current population are read-only (which you may assume for a generational
@@ -38,16 +36,17 @@ import com.sun.corba.se.impl.oa.poa.POAPolicyMediator;
  * and other objects as necessary.
  *
  * @author Sean Luke
- * @version 1.0 
+ * @version 1.0
  */
 
-public abstract class Breeder implements Singleton
-    {
-    /** Breeds state.population, returning a new population.  In general,
-        state.population should not be modified. */
+public abstract class Breeder implements Singleton {
+    /**
+     * Breeds state.population, returning a new population.  In general,
+     * state.population should not be modified.
+     */
 
-    public abstract Population breedPopulation(final EvolutionState state) ;
+    public abstract Population breedPopulation(final EvolutionState state);
 
     //fzhang 2019.6.9 because I wrote a new method in simplebreeder
-    public abstract Population breedPopulation(final EvolutionState state, Population pop) ;
-    }
+    public abstract Population breedPopulation(final EvolutionState state, Population pop);
+}

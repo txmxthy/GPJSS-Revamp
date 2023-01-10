@@ -2,6 +2,7 @@ package simulation.definition.logic;
 
 import simulation.definition.OperationOption;
 import simulation.definition.logic.state.SystemState;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +28,7 @@ public class RoutingDecisionSituation extends DecisionSituation {
     }
 
     public RoutingDecisionSituation clone() {
+        RoutingDecisionSituation routingDecisionSituation = (RoutingDecisionSituation) clone();
         List<OperationOption> clonedQ = new ArrayList<>(queue);
         SystemState clonedState = systemState.clone();
 

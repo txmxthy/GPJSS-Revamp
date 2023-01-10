@@ -6,7 +6,7 @@ import simulation.jss.gp.terminal.ConstantTerminal;
 
 /**
  * A simple ignorer: replace the ignored GP node with a constant 1.0.
- *
+ * <p>
  * Created by yimei on 12/10/16.
  */
 public class SimpleIgnorer extends Ignorer {
@@ -16,8 +16,8 @@ public class SimpleIgnorer extends Ignorer {
         newNode.parent = node.parent;
         newNode.argposition = node.argposition;
         if (newNode.parent instanceof GPNode)
-            ((GPNode)(newNode.parent)).children[newNode.argposition] = newNode;
+            ((GPNode) (newNode.parent)).children[newNode.argposition] = newNode;
         else
-            ((GPTree)(newNode.parent)).child = newNode;
+            ((GPTree) (newNode.parent)).child = newNode;
     }
 }

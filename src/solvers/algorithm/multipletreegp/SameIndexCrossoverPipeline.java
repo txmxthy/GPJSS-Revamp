@@ -17,9 +17,9 @@ public class SameIndexCrossoverPipeline extends CrossoverPipeline {
      * <p>
      * Unfortunately, this is an ugly extension due to the parent class design, but the changed parts from the parent can be found between the >>>>>>>START<<<<<<< and >>>>>>>>END<<<<<<<< tags.
      */
-	
-	//for each tree, do crossover one by one.
-	//tree1 do crossover with tree1 and tree2 do crossover with tree2, point crossover
+
+    //for each tree, do crossover one by one.
+    //tree1 do crossover with tree1 and tree2 do crossover with tree2, point crossover
     @Override
     public int produce(final int min,
                        final int max,
@@ -27,9 +27,7 @@ public class SameIndexCrossoverPipeline extends CrossoverPipeline {
                        final int subpopulation,
                        final Individual[] inds,
                        final EvolutionState state,
-                       final int thread)
-
-    {
+                       final int thread) {
         // how many individuals should we make?
         int n = typicalIndsProduced();
         if (n < min) n = min;
@@ -69,8 +67,8 @@ public class SameIndexCrossoverPipeline extends CrossoverPipeline {
                 do
                 // pick random trees  -- their GPTreeConstraints must be the same
                 {
-                    /**
-                     * >>>>>>>START<<<<<<<
+                    /*
+                      >>>>>>>START<<<<<<<
                      */
                     if (tree1 == TREE_UNFIXED && tree2 == TREE_UNFIXED && parents[0].trees.length > 1 && parents[1].trees.length > 1) {
                         if (parents[0].trees.length != parents[1].trees.length) {
@@ -100,8 +98,8 @@ public class SameIndexCrossoverPipeline extends CrossoverPipeline {
                             else t2 = 0;
                         else t2 = tree2;
                     }
-                    /**
-                     * >>>>>>>>END<<<<<<<<
+                    /*
+                      >>>>>>>>END<<<<<<<<
                      */
                 }
                 while (parents[0].trees[t1].constraints(initializer) != parents[1].trees[t2].constraints(initializer));
@@ -175,7 +173,9 @@ public class SameIndexCrossoverPipeline extends CrossoverPipeline {
 
             // Fill in various tree information that didn't get filled in there
             j1.trees = new GPTree[parents[0].trees.length];
-            if (n - (q - start) >= 2 && !tossSecondParent) j2.trees = new GPTree[parents[1].trees.length];
+            if (n - (q - start) >= 2 && !tossSecondParent) if (j2 != null) {
+                j2.trees = new GPTree[parents[1].trees.length];
+            }
 
             // at this point, p1 or p2, or both, may be null.
             // If not, swap one in.  Else just copy the parent.
@@ -200,22 +200,24 @@ public class SameIndexCrossoverPipeline extends CrossoverPipeline {
             }
 
             if (n - (q - start) >= 2 && !tossSecondParent)
-                for (int x = 0; x < j2.trees.length; x++) {
-                    if (x == t2 && res2)  // we've got a tree with a kicking cross position!
-                    {
-                        j2.trees[x] = parents[1].trees[x].lightClone();
-                        j2.trees[x].owner = j2;
-                        j2.trees[x].child = parents[1].trees[x].child.cloneReplacing(p1, p2);
-                        j2.trees[x].child.parent = j2.trees[x];
-                        j2.trees[x].child.argposition = 0;
-                        j2.evaluated = false;
-                    } // it's changed
-                    else {
-                        j2.trees[x] = parents[1].trees[x].lightClone();
-                        j2.trees[x].owner = j2;
-                        j2.trees[x].child = (GPNode) (parents[1].trees[x].child.clone());
-                        j2.trees[x].child.parent = j2.trees[x];
-                        j2.trees[x].child.argposition = 0;
+                if (j2 != null) {
+                    for (int x = 0; x < j2.trees.length; x++) {
+                        if (x == t2 && res2)  // we've got a tree with a kicking cross position!
+                        {
+                            j2.trees[x] = parents[1].trees[x].lightClone();
+                            j2.trees[x].owner = j2;
+                            j2.trees[x].child = parents[1].trees[x].child.cloneReplacing(p1, p2);
+                            j2.trees[x].child.parent = j2.trees[x];
+                            j2.trees[x].child.argposition = 0;
+                            j2.evaluated = false;
+                        } // it's changed
+                        else {
+                            j2.trees[x] = parents[1].trees[x].lightClone();
+                            j2.trees[x].owner = j2;
+                            j2.trees[x].child = (GPNode) (parents[1].trees[x].child.clone());
+                            j2.trees[x].child.parent = j2.trees[x];
+                            j2.trees[x].child.argposition = 0;
+                        }
                     }
                 }
 

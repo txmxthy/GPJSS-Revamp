@@ -1,33 +1,33 @@
 package ec.multiobjective.MOEAD;
 
-public class IndexDistancePair implements Comparable<IndexDistancePair>{
-	private final int index;
-	private final double distance;
+public class IndexDistancePair implements Comparable<IndexDistancePair> {
+    private final int index;
+    private final double distance;
 
-	public IndexDistancePair(int i, double d) {
-		index = i;
-		distance = d;
-	}
+    public IndexDistancePair(int i, double d) {
+        index = i;
+        distance = d;
+    }
 
-	@Override
-	/**
-	 * {@inheritDoc}
-	 */
-	public int compareTo(IndexDistancePair o) {
-		if (distance < o.distance)
-			return -1;
-		else if (distance > o.distance)
-			return 1;
-		else
-			return 0;
-	}
+    @Override
+    /**
+     * {@inheritDoc}
+     */
+    public int compareTo(IndexDistancePair o) {
+        if (distance < o.distance)
+            return -1;
+        else if (distance > o.distance)
+            return 1;
+        else
+            return 0;
+    }
 
-	public int getIndex() {
-		return index;
-	}
+    public int getIndex() {
+        return index;
+    }
 
-	public double getDistance() {
-		return distance;
-	}
+    public double getDistance() {
+        return distance;
+    }
 
 }

@@ -2,19 +2,19 @@ package simulation.definition;
 
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
-import simulation.rules.rule.AbstractRule;
 import simulation.definition.logic.DynamicSimulation;
 import simulation.definition.logic.Simulation;
+import simulation.rules.rule.AbstractRule;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * The set of scheduling problems. The set includes:
- *   1. A list of simulations.
- *   2. Number of replications for each simulation.
- *   3. The objective lower bound matrix: (i,j) - the lower bound of objective i in replication j.
- *
+ * 1. A list of simulations.
+ * 2. Number of replications for each simulation.
+ * 3. The objective lower bound matrix: (i,j) - the lower bound of objective i in replication j.
+ * <p>
  * Created by YiMei on 28/09/16.
  */
 public class SchedulingSet {
@@ -29,9 +29,74 @@ public class SchedulingSet {
         this.simulations = simulations;
         this.replications = replications;
         createObjectiveLowerBoundMatrix(objectives);
-        
+
         //fzhang 2018.12.20 if we do not want use the lowerBounds, just comment this
         //lowerBoundsFromBenchmarkRule(objectives);
+    }
+
+    public static SchedulingSet dynamicFullSet(long simSeed,
+                                               double utilLevel,
+                                               double dueDateFactor,
+                                               List<Objective> objectives,
+                                               int reps) {
+        List<Simulation> simulations = new ArrayList<>();
+
+        //original
+      /*  simulations.add(
+                DynamicSimulation.standardFull(simSeed, null, null, 10, 4000, 1000,
+                        utilLevel, dueDateFactor));*/
+
+        //fzhang 2019.2.12 test should be also with 5000 jobs
+        simulations.add(
+                DynamicSimulation.standardFull(simSeed, null, null, 10, 5000, 1000,
+                        utilLevel, dueDateFactor));
+        List<Integer> replications = new ArrayList<>();
+        replications.add(reps);
+
+        return new SchedulingSet(simulations, replications, objectives);
+    }
+
+    public static SchedulingSet dynamicMissingSet(long simSeed,
+                                                  double utilLevel,
+                                                  double dueDateFactor,
+                                                  List<Objective> objectives,
+                                                  int reps) {
+        List<Simulation> simulations = new ArrayList<>();
+        //original
+    /*    simulations.add(
+                DynamicSimulation.standardMissing(simSeed, null, null, 10, 4000, 1000,
+                        utilLevel, dueDateFactor));*/
+
+        //fzhang 2019.2.12 test should be also with 5000 jobs
+        simulations.add(
+                DynamicSimulation.standardMissing(simSeed, null, null, 10, 5000, 1000,
+                        utilLevel, dueDateFactor));
+
+        List<Integer> replications = new ArrayList<>();
+        replications.add(reps);
+        return new SchedulingSet(simulations, replications, objectives);
+    }
+
+    public static SchedulingSet generateSet(long simSeed,
+                                            String scenario,
+                                            String setName,
+                                            List<Objective> objectives,
+                                            int replications) {
+        if (scenario.equals(Scenario.DYNAMIC_JOB_SHOP.getName())) {
+            String[] parameters = setName.split("-");  //for example: missing-0.95-4.0      utilLevel = parameters[1] = 0.85
+            double utilLevel = Double.parseDouble(parameters[1]);
+            double dueDateFactor = Double.parseDouble(parameters[2]); //dueDateFactor = parameters[2] = 4
+
+            if (parameters[0].equals("missing")) {
+                return SchedulingSet.dynamicMissingSet(simSeed, utilLevel, dueDateFactor, objectives, replications);
+            } else if (parameters[0].equals("full")) {
+                return SchedulingSet.dynamicFullSet(simSeed, utilLevel, dueDateFactor, objectives, replications);
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
     }
 
     public List<Simulation> getSimulations() {
@@ -42,16 +107,16 @@ public class SchedulingSet {
         return replications;
     }
 
+    public void setReplications(List<Integer> replications) {
+        this.replications = replications;
+    }
+
     public RealMatrix getObjectiveLowerBoundMtx() {
         return objectiveLowerBoundMtx;
     }
 
     public double getObjectiveLowerBound(int row, int col) {
         return objectiveLowerBoundMtx.getEntry(row, col);
-    }
-
-    public void setReplications(List<Integer> replications) {
-        this.replications = replications;
     }
 
     public void setRule(AbstractRule rule) {
@@ -94,14 +159,14 @@ public class SchedulingSet {
                 double value = simulation.objectiveValue(objective);
                 objectiveLowerBoundMtx.setEntry(i, col, value);
 //                System.out.println("objective1LowerBound: "+ this.getObjectiveLowerBound(i, col));
-                
-                col ++;
+
+                col++;
 
                 for (int k = 1; k < replications.get(j); k++) {
                     simulation.rerun();
                     value = simulation.objectiveValue(objective);
                     objectiveLowerBoundMtx.setEntry(i, col, value);
-                    col ++;
+                    col++;
                 }
                 simulation.reset();
             }
@@ -114,25 +179,9 @@ public class SchedulingSet {
         List<Simulation> surrogateSimulations = new ArrayList<>();
         List<Integer> surrogateReplications = new ArrayList<>();
 
-        for (int i = 0; i < simulations.size(); i++) {
+        for (Simulation simulation : simulations) {
             surrogateSimulations.add(
-                    simulations.get(i).surrogate(
-                    numWorkCenters, numJobsRecorded, warmupJobs));
-            surrogateReplications.add(1);
-        }
-
-        return new SchedulingSet(surrogateSimulations,
-                surrogateReplications, objectives);
-    }
-
-    public SchedulingSet surrogateBusy(int numWorkCenters, int numJobsRecorded,
-                                   int warmupJobs, List<Objective> objectives) {
-        List<Simulation> surrogateSimulations = new ArrayList<>();
-        List<Integer> surrogateReplications = new ArrayList<>();
-
-        for (int i = 0; i < simulations.size(); i++) {
-            surrogateSimulations.add(
-                    simulations.get(i).surrogateBusy(
+                    simulation.surrogate(
                             numWorkCenters, numJobsRecorded, warmupJobs));
             surrogateReplications.add(1);
         }
@@ -141,72 +190,20 @@ public class SchedulingSet {
                 surrogateReplications, objectives);
     }
 
-    public static SchedulingSet dynamicFullSet(long simSeed,
-                                               double utilLevel,
-                                               double dueDateFactor,
-                                               List<Objective> objectives,
-                                               int reps) {
-        List<Simulation> simulations = new ArrayList<>();
-        
-        //original
-      /*  simulations.add(
-                DynamicSimulation.standardFull(simSeed, null, null, 10, 4000, 1000,
-                        utilLevel, dueDateFactor));*/
-        
-      //fzhang 2019.2.12 test should be also with 5000 jobs  
-        simulations.add(
-                DynamicSimulation.standardFull(simSeed, null, null, 10, 5000, 1000,
-                        utilLevel, dueDateFactor));
-        List<Integer> replications = new ArrayList<>();
-        replications.add(reps);
+    public SchedulingSet surrogateBusy(int numWorkCenters, int numJobsRecorded,
+                                       int warmupJobs, List<Objective> objectives) {
+        List<Simulation> surrogateSimulations = new ArrayList<>();
+        List<Integer> surrogateReplications = new ArrayList<>();
 
-        return new SchedulingSet(simulations, replications, objectives);
-    }
-
-    public static SchedulingSet dynamicMissingSet(long simSeed,
-                                                  double utilLevel,
-                                                  double dueDateFactor,
-                                                  List<Objective> objectives,
-                                                  int reps) {
-        List<Simulation> simulations = new ArrayList<>();
-      //original  
-    /*    simulations.add(
-                DynamicSimulation.standardMissing(simSeed, null, null, 10, 4000, 1000,
-                        utilLevel, dueDateFactor));*/
-        
-        //fzhang 2019.2.12 test should be also with 5000 jobs    
-        simulations.add(
-                DynamicSimulation.standardMissing(simSeed, null, null, 10, 5000, 1000,
-                        utilLevel, dueDateFactor));
-        
-        List<Integer> replications = new ArrayList<>();
-        replications.add(reps);
-        return new SchedulingSet(simulations, replications, objectives);
-    }
-
-    public static SchedulingSet generateSet(long simSeed,
-                                            String scenario,
-                                            String setName,
-                                            List<Objective> objectives,
-                                            int replications) {
-        if (scenario.equals(Scenario.DYNAMIC_JOB_SHOP.getName())) {
-            String[] parameters = setName.split("-");  //for example: missing-0.95-4.0      utilLevel = parameters[1] = 0.85
-            double utilLevel = Double.valueOf(parameters[1]);
-            double dueDateFactor = Double.valueOf(parameters[2]); //dueDateFactor = parameters[2] = 4
-
-            if (parameters[0].equals("missing")) {
-                return SchedulingSet.dynamicMissingSet(simSeed, utilLevel, dueDateFactor, objectives, replications);
-            }
-            else if (parameters[0].equals("full")) {
-                return SchedulingSet.dynamicFullSet(simSeed, utilLevel, dueDateFactor, objectives, replications);
-            }
-            else {
-                return null;
-            }
+        for (Simulation simulation : simulations) {
+            surrogateSimulations.add(
+                    simulation.surrogateBusy(
+                            numWorkCenters, numJobsRecorded, warmupJobs));
+            surrogateReplications.add(1);
         }
-        else {
-            return null;
-        }
+
+        return new SchedulingSet(surrogateSimulations,
+                surrogateReplications, objectives);
     }
 
     @Override

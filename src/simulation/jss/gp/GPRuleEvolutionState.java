@@ -1,62 +1,61 @@
 package simulation.jss.gp;
 
-import java.io.*;
-import java.util.*;
-
-import ec.Individual;
-import simulation.jss.gp.terminal.AttributeGPNode;
-import simulation.jss.gp.terminal.JobShopAttribute;
-import simulation.rules.rule.AbstractRuleHelper;
 import ec.EvolutionState;
+import ec.Individual;
 import ec.gp.GPNode;
 import ec.simple.SimpleEvolutionState;
 import ec.util.Checkpoint;
 import ec.util.Parameter;
+import simulation.jss.gp.terminal.AttributeGPNode;
+import simulation.jss.gp.terminal.JobShopAttribute;
+import simulation.rules.rule.AbstractRuleHelper;
 import simulation.rules.ruleoptimisation.RuleOptimizationProblem;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * The evolution state of evolving dispatching rules with GP.
  *
  * @author yimei
- *
  */
 
 public class GPRuleEvolutionState extends SimpleEvolutionState {
 
-	/**
-	 * Read the file to specify the terminals.
-	 */
-	public final static String P_TERMINALS_FROM = "terminals-from";
-	public final static String P_INCLUDE_ERC = "include-erc";
+    /**
+     * Read the file to specify the terminals.
+     */
+    public final static String P_TERMINALS_FROM = "terminals-from";
+    public final static String P_INCLUDE_ERC = "include-erc";
+    final List<Double> genTimes = new ArrayList<>();
+    protected String[] terminalsFrom;
+    protected boolean[] includeErc;
+    protected long jobSeed;
+    protected GPNode[][] terminals;
+    //fzhang 2019.5.20 set weights to terminals in each subpop
+    protected double[][] weights;
 
-	protected String[] terminalsFrom;
-	protected boolean[] includeErc;
-	protected long jobSeed;
-	protected GPNode[][] terminals;
-	//fzhang 2019.5.20 set weights to terminals in each subpop
-	protected double[][] weights;
+    public void setWeights(double[][] weights) {
+        this.weights = weights;
+    }
 
-	public void setWeights(double[][] weights){
-		this.weights = weights;
-	}
+    public GPNode[][] getTerminals() {
+        return terminals;
+    }
 
-	final List<Double> genTimes = new ArrayList<>();
-
-	public GPNode[][] getTerminals() {
-		return terminals;
-	}
+    public void setTerminals(GPNode[][] terminals) {
+        this.terminals = terminals;
+    }
 
     public GPNode[] getTerminals(int subPopNum) {
         return terminals[subPopNum];
     }
 
     public long getJobSeed() {
-		return jobSeed;
-	}
-
-	public void setTerminals(GPNode[][] terminals) {
-		this.terminals = terminals;
-	}
+        return jobSeed;
+    }
 
     public void setTerminals(GPNode[] terminals, int subPopNum) {
         this.terminals[subPopNum] = terminals;
@@ -73,49 +72,50 @@ public class GPRuleEvolutionState extends SimpleEvolutionState {
     }
 
     /**
-	 * Initialize the terminal set with all the job shop attributes.
-	 */
-	public void initTerminalSet() {
-        int numSubPops = parameters.getInt(new Parameter("pop.subpops"),null); //numSubPops = 2
+     * Initialize the terminal set with all the job shop attributes.
+     */
+    public void initTerminalSet() {
+        int numSubPops = parameters.getInt(new Parameter("pop.subpops"), null); //numSubPops = 2
         //terminals is a double array [][], type: GPNode
         this.terminals = new GPNode[numSubPops][];
 
         for (int subPopNum = 0; subPopNum < numSubPops; subPopNum++) {
-         //for (int subPopNum = 0; subPopNum < numSubPops; ++subPopNum) {
-        	//terminals From should have two elements, terminalsFrom[0] and terminalsFrom[1]
-        	//terminals-from.0 = relative            terminalsFrom[0] = relative
-        	//terminals-from.1 = systemstate         terminalsFrom[1] = systemstate   Yes, it is right.
+            //for (int subPopNum = 0; subPopNum < numSubPops; ++subPopNum) {
+            //terminals From should have two elements, terminalsFrom[0] and terminalsFrom[1]
+            //terminals-from.0 = relative            terminalsFrom[0] = relative
+            //terminals-from.1 = systemstate         terminalsFrom[1] = systemstate   Yes, it is right.
             String terminalFrom = terminalsFrom[subPopNum];
             boolean includeErc = this.includeErc[subPopNum];
-            if (terminalFrom.equals("basic")) {
-                initBasicTerminalSet(subPopNum);
-            }
-            else if (terminalFrom.equals("relative")) {
-            	//that is to say, put the terminals we defined into terminals[]
-                initRelativeTerminalSet(subPopNum);
-            }
-            //modified by fzhang 27.5.2018   create some new features mainly about systemstate
-            else if(terminalFrom.equals("systemstate")) {
-            	initSystemstateTerminalSet(subPopNum);
-            }
-          //modified by fzhang 6.6.2018   create some new features from relativeWithoutWeight
-            else if(terminalFrom.equals("relativeWithoutWeight")) {
-            	initRelativeWithoutWeightTerminalSet(subPopNum);
-            }
-            //fzhang 19.7.2018
-            else if(terminalFrom.equals("current")) {
-            	initRelativeCurrentAttributesTerminalSet(subPopNum);
-            }
-            else if(terminalFrom.equals("future")) {
-            	initRelativeFutureAttributesTerminalSet(subPopNum);
-            }
-            else if(terminalFrom.equals("history")) {
-            	initRelativeHistoryAttributesTerminalSet(subPopNum);
-            }
-            else {
-            	String terminalFile = terminalFrom;
-                //String terminalFile = "terminals/" + terminalFrom;  //set directly in parameter file fzhang 21.6.2018
-                initTerminalSetFromCsv(new File(terminalFile), subPopNum);
+            switch (terminalFrom) {
+                case "basic":
+                    initBasicTerminalSet(subPopNum);
+                    break;
+                case "relative":
+                    //that is to say, put the terminals we defined into terminals[]
+                    initRelativeTerminalSet(subPopNum);
+                    break;
+                //modified by fzhang 27.5.2018   create some new features mainly about systemstate
+                case "systemstate":
+                    initSystemstateTerminalSet(subPopNum);
+                    break;
+                //modified by fzhang 6.6.2018   create some new features from relativeWithoutWeight
+                case "relativeWithoutWeight":
+                    initRelativeWithoutWeightTerminalSet(subPopNum);
+                    break;
+                //fzhang 19.7.2018
+                case "current":
+                    initRelativeCurrentAttributesTerminalSet(subPopNum);
+                    break;
+                case "future":
+                    initRelativeFutureAttributesTerminalSet(subPopNum);
+                    break;
+                case "history":
+                    initRelativeHistoryAttributesTerminalSet(subPopNum);
+                    break;
+                default:
+                    //String terminalFile = "terminals/" + terminalFrom;  //set directly in parameter file fzhang 21.6.2018
+                    initTerminalSetFromCsv(new File(terminalFrom), subPopNum);
+                    break;
             }
 
             if (includeErc) {
@@ -124,91 +124,90 @@ public class GPRuleEvolutionState extends SimpleEvolutionState {
                 System.out.println("INCLUDE ERC NOT IMPLEMENTED");
             }
         }
-	}
+    }
 
-	public void initBasicTerminalSet(int subPopNum) {
-		LinkedList<GPNode> terminals = new LinkedList<GPNode>();
-		for (JobShopAttribute a : JobShopAttribute.basicAttributes()) {
+    public void initBasicTerminalSet(int subPopNum) {
+        LinkedList<GPNode> terminals = new LinkedList<>();
+        for (JobShopAttribute a : JobShopAttribute.basicAttributes()) {
             GPNode attribute = new AttributeGPNode(a);
             terminals.add(attribute);
-		}
-		this.terminals[subPopNum] = terminals.toArray(new GPNode[0]);
+        }
+        this.terminals[subPopNum] = terminals.toArray(new GPNode[0]);
 
-	}
+    }
 
-	public void initRelativeTerminalSet(int subPopNum) {
-        LinkedList<GPNode> terminals = new LinkedList<GPNode>();
-		for (JobShopAttribute a : JobShopAttribute.relativeAttributes()) {
-		    GPNode attribute = new AttributeGPNode(a);
-			terminals.add(attribute); //read all the terminals we defined to keep them into terminals[]
-		}
+    public void initRelativeTerminalSet(int subPopNum) {
+        LinkedList<GPNode> terminals = new LinkedList<>();
+        for (JobShopAttribute a : JobShopAttribute.relativeAttributes()) {
+            GPNode attribute = new AttributeGPNode(a);
+            terminals.add(attribute); //read all the terminals we defined to keep them into terminals[]
+        }
         this.terminals[subPopNum] = terminals.toArray(new GPNode[0]);
     }
 
-	//modified by fzhang  27.5.2018  create some new features
-	public void initSystemstateTerminalSet(int subPopNum) {
-        LinkedList<GPNode> terminals = new LinkedList<GPNode>();
-		for (JobShopAttribute a : JobShopAttribute.systemstateAttributes()) {
-		    GPNode attribute = new AttributeGPNode(a);
-			terminals.add(attribute);  //read terminals into terminals[]  rigth
-		}
+    //modified by fzhang  27.5.2018  create some new features
+    public void initSystemstateTerminalSet(int subPopNum) {
+        LinkedList<GPNode> terminals = new LinkedList<>();
+        for (JobShopAttribute a : JobShopAttribute.systemstateAttributes()) {
+            GPNode attribute = new AttributeGPNode(a);
+            terminals.add(attribute);  //read terminals into terminals[]  rigth
+        }
         this.terminals[subPopNum] = terminals.toArray(new GPNode[0]);  //terminals[subPopNum] value is right
     }
 
-	//modified by fzhang  6.6.2018  do not use weight as terminal in non-weighted-objective
-		public void initRelativeWithoutWeightTerminalSet(int subPopNum) {
-	        LinkedList<GPNode> terminals = new LinkedList<GPNode>();
-			for (JobShopAttribute a : JobShopAttribute.relativeWithoutWeightAttributes()) {
-			    GPNode attribute = new AttributeGPNode(a);
-				terminals.add(attribute);
-			}
-	        this.terminals[subPopNum] = terminals.toArray(new GPNode[0]);
-	    }
+    //modified by fzhang  6.6.2018  do not use weight as terminal in non-weighted-objective
+    public void initRelativeWithoutWeightTerminalSet(int subPopNum) {
+        LinkedList<GPNode> terminals = new LinkedList<>();
+        for (JobShopAttribute a : JobShopAttribute.relativeWithoutWeightAttributes()) {
+            GPNode attribute = new AttributeGPNode(a);
+            terminals.add(attribute);
+        }
+        this.terminals[subPopNum] = terminals.toArray(new GPNode[0]);
+    }
 
-	// modified by fzhang 19.7.2018  relativeCurrentAttributes
-	public void initRelativeCurrentAttributesTerminalSet(int subPopNum) {
-		LinkedList<GPNode> terminals = new LinkedList<GPNode>();
-		for (JobShopAttribute a : JobShopAttribute.relativeCurrentAttributes()) {
-			GPNode attribute = new AttributeGPNode(a);
-			terminals.add(attribute);
-		}
-		this.terminals[subPopNum] = terminals.toArray(new GPNode[0]);
-	}
-	//relativeFutureAttributes
-	public void initRelativeFutureAttributesTerminalSet(int subPopNum) {
-		LinkedList<GPNode> terminals = new LinkedList<GPNode>();
-		for (JobShopAttribute a : JobShopAttribute.relativeFutureAttributes()) {
-			GPNode attribute = new AttributeGPNode(a);
-			terminals.add(attribute);
-		}
-		this.terminals[subPopNum] = terminals.toArray(new GPNode[0]);
-	}
+    // modified by fzhang 19.7.2018  relativeCurrentAttributes
+    public void initRelativeCurrentAttributesTerminalSet(int subPopNum) {
+        LinkedList<GPNode> terminals = new LinkedList<>();
+        for (JobShopAttribute a : JobShopAttribute.relativeCurrentAttributes()) {
+            GPNode attribute = new AttributeGPNode(a);
+            terminals.add(attribute);
+        }
+        this.terminals[subPopNum] = terminals.toArray(new GPNode[0]);
+    }
 
-	//relativeHistoryAttributes
-	public void initRelativeHistoryAttributesTerminalSet(int subPopNum) {
-		LinkedList<GPNode> terminals = new LinkedList<GPNode>();
-		for (JobShopAttribute a : JobShopAttribute.relativeHistoryAttributes()) {
-			GPNode attribute = new AttributeGPNode(a);
-			terminals.add(attribute);
-		}
-		this.terminals[subPopNum] = terminals.toArray(new GPNode[0]);
-	}
+    //relativeFutureAttributes
+    public void initRelativeFutureAttributesTerminalSet(int subPopNum) {
+        LinkedList<GPNode> terminals = new LinkedList<>();
+        for (JobShopAttribute a : JobShopAttribute.relativeFutureAttributes()) {
+            GPNode attribute = new AttributeGPNode(a);
+            terminals.add(attribute);
+        }
+        this.terminals[subPopNum] = terminals.toArray(new GPNode[0]);
+    }
 
-	public void initTerminalSetFromCsv(File csvFile, int subPopNum) {
-        LinkedList<GPNode> terminals = new LinkedList<GPNode>();
+    //relativeHistoryAttributes
+    public void initRelativeHistoryAttributesTerminalSet(int subPopNum) {
+        LinkedList<GPNode> terminals = new LinkedList<>();
+        for (JobShopAttribute a : JobShopAttribute.relativeHistoryAttributes()) {
+            GPNode attribute = new AttributeGPNode(a);
+            terminals.add(attribute);
+        }
+        this.terminals[subPopNum] = terminals.toArray(new GPNode[0]);
+    }
 
-		BufferedReader br = null;
-        String line = "";
+    public void initTerminalSetFromCsv(File csvFile, int subPopNum) {
+        LinkedList<GPNode> terminals = new LinkedList<>();
+
+        BufferedReader br = null;
+        String line;
 
         try {
             br = new BufferedReader(new FileReader(csvFile));
             while ((line = br.readLine()) != null) {
-            	JobShopAttribute a = JobShopAttribute.get(line);
+                JobShopAttribute a = JobShopAttribute.get(line);
                 GPNode attribute = new AttributeGPNode(a);
                 terminals.add(attribute);
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -223,203 +222,198 @@ public class GPRuleEvolutionState extends SimpleEvolutionState {
         this.terminals[subPopNum] = terminals.toArray(new GPNode[0]);
     }
 
-	/**
-	 * Return the index of an attribute in the terminal set.
-	 * @param attribute the attribute.
-	 * @return the index of the attribute in the terminal set.
-	 */
-	public int indexOfAttribute(JobShopAttribute attribute, int subPopNum) {
-	    GPNode[] terminals = this.terminals[subPopNum];
-		for (int i = 0; i < terminals.length; i++) {
-			JobShopAttribute terminalAttribute = ((AttributeGPNode)terminals[i]).getJobShopAttribute();
-			if (terminalAttribute == attribute) {
-				return i;
-			}
-		}
+    /**
+     * Return the index of an attribute in the terminal set.
+     *
+     * @param attribute the attribute.
+     * @return the index of the attribute in the terminal set.
+     */
+    public int indexOfAttribute(JobShopAttribute attribute, int subPopNum) {
+        GPNode[] terminals = this.terminals[subPopNum];
+        for (int i = 0; i < terminals.length; i++) {
+            JobShopAttribute terminalAttribute = ((AttributeGPNode) terminals[i]).getJobShopAttribute();
+            if (terminalAttribute == attribute) {
+                return i;
+            }
+        }
 
-		return -1;
-	}
+        return -1;
+    }
 
-	/**
-	 * Randomly pick a terminal from the terminal set.
-	 * @return the selected terminal, which is a GPNode.
-	 */
-	//fzhang  random pick terminals will come to here
-	public GPNode pickTerminalRandom(int subPopNum) {
-    	int index = random[0].nextInt(terminals[subPopNum].length);
-    	return terminals[subPopNum][index];
+    /**
+     * Randomly pick a terminal from the terminal set.
+     *
+     * @return the selected terminal, which is a GPNode.
+     */
+    //fzhang  random pick terminals will come to here
+    public GPNode pickTerminalRandom(int subPopNum) {
+        int index = random[0].nextInt(terminals[subPopNum].length);
+        return terminals[subPopNum][index];
     }
 
     //fzhang 2019.5.27 another pickTerminalRandom with different parameters
-	public GPNode pickTerminalRandom(EvolutionState state, int subPopNum) {
-		int index = state.random[0].nextInt(terminals[subPopNum].length);
-		return terminals[subPopNum][index];
-	}
+    public GPNode pickTerminalRandom(EvolutionState state, int subPopNum) {
+        int index = state.random[0].nextInt(terminals[subPopNum].length);
+        return terminals[subPopNum][index];
+    }
 
-	// the best individual in subpopulation
-	public Individual bestIndi(int subpop) {
-		int best = 0;
-		for(int x = 1; x < population.subpops[subpop].individuals.length; x++)
-			if (population.subpops[subpop].individuals[x].fitness.betterThan(
-			        population.subpops[subpop].individuals[best].fitness))
-				best = x;
+    // the best individual in subpopulation
+    public Individual bestIndi(int subpop) {
+        int best = 0;
+        for (int x = 1; x < population.subpops[subpop].individuals.length; x++)
+            if (population.subpops[subpop].individuals[x].fitness.betterThan(
+                    population.subpops[subpop].individuals[best].fitness))
+                best = x;
 
-		return population.subpops[subpop].individuals[best];
-	}
-
-	@Override
-	public void setup(EvolutionState state, Parameter base) {
-		Parameter p;
-		//fzhang 2018.11.8 I need to do this to be able to load seed values in the AbtractRule class.
-		AbstractRuleHelper.state = this;
-
-		// Get the job seed.
-		p = new Parameter("seed").push(""+0);
-		jobSeed = parameters.getLongWithDefault(p, null, 0);
-
-
-		setupTerminals();
-
-		super.setup(this, base);
-	}
-
-	@Override
-	public void run(int condition)
-    {
-		double totalTime = 0;
-
-		if (condition == C_STARTED_FRESH) {
-			startFresh();
-        }
-		else {
-			startFromCheckpoint();
-        }
-
-		int result = R_NOTDONE; //2, means not finished, continue to do
-		while ( result == R_NOTDONE )
-        {
-			//fzhang 21.7.2018  after startFresh(), we will in this loop
-			//here, to reFresh breeder only
-			//startFreshResetOperatorProb();
-
-			long start = System.currentTimeMillis();//yimei.util.Timer.getCpuTime();
-
-			result = evolve();//System.out.println(result);
-
-			long finish =System.currentTimeMillis();// yimei.util.Timer.getCpuTime();
-			double duration = (finish - start) / 1000;//000000;
-			genTimes.add(duration);
-			totalTime += duration;
-
-			output.message("Generation " + (generation-1) + " elapsed " + duration + " seconds.");// time used for each generation
-        }
-
-		output.message("The whole program elapsed " + totalTime + " seconds."); // time used for total program
-
-		File timeFile = new File("job." + jobSeed + ".time.csv"); //jobSeed = 0
-		try {
-			BufferedWriter writer = new BufferedWriter(new FileWriter(timeFile));
-			writer.write("Gen,Time");
-			writer.newLine();
-			for (int gen = 0; gen < genTimes.size(); gen++) {
-				writer.write(gen + "," + genTimes.get(gen));
-				writer.newLine();
-			}
-			writer.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		finish(result);
+        return population.subpops[subpop].individuals[best];
     }
 
     @Override
-	public int evolve() {
-	    if (generation > 0)
-	        output.message("Generation " + generation);
+    public void setup(EvolutionState state, Parameter base) {
+        Parameter p;
+        //fzhang 2018.11.8 I need to do this to be able to load seed values in the AbtractRule class.
+        AbstractRuleHelper.state = this;
 
-	    //System.out.println("generation "+generation);
-	    // EVALUATION
-	    statistics.preEvaluationStatistics(this);
+        // Get the job seed.
+        p = new Parameter("seed").push("" + 0);
+        jobSeed = parameters.getLongWithDefault(p, null, 0);
 
-	    evaluator.evaluatePopulation(this);  //// here, after this we evaluate the population
-	    statistics.postEvaluationStatistics(this);
 
-	    // SHOULD WE QUIT?
-	    if (evaluator.runComplete(this) && quitOnRunComplete)
-	        {
-	        output.message("Found Ideal Individual");
-	        return R_SUCCESS;
-	        }
-	    // SHOULD WE QUIT?
-	    if (generation == numGenerations-1)
-	        {
-	    	generation++; // in this way, the last generation value will be printed properly.  fzhang 28.3.2018
-	        return R_FAILURE;
-	        }
+        setupTerminals();
 
-	    // PRE-BREEDING EXCHANGING
-	    statistics.prePreBreedingExchangeStatistics(this);
-	    population = exchanger.preBreedingExchangePopulation(this);  /** Simply returns state.population. */
-	    statistics.postPreBreedingExchangeStatistics(this);
+        super.setup(this, base);
+    }
 
-	    String exchangerWantsToShutdown = exchanger.runComplete(this);  /** Always returns null */
-	    if (exchangerWantsToShutdown!=null)
-	        {
-	        output.message(exchangerWantsToShutdown);
-	        /*
-	         * Don't really know what to return here.  The only place I could
-	         * find where runComplete ever returns non-null is
-	         * IslandExchange.  However, that can return non-null whether or
-	         * not the ideal individual was found (for example, if there was
-	         * a communication error with the server).
-	         *
-	         * Since the original version of this code didn't care, and the
-	         * result was initialized to R_SUCCESS before the while loop, I'm
-	         * just going to return R_SUCCESS here.
-	         */
+    @Override
+    public void run(int condition) {
+        double totalTime = 0;
 
-	        return R_SUCCESS;
-	        }
+        if (condition == C_STARTED_FRESH) {
+            startFresh();
+        } else {
+            startFromCheckpoint();
+        }
 
-	    // BREEDING
-	    statistics.preBreedingStatistics(this);
+        int result = R_NOTDONE; //2, means not finished, continue to do
+        while (result == R_NOTDONE) {
+            //fzhang 21.7.2018  after startFresh(), we will in this loop
+            //here, to reFresh breeder only
+            //startFreshResetOperatorProb();
 
-	    population = breeder.breedPopulation(this); //!!!!!!   return newpop;  if it is NSGA-II, the population here is 2N
+            long start = System.currentTimeMillis();//yimei.util.Timer.getCpuTime();
 
-	    // POST-BREEDING EXCHANGING
-	    statistics.postBreedingStatistics(this);   //position 1  here, a new pop has been generated.
+            result = evolve();//System.out.println(result);
 
-	    // POST-BREEDING EXCHANGING
-	    statistics.prePostBreedingExchangeStatistics(this);
-	    population = exchanger.postBreedingExchangePopulation(this);   /** Simply returns state.population. */
-	    statistics.postPostBreedingExchangeStatistics(this);  //position 2
+            long finish = System.currentTimeMillis();// yimei.util.Timer.getCpuTime();
+            double duration = (finish - start) / 1000;//000000;
+            genTimes.add(duration);
+            totalTime += duration;
 
-	    // Generate new instances if needed
-		RuleOptimizationProblem problem = (RuleOptimizationProblem)evaluator.p_problem;
-	    if (problem.getEvaluationModel().isRotatable()) {
-			problem.rotateEvaluationModel();
-		}
+            output.message("Generation " + (generation - 1) + " elapsed " + duration + " seconds.");// time used for each generation
+        }
 
-	    // INCREMENT GENERATION AND CHECKPOINT
-	    generation++;
-	    if (checkpoint && generation%checkpointModulo == 0)
-	        {
-	        output.message("Checkpointing");
-	        statistics.preCheckpointStatistics(this);
-	        Checkpoint.setCheckpoint(this);
-	        statistics.postCheckpointStatistics(this);
-	        }
+        output.message("The whole program elapsed " + totalTime + " seconds."); // time used for total program
 
-	    return R_NOTDONE;
-	}
+        File timeFile = new File("job." + jobSeed + ".time.csv"); //jobSeed = 0
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(timeFile));
+            writer.write("Gen,Time");
+            writer.newLine();
+            for (int gen = 0; gen < genTimes.size(); gen++) {
+                writer.write(gen + "," + genTimes.get(gen));
+                writer.newLine();
+            }
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-	private void setupTerminals() {
+        finish(result);
+    }
+
+    @Override
+    public int evolve() {
+        if (generation > 0)
+            output.message("Generation " + generation);
+
+        //System.out.println("generation "+generation);
+        // EVALUATION
+        statistics.preEvaluationStatistics(this);
+
+        evaluator.evaluatePopulation(this);  //// here, after this we evaluate the population
+        statistics.postEvaluationStatistics(this);
+
+        // SHOULD WE QUIT?
+        if (evaluator.runComplete(this) && quitOnRunComplete) {
+            output.message("Found Ideal Individual");
+            return R_SUCCESS;
+        }
+        // SHOULD WE QUIT?
+        if (generation == numGenerations - 1) {
+            generation++; // in this way, the last generation value will be printed properly.  fzhang 28.3.2018
+            return R_FAILURE;
+        }
+
+        // PRE-BREEDING EXCHANGING
+        statistics.prePreBreedingExchangeStatistics(this);
+        population = exchanger.preBreedingExchangePopulation(this);  /* Simply returns state.population. */
+        statistics.postPreBreedingExchangeStatistics(this);
+
+        String exchangerWantsToShutdown = exchanger.runComplete(this);  /* Always returns null */
+        if (exchangerWantsToShutdown != null) {
+            output.message(exchangerWantsToShutdown);
+            /*
+             * Don't really know what to return here.  The only place I could
+             * find where runComplete ever returns non-null is
+             * IslandExchange.  However, that can return non-null whether or
+             * not the ideal individual was found (for example, if there was
+             * a communication error with the server).
+             *
+             * Since the original version of this code didn't care, and the
+             * result was initialized to R_SUCCESS before the while loop, I'm
+             * just going to return R_SUCCESS here.
+             */
+
+            return R_SUCCESS;
+        }
+
+        // BREEDING
+        statistics.preBreedingStatistics(this);
+
+        population = breeder.breedPopulation(this); //!!!!!!   return newpop;  if it is NSGA-II, the population here is 2N
+
+        // POST-BREEDING EXCHANGING
+        statistics.postBreedingStatistics(this);   //position 1  here, a new pop has been generated.
+
+        // POST-BREEDING EXCHANGING
+        statistics.prePostBreedingExchangeStatistics(this);
+        population = exchanger.postBreedingExchangePopulation(this);   /* Simply returns state.population. */
+        statistics.postPostBreedingExchangeStatistics(this);  //position 2
+
+        // Generate new instances if needed
+        RuleOptimizationProblem problem = (RuleOptimizationProblem) evaluator.p_problem;
+        if (problem.getEvaluationModel().isRotatable()) {
+            problem.rotateEvaluationModel();
+        }
+
+        // INCREMENT GENERATION AND CHECKPOINT
+        generation++;
+        if (checkpoint && generation % checkpointModulo == 0) {
+            output.message("Checkpointing");
+            statistics.preCheckpointStatistics(this);
+            Checkpoint.setCheckpoint(this);
+            statistics.postCheckpointStatistics(this);
+        }
+
+        return R_NOTDONE;
+    }
+
+    private void setupTerminals() {
         Parameter p;
 
         //Need to know how many populations we're expecting here, as will need
         //one terminal set per population
-        int numSubPops = parameters.getInt(new Parameter("pop.subpops"),null);
+        int numSubPops = parameters.getInt(new Parameter("pop.subpops"), null);
 
         if (numSubPops == 1) {
             p = new Parameter(P_TERMINALS_FROM);
@@ -444,7 +438,7 @@ public class GPRuleEvolutionState extends SimpleEvolutionState {
                 p = new Parameter(P_TERMINALS_FROM);
                 subPop1TerminalSet = parameters.getStringWithDefault(p,
                         null, "relative");
-                output.warning("No terminal set for subpopulation 1 specified - using "+subPop1TerminalSet+".");
+                output.warning("No terminal set for subpopulation 1 specified - using " + subPop1TerminalSet + ".");
 
             }
             terminalsFrom[subPopNum] = subPop1TerminalSet;

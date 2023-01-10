@@ -24,6 +24,7 @@ public class CalcPriorityProblem extends Problem implements SimpleProblemForm {
         this.workCenter = workCenter;
         this.systemState = systemState;
     }
+
     public OperationOption getOperation() {
         return operation;
     }
@@ -35,14 +36,16 @@ public class CalcPriorityProblem extends Problem implements SimpleProblemForm {
     public SystemState getSystemState() {
         return systemState;
     }
+
     @Override
     public void evaluate(EvolutionState state, Individual ind,
                          int subpopulation, int threadnum) {
     }
-	@Override
-	public void normObjective(EvolutionState state, Individual ind,
-			                  int subpopulation, int threadnum) {
-		// TODO Auto-generated method stub
 
-	}
+    @Override
+    public void normObjective(EvolutionState state, Individual ind,
+                              int subpopulation, int threadnum) {
+        // TODO Auto-generated method stub
+
+    }
 }

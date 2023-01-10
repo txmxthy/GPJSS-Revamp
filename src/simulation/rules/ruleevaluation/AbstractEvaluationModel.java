@@ -11,7 +11,7 @@ import java.util.List;
 
 /**
  * The evaluation model for job shop dispatching rules.
- *
+ * <p>
  * Created by yimei on 10/11/16.
  */
 public abstract class AbstractEvaluationModel {
@@ -50,9 +50,10 @@ public abstract class AbstractEvaluationModel {
                                   EvolutionState state);
 
     public abstract boolean isRotatable();
+
     public abstract void rotate();
 
     public abstract void normObjective(List<Fitness> fitnesses,
-            List<AbstractRule> rule,
-            EvolutionState state);
+                                       List<AbstractRule> rule,
+                                       EvolutionState state);
 }

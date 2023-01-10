@@ -1,47 +1,45 @@
 package simulation.util.random;
 
-import java.util.Arrays;
-
+import ec.EvolutionState;
 import org.apache.commons.math3.random.RandomDataGenerator;
 
-import ec.EvolutionState;
+import java.util.Arrays;
 
 /**
  * The roulette wheel sampler -- sample an index based on the given cumulative frequencies.
  *
  * @author yimei
- *
  */
 
 public class RouletteWheelSampler {
 
-	private final double[] cumFreqs; // the cumulative frequencies, starting from 0.
+    private final double[] cumFreqs; // the cumulative frequencies, starting from 0.
 
-	public RouletteWheelSampler(double[] cumFreqs) {
-		this.cumFreqs = cumFreqs;
-	}
+    public RouletteWheelSampler(double[] cumFreqs) {
+        this.cumFreqs = cumFreqs;
+    }
 
-	public int next(RandomDataGenerator rdg) {
-		double a = rdg.nextUniform(0, cumFreqs[cumFreqs.length-1] - 0.0000000001);
-		int idx = Arrays.binarySearch(cumFreqs, a);
+    public int next(RandomDataGenerator rdg) {
+        double a = rdg.nextUniform(0, cumFreqs[cumFreqs.length - 1] - 0.0000000001);
+        int idx = Arrays.binarySearch(cumFreqs, a);
 
-		if (idx < 0)
-			idx = -idx-2;
+        if (idx < 0)
+            idx = -idx - 2;
 
-		return idx;
-	}
+        return idx;
+    }
 
-	public int next(EvolutionState state, int thread) {
-		double a = state.random[thread].nextDouble() * cumFreqs[cumFreqs.length-1];
-		int idx = Arrays.binarySearch(cumFreqs, a);
+    public int next(EvolutionState state, int thread) {
+        double a = state.random[thread].nextDouble() * cumFreqs[cumFreqs.length - 1];
+        int idx = Arrays.binarySearch(cumFreqs, a);
 
-		if (idx < 0)
-			idx = -idx-2;
+        if (idx < 0)
+            idx = -idx - 2;
 
-		return idx;
-	}
+        return idx;
+    }
 
-	public int size() {
-		return cumFreqs.length - 1;
-	}
+    public int size() {
+        return cumFreqs.length - 1;
+    }
 }

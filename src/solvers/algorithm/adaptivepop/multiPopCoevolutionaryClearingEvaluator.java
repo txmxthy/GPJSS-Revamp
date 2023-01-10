@@ -3,13 +3,12 @@ package solvers.algorithm.adaptivepop;
 import ec.EvolutionState;
 import ec.Individual;
 import ec.coevolve.GroupedProblemForm;
-import ec.multiobjective.MultiObjectiveFitness;
 import ec.util.Parameter;
 import simulation.jss.helper.PopulationUtils;
 import simulation.jss.niching.Clearing;
 import simulation.jss.niching.MultiPopCoevolutionaryClearingEvaluator;
-import simulation.rules.ruleoptimisation.RuleOptimizationProblem;
 import simulation.jss.surrogate.Surrogate;
+import simulation.rules.ruleoptimisation.RuleOptimizationProblem;
 
 import java.util.ArrayList;
 
@@ -19,18 +18,14 @@ public class multiPopCoevolutionaryClearingEvaluator extends MultiPopCoevolution
     public static final String P_NUM_TOP_INDS = "num-topinds";
     public final static String P_GENERATIONS = "generations";
     public static final String P_POP_ADAPT_FRAC_ELITES = "pop-adapt-frac-elites";
-
-    private int preGenerations;
+    final ArrayList<Double> saveOldFitSubPop0 = new ArrayList<>();
+    final ArrayList<Double> saveOldFitSubPop1 = new ArrayList<>();
     protected long jobSeed;
     Boolean flag = false;
-
     // individuals to evaluate together
     Individual[] inds = null;
     // which individual should have its fitness updated as a result
     boolean[] updates = null;
-
-    final ArrayList<Double> saveOldFitSubPop0 = new ArrayList<>();
-    final ArrayList<Double> saveOldFitSubPop1 = new ArrayList<>();
 
     @Override
     public void evaluatePopulation(final EvolutionState state) {
@@ -52,13 +47,13 @@ public class multiPopCoevolutionaryClearingEvaluator extends MultiPopCoevolution
 
         ////fzhang 2019.6.6 in order to get the real fitnesses of top 20% individuals in old population
         //==============================start===============================
-        preGenerations = state.parameters.getIntWithDefault(new Parameter(P_PRE_GENERATIONS), null, 0);
-        if(state.generation == preGenerations && !flag){
+        int preGenerations = state.parameters.getIntWithDefault(new Parameter(P_PRE_GENERATIONS), null, 0);
+        if (state.generation == preGenerations && !flag) {
             flag = true;
             PopulationUtils.sort(state.population); //old population
-            ((MultiPopCoevolutionaryClearingEvaluator)state.evaluator).setClear(false);
+            ((MultiPopCoevolutionaryClearingEvaluator) state.evaluator).setClear(false);
             //((ClearingEvaluator)evaluator).setClear(false); //this is for simpleGP
-            ((Surrogate)((RuleOptimizationProblem)state.evaluator.p_problem)
+            ((Surrogate) ((RuleOptimizationProblem) state.evaluator.p_problem)
                     .getEvaluationModel()).useOriginal(); //use original simulation, 5000 jobs...   surrogate only use 500
 
             double fracElites = state.parameters.getDoubleWithDefault(
@@ -67,9 +62,9 @@ public class multiPopCoevolutionaryClearingEvaluator extends MultiPopCoevolution
                 calculateOldFitness(state, fracElites, i);
             }
 
-            ((MultiPopCoevolutionaryClearingEvaluator)state.evaluator).setClear(true);
+            ((MultiPopCoevolutionaryClearingEvaluator) state.evaluator).setClear(true);
             //((ClearingEvaluator)evaluator).setClear(false); //this is for simpleGP
-            ((Surrogate)((RuleOptimizationProblem)state.evaluator.p_problem)
+            ((Surrogate) ((RuleOptimizationProblem) state.evaluator.p_problem)
                     .getEvaluationModel()).useSurrogate(); //use original simulation, 5000 jobs...   surrogate only use 500
             evaluatePopulation(state);
         }
@@ -86,15 +81,14 @@ public class multiPopCoevolutionaryClearingEvaluator extends MultiPopCoevolution
     }
 
 
-
     public void calculateOldFitness(final EvolutionState state,
-                              double fracElites,
-                              int subPopNum) {
+                                    double fracElites,
+                                    int subPopNum) {
         inds = new Individual[state.population.subpops.length];
         updates = new boolean[state.population.subpops.length];
 
         Individual[] newPop = state.population.subpops[subPopNum].individuals;
-        int numElites = (int)(fracElites * state.population.subpops[subPopNum].individuals.length); //elites: how many individuals to copy directly
+        int numElites = (int) (fracElites * state.population.subpops[subPopNum].individuals.length); //elites: how many individuals to copy directly
 
         for (int i = 0; i < numElites; i++) {
             //read eliteIndividuals for coevolution
@@ -104,8 +98,7 @@ public class multiPopCoevolutionaryClearingEvaluator extends MultiPopCoevolution
                         inds[ind1] = newPop[i]; //inds[0] = individual = state.population.subpops[0].individuals[0];
                         //the individuals to evaluate together
                         updates[ind1] = true;   // updates[0] = true    updates[1] = true   evaluate
-                    }
-                    else {  // this is subpopulation2
+                    } else {  // this is subpopulation2
                         inds[ind1] = eliteIndividuals[ind1][k];   // (ind j) ---> (0 1) or (1 0)
                         updates[ind1] = false;  // do not evaluate
                     }
@@ -114,24 +107,24 @@ public class multiPopCoevolutionaryClearingEvaluator extends MultiPopCoevolution
 
             //evaluate new individuals
             newPop[i].fitness.trials = new ArrayList();//this is always make trials.size == 1, actually useless
-            ((GroupedProblemForm)(this.p_problem)).evaluate(state, inds
+            ((GroupedProblemForm) (this.p_problem)).evaluate(state, inds
                     , updates // Should the fitness of individuals be updated? Here it says yes and yes.
                     , false
                     , new int[]{0, 1} // Which subpopulation to use? Here we have two subpops and we want to use them both so it should be 0 and 1
                     , 0);// real evaluation
             //newPop[i].evaluated = true;
-            if(subPopNum == 0)
-               saveOldFitSubPop0.add(newPop[i].fitness.fitness());
+            if (subPopNum == 0)
+                saveOldFitSubPop0.add(newPop[i].fitness.fitness());
             else
-               saveOldFitSubPop1.add(newPop[i].fitness.fitness());
+                saveOldFitSubPop1.add(newPop[i].fitness.fitness());
         }
     }
 
-    public ArrayList<Double> getSaveOldFitSubPop0(){
+    public ArrayList<Double> getSaveOldFitSubPop0() {
         return saveOldFitSubPop0;
     }
 
-    public ArrayList<Double> getSaveOldFitSubPop1(){
+    public ArrayList<Double> getSaveOldFitSubPop1() {
         return saveOldFitSubPop1;
     }
 }

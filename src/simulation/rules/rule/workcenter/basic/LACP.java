@@ -6,10 +6,10 @@ import yimei.jss.rule.AbstractRule;
 import yimei.jss.rule.RuleType;
 import yimei.jss.simulation.state.SystemState;
 
-*//**
- * Created by dyska on 6/06/17.
- * Least aggregate cost and process time in queue.
- * The priority of this method should be the amount of work in the queue.
+*//*
+  Created by dyska on 6/06/17.
+  Least aggregate cost and process time in queue.
+  The priority of this method should be the amount of work in the queue.
  *//*
 public class LACP extends AbstractRule {
 

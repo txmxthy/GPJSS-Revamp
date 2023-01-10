@@ -7,7 +7,7 @@ import ec.util.Parameter;
 /**
  * The evaluator with population clearing.
  * The evaluator is used for niching.
- *
+ * <p>
  * Created by YiMei on 3/10/16.
  */
 public class ClearingEvaluator extends SimpleEvaluator {
@@ -68,10 +68,10 @@ public class ClearingEvaluator extends SimpleEvaluator {
     @Override
     public void evaluatePopulation(final EvolutionState state) {
         super.evaluatePopulation(state);
-        
-      //fzhang  2018.10.9  this is for single population, no business with Co-evolution.
+
+        //fzhang  2018.10.9  this is for single population, no business with Co-evolution.
         if (clear) {
-/*        	System.out.print("clearingEvalutor");*/
+            /*        	System.out.print("clearingEvalutor");*/
             Clearing.clearPopulation(state, radius, capacity,
                     phenoCharacterisation);
         }

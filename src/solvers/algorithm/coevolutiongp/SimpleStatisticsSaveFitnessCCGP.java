@@ -6,18 +6,21 @@
 
 
 package solvers.algorithm.coevolutiongp;
-import ec.*;
-import ec.simple.SimpleProblemForm;
-import ec.steadystate.*;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
-import ec.util.*;
+import ec.EvolutionState;
+import ec.Individual;
+import ec.Statistics;
+import ec.simple.SimpleProblemForm;
+import ec.steadystate.SteadyStateStatisticsForm;
+import ec.util.Output;
+import ec.util.Parameter;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /*
  * SimpleStatistics.java
@@ -28,7 +31,7 @@ import java.io.FileWriter;
 
 /**
  * A basic Statistics class suitable for simple problem applications.
- *
+ * <p>
  * SimpleStatistics prints out the best individual, per subpopulation,
  * each generation.  At the end of a run, it also prints out the best
  * individual of the run.  SimpleStatistics outputs this data to a log
@@ -42,87 +45,94 @@ import java.io.FileWriter;
  * after the last boundary.  This is done by using individualsEvaluatedStatistics(...)
  * to update best-individual-of-generation in addition to doing it in
  * postEvaluationStatistics(...).
-
- <p><b>Parameters</b><br>
- <table>
- <tr><td valign=top><i>base.</i><tt>gzip</tt><br>
- <font size=-1>boolean</font></td>
- <td valign=top>(whether or not to compress the file (.gz suffix added)</td></tr>
- <tr><td valign=top><i>base.</i><tt>file</tt><br>
- <font size=-1>String (a filename), or nonexistant (signifies stdout)</font></td>
- <td valign=top>(the log for statistics)</td></tr>
- </table>
-
+ *
+ * <p><b>Parameters</b><br>
+ * <table>
+ * <tr><td valign=top><i>base.</i><tt>gzip</tt><br>
+ * <font size=-1>boolean</font></td>
+ * <td valign=top>(whether or not to compress the file (.gz suffix added)</td></tr>
+ * <tr><td valign=top><i>base.</i><tt>file</tt><br>
+ * <font size=-1>String (a filename), or nonexistant (signifies stdout)</font></td>
+ * <td valign=top>(the log for statistics)</td></tr>
+ * </table>
  *
  * @author Sean Luke
  * @version 1.0
  */
 
 public class SimpleStatisticsSaveFitnessCCGP extends Statistics implements SteadyStateStatisticsForm //, ec.eval.ProvidesBestSoFar
-    {
+{
 	/*//fzhang 20.7.2018 in order to get breed
 	 public final static String P_BREEDER = "breed";
 	 public Breeder breeder;
 	 public ParameterDatabase parameters;*/
-	 
-    public Individual[] getBestSoFar() { return best_of_run; }
 
-    /** log file parameter */
+    /**
+     * log file parameter
+     */
     public static final String P_STATISTICS_FILE = "file";
-
-    /** compress? */
+    /**
+     * compress?
+     */
     public static final String P_COMPRESS = "gzip";
-
     public static final String P_DO_FINAL = "do-final";
     public static final String P_DO_GENERATION = "do-generation";
     public static final String P_DO_MESSAGE = "do-message";
     public static final String P_DO_DESCRIPTION = "do-description";
     public static final String P_DO_PER_GENERATION_DESCRIPTION = "do-per-generation-description";
-    //get seed
-    protected long jobSeed;
-    
     //fzhang 25.6.2018 in order to save the rulesize in each generation
     final List<Double> aveSeqRulesizeSubPop0 = new ArrayList<>();
     final List<Double> aveRouRulesizeSubPop1 = new ArrayList<>();
-
-    /** The Statistics' log */
+    /**
+     * The Statistics' log
+     */
     public int statisticslog = 0;  // stdout
-
-    /** The best individual we've found so far */
+    /**
+     * The best individual we've found so far
+     */
     public Individual[] best_of_run = null;
-
-    /** Should we compress the file? */
+    /**
+     * Should we compress the file?
+     */
     public boolean compress;
     public boolean doFinal;
     public boolean doGeneration;
     public boolean doMessage;
     public boolean doDescription;
     public boolean doPerGenerationDescription;
+    //get seed
+    protected long jobSeed;
+    /**
+     * Logs the best individual of the generation.
+     */
+    boolean warned = false;
 
     //fzhang  in order to save the fiteness in each generation
 /*    List<String> fitnessSubPop0 = new ArrayList<>();
     List<String> fitnessSubPop1 = new ArrayList<>();*/
 
+    public Individual[] getBestSoFar() {
+        return best_of_run;
+    }
 
-    public void setup(final EvolutionState state, final Parameter base)
-        {
-        super.setup(state,base);
+    public void setup(final EvolutionState state, final Parameter base) {
+        super.setup(state, base);
 
-        compress = state.parameters.getBoolean(base.push(P_COMPRESS),null,false);
+        compress = state.parameters.getBoolean(base.push(P_COMPRESS), null, false);
 
         File statisticsFile = state.parameters.getFile(
-            base.push(P_STATISTICS_FILE),null);
+                base.push(P_STATISTICS_FILE), null);
 
-        doFinal = state.parameters.getBoolean(base.push(P_DO_FINAL),null,true);
-        doGeneration = state.parameters.getBoolean(base.push(P_DO_GENERATION),null,true);
+        doFinal = state.parameters.getBoolean(base.push(P_DO_FINAL), null, true);
+        doGeneration = state.parameters.getBoolean(base.push(P_DO_GENERATION), null, true);
         //System.out.println(doGeneration); //true
-        doMessage = state.parameters.getBoolean(base.push(P_DO_MESSAGE),null,true);
-        doDescription = state.parameters.getBoolean(base.push(P_DO_DESCRIPTION),null,true);
-        doPerGenerationDescription = state.parameters.getBoolean(base.push(P_DO_PER_GENERATION_DESCRIPTION),null,false);
+        doMessage = state.parameters.getBoolean(base.push(P_DO_MESSAGE), null, true);
+        doDescription = state.parameters.getBoolean(base.push(P_DO_DESCRIPTION), null, true);
+        doPerGenerationDescription = state.parameters.getBoolean(base.push(P_DO_PER_GENERATION_DESCRIPTION), null, false);
 
         Parameter p;
-		// Get the job seed.
-		p = new Parameter("seed").push(""+0);
+        // Get the job seed.
+        p = new Parameter("seed").push("" + 0);
         jobSeed = state.parameters.getLongWithDefault(p, null, 0);
         //System.out.println(jobSeed);
 
@@ -130,70 +140,56 @@ public class SimpleStatisticsSaveFitnessCCGP extends Statistics implements Stead
         //int generation = state.parameters.getIntWithDefault(new Parameter("generations"), null, 0);
         //System.out.println(generation);
 
-        if (silentFile)
-            {
+        if (silentFile) {
             statisticslog = Output.NO_LOGS;
-            }
-        else if (statisticsFile!=null)
-            {
-            try
-                {
+        } else if (statisticsFile != null) {
+            try {
                 statisticslog = state.output.addLog(statisticsFile, !compress, compress);
-                }
-            catch (IOException i)
-                {
+            } catch (IOException i) {
                 state.output.fatal("An IOException occurred while trying to create the log " + statisticsFile + ":\n" + i);
-                }
             }
-        else state.output.warning("No statistics file specified, printing to stdout at end.", base.push(P_STATISTICS_FILE));
-        }
+        } else
+            state.output.warning("No statistics file specified, printing to stdout at end.", base.push(P_STATISTICS_FILE));
+    }
 
-	public void postInitializationStatistics(final EvolutionState state) {
-		super.postInitializationStatistics(state);
+    public void postInitializationStatistics(final EvolutionState state) {
+        super.postInitializationStatistics(state);
 
-		// set up our best_of_run array -- can't do this in setup, because
-		// we don't know if the number of subpopulations has been determined yet
-		best_of_run = new Individual[state.population.subpops.length]; 
-	}
+        // set up our best_of_run array -- can't do this in setup, because
+        // we don't know if the number of subpopulations has been determined yet
+        best_of_run = new Individual[state.population.subpops.length];
+    }
 
-    /** Logs the best individual of the generation. */
-    boolean warned = false;
-    public void postEvaluationStatistics(final EvolutionState state)
-        {
+    public void postEvaluationStatistics(final EvolutionState state) {
         super.postEvaluationStatistics(state);
 
         // for now we just print the best fitness per subpopulation.
         Individual[] best_i = new Individual[state.population.subpops.length];  // quiets compiler complaints
-        for(int x=0;x<state.population.subpops.length;x++)
-            {
+        for (int x = 0; x < state.population.subpops.length; x++) {
             best_i[x] = state.population.subpops[x].individuals[0];
-            for(int y=1;y<state.population.subpops[x].individuals.length;y++)
-                {
-                if (state.population.subpops[x].individuals[y] == null)
-                    {
-                    if (!warned)
-                        {
+            for (int y = 1; y < state.population.subpops[x].individuals.length; y++) {
+                if (state.population.subpops[x].individuals[y] == null) {
+                    if (!warned) {
                         state.output.warnOnce("Null individuals found in subpopulation");
                         warned = true;  // we do this rather than relying on warnOnce because it is much faster in a tight loop
-                        }
                     }
-                else if (best_i[x] == null || state.population.subpops[x].individuals[y].fitness.betterThan(best_i[x].fitness))
-                     best_i[x] = state.population.subpops[x].individuals[y];
+                } else if (best_i[x] == null || state.population.subpops[x].individuals[y].fitness.betterThan(best_i[x].fitness))
+                    best_i[x] = state.population.subpops[x].individuals[y];
 
-                if (best_i[x] == null)
-                    {
-                    if (!warned)
-                        {
+                if (best_i[x] == null) {
+                    if (!warned) {
                         state.output.warnOnce("Null individuals found in subpopulation");
                         warned = true;  // we do this rather than relying on warnOnce because it is much faster in a tight loop
-                        }
                     }
                 }
+            }
 
             // now test to see if it's the new best_of_run
-            if (best_of_run[x]==null || best_i[x].fitness.betterThan(best_of_run[x].fitness))
-                best_of_run[x] = (Individual)(best_i[x].clone());
-            }
+            if (best_i[x] != null && (best_of_run[x] == null || best_i[x].fitness.betterThan(best_of_run[x].fitness)))
+                if (best_i[x] != null) {
+                    best_of_run[x] = (Individual) (best_i[x].clone());
+                }
+        }
 
 //        //Only care about overall best fitness
 //        //Collab and elite individuals will switch roles each generation, so which subpop is better is not
@@ -211,16 +207,15 @@ public class SimpleStatisticsSaveFitnessCCGP extends Statistics implements Stead
 
         // print the best-of-generation individual
 
-        if (doGeneration) state.output.println("\nGeneration: " + state.generation,statisticslog);
-        if (doGeneration) state.output.println("Best Individual:",statisticslog);
+        if (doGeneration) state.output.println("\nGeneration: " + state.generation, statisticslog);
+        if (doGeneration) state.output.println("Best Individual:", statisticslog);
 
-        for(int x=0;x<state.population.subpops.length;x++)
-            {
-            if (doGeneration) state.output.println("Subpopulation " + x + ":",statisticslog);
-            if (doGeneration) best_i[x].printIndividualForHumans(state,statisticslog);
+        for (int x = 0; x < state.population.subpops.length; x++) {
+            if (doGeneration) state.output.println("Subpopulation " + x + ":", statisticslog);
+            if (doGeneration) best_i[x].printIndividualForHumans(state, statisticslog);
             if (doMessage && !silentPrint) state.output.message("Subpop " + x + " best fitness of generation" +
-                (best_i[x].evaluated ? " " : " (evaluated flag not set): ") +
-                best_i[x].fitness.fitnessToStringForHumans());
+                    (best_i[x].evaluated ? " " : " (evaluated flag not set): ") +
+                    best_i[x].fitness.fitnessToStringForHumans());
 
             //save the fitness values to .csv  26/3/2018   fzhang
          /*   if(x==0)
@@ -231,14 +226,13 @@ public class SimpleStatisticsSaveFitnessCCGP extends Statistics implements Stead
                fitnessSubPop1.add(best_i[x].fitness.fitnessToStringForHumans());
 */
             // describe the winner if there is a description
-            if (doGeneration && doPerGenerationDescription)
-                {
+            if (doGeneration && doPerGenerationDescription) {
                 if (state.evaluator.p_problem instanceof SimpleProblemForm)
-                    ((SimpleProblemForm)(state.evaluator.p_problem.clone())).describe(state, best_i[x], x, 0, statisticslog);
-                }
+                    ((SimpleProblemForm) (state.evaluator.p_problem.clone())).describe(state, best_i[x], x, 0, statisticslog);
             }
+        }
 
-		//System.out.println(fitnessSubPop0.size());
+        //System.out.println(fitnessSubPop0.size());
         //save fitness values into .csv
 
         //save the fitness values to .csv  26/3/2018   fzhang
@@ -255,32 +249,36 @@ public class SimpleStatisticsSaveFitnessCCGP extends Statistics implements Stead
 		} catch (IOException e) {
 			e.printStackTrace();
 		}*/
-		}
+    }
 
-    /** Allows MultiObjectiveStatistics etc. to call super.super.finalStatistics(...) without
-        calling super.finalStatistics(...) */
-    protected void bypassFinalStatistics(EvolutionState state, int result)
-        { super.finalStatistics(state, result); }
+    /**
+     * Allows MultiObjectiveStatistics etc. to call super.super.finalStatistics(...) without
+     * calling super.finalStatistics(...)
+     */
+    protected void bypassFinalStatistics(EvolutionState state, int result) {
+        super.finalStatistics(state, result);
+    }
 
-    /** Logs the best individual of the run. */
-    public void finalStatistics(final EvolutionState state, final int result)
-        {
-        super.finalStatistics(state,result);
+    /**
+     * Logs the best individual of the run.
+     */
+    public void finalStatistics(final EvolutionState state, final int result) {
+        super.finalStatistics(state, result);
 
         // for now we just print the best fitness
 
-        if (doFinal) state.output.println("\nBest Individual of Run:",statisticslog);
-        for(int x=0;x<state.population.subpops.length;x++ )
-            {
-            if (doFinal) state.output.println("Subpopulation " + x + ":",statisticslog);
-            if (doFinal) best_of_run[x].printIndividualForHumans(state,statisticslog);
-            if (doMessage && !silentPrint) state.output.message("Subpop " + x + " best fitness of run: " + best_of_run[x].fitness.fitnessToStringForHumans());
+        if (doFinal) state.output.println("\nBest Individual of Run:", statisticslog);
+        for (int x = 0; x < state.population.subpops.length; x++) {
+            if (doFinal) state.output.println("Subpopulation " + x + ":", statisticslog);
+            if (doFinal) best_of_run[x].printIndividualForHumans(state, statisticslog);
+            if (doMessage && !silentPrint)
+                state.output.message("Subpop " + x + " best fitness of run: " + best_of_run[x].fitness.fitnessToStringForHumans());
 
             // finally describe the winner if there is a description
             if (doFinal && doDescription)
                 if (state.evaluator.p_problem instanceof SimpleProblemForm)
-                    ((SimpleProblemForm)(state.evaluator.p_problem.clone())).describe(state, best_of_run[x], x, 0, statisticslog);
-            }
+                    ((SimpleProblemForm) (state.evaluator.p_problem.clone())).describe(state, best_of_run[x], x, 0, statisticslog);
+        }
 
         //save the best value in after last generation  fzhang 27/3/2018
         //File fitnessFile = new File("job." + jobSeed + ".bestfitness.csv"); //jobSeed = 0
@@ -292,8 +290,7 @@ public class SimpleStatisticsSaveFitnessCCGP extends Statistics implements Stead
         double bestfitnessFinalSub1 = Double.parseDouble(bestfitnessSubpop1);
 
         double selectedBestFitness = bestfitnessFinalSub0;
-        if(Double.compare(selectedBestFitness, bestfitnessFinalSub1)>0) {
-        	selectedBestFitness = bestfitnessFinalSub1;
+        if (Double.compare(selectedBestFitness, bestfitnessFinalSub1) > 0) {
         }
 
 		/*try {
@@ -309,75 +306,75 @@ public class SimpleStatisticsSaveFitnessCCGP extends Statistics implements Stead
 		} catch (IOException e) {
 			e.printStackTrace();
 		}*/
-        }
+    }
 
     //convert string including characters and numbers to numbers  26/3/2017 fzhang
     public String extractFitness(String s) {
-    	String split =s.split("\\[")[1];
-    	split = split.split("\\]")[0];
-    	return split;
+        String split = s.split("\\[")[1];
+        split = split.split("\\]")[0];
+        return split;
     }
-    
-    /** GENERATIONAL: Called immediately before evaluation occurs. */
-    public void preEvaluationStatistics(final EvolutionState state)
-        {
-    	for(int x=0;x<children.length;x++)
-            children[x].preEvaluationStatistics(state);
-    	//==============================start==================================================================
-        // fzhang 15.6.2018 1. save the individual size in population
- 		// 2. calculate the average size of individuals in population
- 		// check the average size of sequencing and routing rules in population
-        //fzhang 15.6.2018  in order to check the average size of sequencing and routing rules in population
-		int SeqSizePop0 = 0;
-		int RouSizePop1 = 0;
-        //int indSizePop = 0; // in order to check whether SeqSizePop1 and RouSizePop2 are calculated correctly
-                        // should be the sum of SeqSizePop1 and RouSizePop2
-		double aveSeqSizePop0 = 0;
-		double aveRouSizePop1 = 0; //change this to double, in this way, 11+12=11.5
-		for (int ind = 0; ind < state.population.subpops[0].individuals.length; ind++) {
-			SeqSizePop0 += state.population.subpops[0].individuals[ind].size();
-		}
 
-		for (int ind = 0; ind < state.population.subpops[1].individuals.length; ind++) {
-			RouSizePop1 += state.population.subpops[1].individuals[ind].size();
-		}
-		aveSeqSizePop0 = SeqSizePop0 / state.population.subpops[0].individuals.length;
-		aveRouSizePop1 = RouSizePop1 / state.population.subpops[1].individuals.length;
-		aveSeqRulesizeSubPop0.add(aveSeqSizePop0);
-		aveRouRulesizeSubPop1.add(aveRouSizePop1);
-		
-		if(state.generation == state.numGenerations-1) {
-			//fzhang  15.6.2018  save the size of rules in each generation
-		    File rulesizeFile = new File("job." + jobSeed + ".aveGenRulesize.csv"); // jobSeed = 0
-			try {
-				BufferedWriter writer = new BufferedWriter(new FileWriter(rulesizeFile));
-				writer.write("Gen,aveSeqRuleSize,aveRouRuleSize,avePairSize");
-				writer.newLine();
-				for (int gen = 0; gen < aveSeqRulesizeSubPop0.size(); gen++) {
-					writer.write(gen + "," + aveSeqRulesizeSubPop0.get(gen) + "," + aveRouRulesizeSubPop1.get(gen) + ","
-							+ (aveSeqRulesizeSubPop0.get(gen) + aveRouRulesizeSubPop1.get(gen))/2);
-					writer.newLine();
-				} 
-				writer.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+    /**
+     * GENERATIONAL: Called immediately before evaluation occurs.
+     */
+    public void preEvaluationStatistics(final EvolutionState state) {
+        for (Statistics child : children) child.preEvaluationStatistics(state);
+        //==============================start==================================================================
+        // fzhang 15.6.2018 1. save the individual size in population
+        // 2. calculate the average size of individuals in population
+        // check the average size of sequencing and routing rules in population
+        //fzhang 15.6.2018  in order to check the average size of sequencing and routing rules in population
+        int SeqSizePop0 = 0;
+        int RouSizePop1 = 0;
+        //int indSizePop = 0; // in order to check whether SeqSizePop1 and RouSizePop2 are calculated correctly
+        // should be the sum of SeqSizePop1 and RouSizePop2
+        double aveSeqSizePop0;
+        double aveRouSizePop1; //change this to double, in this way, 11+12=11.5
+        for (int ind = 0; ind < state.population.subpops[0].individuals.length; ind++) {
+            SeqSizePop0 += state.population.subpops[0].individuals[ind].size();
+        }
+
+        for (int ind = 0; ind < state.population.subpops[1].individuals.length; ind++) {
+            RouSizePop1 += state.population.subpops[1].individuals[ind].size();
+        }
+        aveSeqSizePop0 = SeqSizePop0 / state.population.subpops[0].individuals.length;
+        aveRouSizePop1 = RouSizePop1 / state.population.subpops[1].individuals.length;
+        aveSeqRulesizeSubPop0.add(aveSeqSizePop0);
+        aveRouRulesizeSubPop1.add(aveRouSizePop1);
+
+        if (state.generation == state.numGenerations - 1) {
+            //fzhang  15.6.2018  save the size of rules in each generation
+            File rulesizeFile = new File("job." + jobSeed + ".aveGenRulesize.csv"); // jobSeed = 0
+            try {
+                BufferedWriter writer = new BufferedWriter(new FileWriter(rulesizeFile));
+                writer.write("Gen,aveSeqRuleSize,aveRouRuleSize,avePairSize");
+                writer.newLine();
+                for (int gen = 0; gen < aveSeqRulesizeSubPop0.size(); gen++) {
+                    writer.write(gen + "," + aveSeqRulesizeSubPop0.get(gen) + "," + aveRouRulesizeSubPop1.get(gen) + ","
+                            + (aveSeqRulesizeSubPop0.get(gen) + aveRouRulesizeSubPop1.get(gen)) / 2);
+                    writer.newLine();
+                }
+                writer.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 	 			
 		/*	System.out.println(SeqSizePop0);
 			System.out.println(RouSizePop1);
 			System.out.println(aveSeqSizePop0);
 			System.out.println(aveRouSizePop1);
 	 		*/
-	 	//fzhang 15.6.2018 in order to check whether SeqSizePop1 and RouSizePop2 are calculated correctly (YES)
+            //fzhang 15.6.2018 in order to check whether SeqSizePop1 and RouSizePop2 are calculated correctly (YES)
 	 	/*	for (int pop = 0; pop < state.population.subpops.length; pop++) {
 	 			for (int ind = 0; ind < state.population.subpops[pop].individuals.length; ind++) {
 	 				indSizePop += state.population.subpops[pop].individuals[ind].size();
 	 			}
 	 		}
 	 		System.out.println(indSizePop);*/
-		}
-		//=======================================end====================================================================
         }
-    
+        //=======================================end====================================================================
     }
+
+}
 

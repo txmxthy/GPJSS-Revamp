@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * The dimension exponent vector.
- *
+ * <p>
  * Created by yimei on 26/10/16.
  */
 public class DimensionExponentVector {
@@ -30,6 +30,10 @@ public class DimensionExponentVector {
         return exponents;
     }
 
+    public void setExponents(List<Double> exponents) {
+        this.exponents = exponents;
+    }
+
     public double getExponent(int index) {
         return exponents.get(index);
     }
@@ -37,10 +41,6 @@ public class DimensionExponentVector {
     public double getExponent(Dimension dimension) {
         int index = dimensions.indexOf(dimension);
         return getExponent(index);
-    }
-
-    public void setExponents(List<Double> exponents) {
-        this.exponents = exponents;
     }
 
     public void setExponent(int index, double value) {

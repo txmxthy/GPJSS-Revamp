@@ -43,13 +43,13 @@ public class AttributeGPNode extends GPNode {
     public void eval(EvolutionState state, int thread, GPData input,
                      ADFStack stack, GPIndividual individual, Problem problem) {
         // The problem is essentially a priority calculation.
-        CalcPriorityProblem calcPrioProb = ((CalcPriorityProblem)problem);
+        CalcPriorityProblem calcPrioProb = ((CalcPriorityProblem) problem);
 
-        DoubleData data = ((DoubleData)input);
-        if(calcPrioProb.getOperation() == null || calcPrioProb.getWorkCenter()== null || calcPrioProb.getSystemState() == null) {
-        	System.out.println("null");
+        DoubleData data = ((DoubleData) input);
+        if (calcPrioProb.getOperation() == null || calcPrioProb.getWorkCenter() == null || calcPrioProb.getSystemState() == null) {
+            System.out.println("null");
         }
-        
+
         data.value = attribute.value(
                 calcPrioProb.getOperation(),
                 calcPrioProb.getWorkCenter(),
@@ -63,7 +63,7 @@ public class AttributeGPNode extends GPNode {
 
     public boolean equals(Object other) {
         if (other instanceof AttributeGPNode) {
-            AttributeGPNode o = (AttributeGPNode)other;
+            AttributeGPNode o = (AttributeGPNode) other;
             return (attribute == o.attribute);
         }
 

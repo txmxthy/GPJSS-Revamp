@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * The utility functions to process LISP expressions.
- *
+ * <p>
  * Created by YiMei on 1/10/16.
  */
 public class LispUtil {
@@ -19,11 +19,11 @@ public class LispUtil {
                 int unbalance = 1;
                 for (int i = head + 1; i < argsString.length(); i++) {
                     if (argsString.charAt(i) == '(') {
-                        unbalance ++;
+                        unbalance++;
                     }
 
                     if (argsString.charAt(i) == ')') {
-                        unbalance --;
+                        unbalance--;
 
                         if (unbalance == 0) {
                             args.add(argsString.substring(head, i + 1));
@@ -31,8 +31,7 @@ public class LispUtil {
                         }
                     }
                 }
-            }
-            else {
+            } else {
                 int tail = argsString.indexOf(' ', head);
                 if (tail == -1)
                     tail = argsString.length();

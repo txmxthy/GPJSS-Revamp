@@ -16,43 +16,27 @@ import org.apache.commons.math3.util.MathUtils;
 
 import java.util.*;
 
-public class KMeansPlusPlusClustererTemp<T extends Clusterable> extends Clusterer<T>  {
+public class KMeansPlusPlusClustererTemp<T extends Clusterable> extends Clusterer<T> {
 
-    @Override
-    public List<? extends Cluster<T>> cluster(Collection<T> collection) throws MathIllegalArgumentException, ConvergenceException {
-        return null;
-    }
-
-    /** Strategies to use for replacing an empty cluster. */
-    public enum EmptyClusterStrategy {
-
-        /** Split the cluster with largest distance variance. */
-        LARGEST_VARIANCE,
-
-        /** Split the cluster with largest number of points. */
-        LARGEST_POINTS_NUMBER,
-
-        /** Create a cluster around the point farthest from its centroid. */
-        FARTHEST_POINT,
-
-        /** Generate an error. */
-        ERROR
-
-    }
-
-    /** The number of clusters. */
+    /**
+     * The number of clusters.
+     */
     private final int k;
-
-    /** The maximum number of iterations. */
+    /**
+     * The maximum number of iterations.
+     */
     private final int maxIterations;
-
-    /** Random generator for choosing initial centers. */
+    /**
+     * Random generator for choosing initial centers.
+     */
     private final RandomGenerator random;
-
-    /** Selected strategy for empty clusters. */
+    /**
+     * Selected strategy for empty clusters.
+     */
     private final KMeansPlusPlusClustererTemp.EmptyClusterStrategy emptyStrategy;
 
-    /** Build a clusterer.
+    /**
+     * Build a clusterer.
      * <p>
      * The default strategy for handling empty clusters that may appear during
      * algorithm iterations is to split the cluster with largest distance variance.
@@ -65,51 +49,81 @@ public class KMeansPlusPlusClustererTemp<T extends Clusterable> extends Clustere
         this(k, -1);
     }
 
-    /** Build a clusterer.
+    /**
+     * Build a clusterer.
      * <p>
      * The default strategy for handling empty clusters that may appear during
      * algorithm iterations is to split the cluster with largest distance variance.
      * <p>
      * The euclidean distance will be used as default distance measure.
      *
-     * @param k the number of clusters to split the data into
+     * @param k             the number of clusters to split the data into
      * @param maxIterations the maximum number of iterations to run the algorithm for.
-     *   If negative, no maximum will be used.
+     *                      If negative, no maximum will be used.
      */
     public KMeansPlusPlusClustererTemp(final int k, final int maxIterations) {
         this(k, maxIterations, new EuclideanDistance());
     }
 
-    /** Build a clusterer.
+    /**
+     * Build a clusterer.
      * <p>
      * The default strategy for handling empty clusters that may appear during
      * algorithm iterations is to split the cluster with largest distance variance.
      *
-     * @param k the number of clusters to split the data into
+     * @param k             the number of clusters to split the data into
      * @param maxIterations the maximum number of iterations to run the algorithm for.
-     *   If negative, no maximum will be used.
-     * @param measure the distance measure to use
+     *                      If negative, no maximum will be used.
+     * @param measure       the distance measure to use
      */
     public KMeansPlusPlusClustererTemp(final int k, final int maxIterations, final DistanceMeasure measure) {
         this(k, maxIterations, measure, new JDKRandomGenerator());
     }
 
-    /** Build a clusterer.
+    /**
+     * Build a clusterer.
      * <p>
      * The default strategy for handling empty clusters that may appear during
      * algorithm iterations is to split the cluster with largest distance variance.
      *
-     * @param k the number of clusters to split the data into
+     * @param k             the number of clusters to split the data into
      * @param maxIterations the maximum number of iterations to run the algorithm for.
-     *   If negative, no maximum will be used.
-     * @param measure the distance measure to use
-     * @param random random generator to use for choosing initial centers
+     *                      If negative, no maximum will be used.
+     * @param measure       the distance measure to use
+     * @param random        random generator to use for choosing initial centers
      */
 
     public KMeansPlusPlusClustererTemp(final int k, final int maxIterations,
-                                   final DistanceMeasure measure,
-                                   final RandomGenerator random) {
+                                       final DistanceMeasure measure,
+                                       final RandomGenerator random) {
         this(k, maxIterations, measure, random, KMeansPlusPlusClustererTemp.EmptyClusterStrategy.LARGEST_VARIANCE);
+    }
+
+    /**
+     * Build a clusterer.
+     *
+     * @param k             the number of clusters to split the data into
+     * @param maxIterations the maximum number of iterations to run the algorithm for.
+     *                      If negative, no maximum will be used.
+     * @param measure       the distance measure to use
+     * @param random        random generator to use for choosing initial centers
+     * @param emptyStrategy strategy to use for handling empty clusters that
+     *                      may appear during algorithm iterations
+     */
+    public KMeansPlusPlusClustererTemp(final int k, final int maxIterations,
+                                       final DistanceMeasure measure,
+                                       final RandomGenerator random,
+                                       final KMeansPlusPlusClustererTemp.EmptyClusterStrategy emptyStrategy) {
+        super(measure);
+        this.k = k;
+        this.maxIterations = maxIterations;
+        this.random = random;
+        this.emptyStrategy = emptyStrategy;
+    }
+
+    @Override
+    public List<? extends Cluster<T>> cluster(Collection<T> collection) throws MathIllegalArgumentException, ConvergenceException {
+        return null;
     }
 
 /*    public KMeansPlusPlusClustererTemp(final int k, final int maxIterations,
@@ -118,29 +132,9 @@ public class KMeansPlusPlusClustererTemp<T extends Clusterable> extends Clustere
         this(k, maxIterations, measure, random, EmptyClusterStrategy.LARGEST_POINTS_NUMBER);
     }*/
 
-    /** Build a clusterer.
-     *
-     * @param k the number of clusters to split the data into
-     * @param maxIterations the maximum number of iterations to run the algorithm for.
-     *   If negative, no maximum will be used.
-     * @param measure the distance measure to use
-     * @param random random generator to use for choosing initial centers
-     * @param emptyStrategy strategy to use for handling empty clusters that
-     * may appear during algorithm iterations
-     */
-    public KMeansPlusPlusClustererTemp(final int k, final int maxIterations,
-                                   final DistanceMeasure measure,
-                                   final RandomGenerator random,
-                                   final KMeansPlusPlusClustererTemp.EmptyClusterStrategy emptyStrategy) {
-        super(measure);
-        this.k             = k;
-        this.maxIterations = maxIterations;
-        this.random        = random;
-        this.emptyStrategy = emptyStrategy;
-    }
-
     /**
      * Return the number of clusters this instance will use.
+     *
      * @return the number of clusters
      */
     public int getK() {
@@ -149,6 +143,7 @@ public class KMeansPlusPlusClustererTemp<T extends Clusterable> extends Clustere
 
     /**
      * Returns the maximum number of iterations this instance will use.
+     *
      * @return the maximum number of iterations, or -1 if no maximum is set
      */
     public int getMaxIterations() {
@@ -157,6 +152,7 @@ public class KMeansPlusPlusClustererTemp<T extends Clusterable> extends Clustere
 
     /**
      * Returns the random generator this instance will use.
+     *
      * @return the random generator
      */
     public RandomGenerator getRandomGenerator() {
@@ -165,6 +161,7 @@ public class KMeansPlusPlusClustererTemp<T extends Clusterable> extends Clustere
 
     /**
      * Returns the {@link KMeansPlusPlusClustererTemp.EmptyClusterStrategy} used by this instance.
+     *
      * @return the {@link KMeansPlusPlusClustererTemp.EmptyClusterStrategy}
      */
     public KMeansPlusPlusClustererTemp.EmptyClusterStrategy getEmptyClusterStrategy() {
@@ -177,16 +174,16 @@ public class KMeansPlusPlusClustererTemp<T extends Clusterable> extends Clustere
      * @param points the points to cluster
      * @return a list of clusters containing the points
      * @throws MathIllegalArgumentException if the data points are null or the number
-     *     of clusters is larger than the number of data points
-     * @throws ConvergenceException if an empty cluster is encountered and the
-     * {@link #emptyStrategy} is set to {@code ERROR}
+     *                                      of clusters is larger than the number of data points
+     * @throws ConvergenceException         if an empty cluster is encountered and the
+     *                                      {@link #emptyStrategy} is set to {@code ERROR}
      */
     //@Override
     public List<CentroidCluster<T>> cluster(final EvolutionState state, final Collection<T> points)
             throws MathIllegalArgumentException, ConvergenceException {
 
         //seed = state.parameters.getInt("P_SEED" , )
-        Parameter p = new Parameter("seed").push(""+0);
+        Parameter p = new Parameter("seed").push("" + 0);
         long jobSeed = state.parameters.getLongWithDefault(p, null, 0);
 
         random.setSeed(jobSeed);
@@ -202,11 +199,11 @@ public class KMeansPlusPlusClustererTemp<T extends Clusterable> extends Clustere
         //fzhang 2019.6.26 get unique points for chooseInitialCenters
         // create the initial clusters
         //============================start===========================================
-        Set<Double> unique = new HashSet<Double>();
-        List<Point> uniquePoints = new ArrayList<Point>();
-        for (int i=0; i<points.size(); i++){
-            Point point = (Point)(((List)points).get(i));
-            if (! unique.contains(point.getPoint()[0])){
+        Set<Double> unique = new HashSet<>();
+        List<Point> uniquePoints = new ArrayList<>();
+        for (int i = 0; i < points.size(); i++) {
+            Point point = (Point) (((List<?>) points).get(i));
+            if (!unique.contains(point.getPoint()[0])) {
                 unique.add(point.getPoint()[0]);
                 uniquePoints.add(point); //uniquePoints: from small to large
             }
@@ -214,11 +211,11 @@ public class KMeansPlusPlusClustererTemp<T extends Clusterable> extends Clustere
 
         //if unique value is not enough, stop here. otherwise, there are some empty cluster happen.
         // number of clusters has to be smaller or equal the number of data points
-        if(uniquePoints.size() < k){
+        if (uniquePoints.size() < k) {
             return null;
         }
 
-        List<CentroidCluster<T>> clusters = chooseInitialCenters((List<T>)uniquePoints);
+        List<CentroidCluster<T>> clusters = chooseInitialCenters((List<T>) uniquePoints);
         //===============================end===========================================
 
         //===================================original===================================
@@ -234,28 +231,28 @@ public class KMeansPlusPlusClustererTemp<T extends Clusterable> extends Clustere
         final int max = (maxIterations < 0) ? Integer.MAX_VALUE : maxIterations;
         for (int count = 0; count < max; count++) {
             boolean emptyCluster = false;
-            List<CentroidCluster<T>> newClusters = new ArrayList<CentroidCluster<T>>();
+            List<CentroidCluster<T>> newClusters = new ArrayList<>();
             for (final CentroidCluster<T> cluster : clusters) {
                 final Clusterable newCenter;
                 if (cluster.getPoints().isEmpty()) {
                     switch (emptyStrategy) {
-                        case LARGEST_VARIANCE :
+                        case LARGEST_VARIANCE:
                             newCenter = getPointFromLargestVarianceCluster(clusters);
                             break;
-                        case LARGEST_POINTS_NUMBER :
+                        case LARGEST_POINTS_NUMBER:
                             newCenter = getPointFromLargestNumberCluster(clusters);
                             break;
-                        case FARTHEST_POINT :
+                        case FARTHEST_POINT:
                             newCenter = getFarthestPoint(clusters);
                             break;
-                        default :
+                        default:
                             throw new ConvergenceException(LocalizedFormats.EMPTY_CLUSTER_IN_K_MEANS);
                     }
                     emptyCluster = true;
                 } else {
                     newCenter = centroidOf(cluster.getPoints(), cluster.getCenter().getPoint().length);
                 }
-                newClusters.add(new CentroidCluster<T>(newCenter));
+                newClusters.add(new CentroidCluster<>(newCenter));
             }
             int changes = assignPointsToClusters(newClusters, points, assignments);
             clusters = newClusters;
@@ -273,8 +270,8 @@ public class KMeansPlusPlusClustererTemp<T extends Clusterable> extends Clustere
     /**
      * Adds the given points to the closest {@link Cluster}.
      *
-     * @param clusters the {@link Cluster}s to add the points to
-     * @param points the points to add to the given {@link Cluster}s
+     * @param clusters    the {@link Cluster}s to add the points to
+     * @param points      the points to add to the given {@link Cluster}s
      * @param assignments points assignments to clusters
      * @return the number of points assigned to different clusters as the iteration before
      */
@@ -307,7 +304,7 @@ public class KMeansPlusPlusClustererTemp<T extends Clusterable> extends Clustere
 
         // Convert to list for indexed access. Make it unmodifiable, since removal of items
         // would screw up the logic of this method.
-        final List<T> pointList = Collections.unmodifiableList(new ArrayList<T> (points));
+        final List<T> pointList = Collections.unmodifiableList(new ArrayList<>(points));
 
         // The number of points in the list.
         final int numPoints = pointList.size();
@@ -317,7 +314,7 @@ public class KMeansPlusPlusClustererTemp<T extends Clusterable> extends Clustere
         final boolean[] taken = new boolean[numPoints];
 
         // The resulting list of initial centers.
-        final List<CentroidCluster<T>> resultSet = new ArrayList<CentroidCluster<T>>();
+        final List<CentroidCluster<T>> resultSet = new ArrayList<>();
 
         // Choose one center uniformly at random from among the data points.
         final int firstPointIndex = random.nextInt(numPoints);
@@ -325,7 +322,7 @@ public class KMeansPlusPlusClustererTemp<T extends Clusterable> extends Clustere
 
         final T firstPoint = pointList.get(firstPointIndex);
 
-        resultSet.add(new CentroidCluster<T>(firstPoint));
+        resultSet.add(new CentroidCluster<>(firstPoint));
 
         // Must mark it as taken
         taken[firstPointIndex] = true;
@@ -339,7 +336,7 @@ public class KMeansPlusPlusClustererTemp<T extends Clusterable> extends Clustere
         for (int i = 0; i < numPoints; i++) {
             if (i != firstPointIndex) { // That point isn't considered
                 double d = distance(firstPoint, pointList.get(i));
-                minDistSquared[i] = d*d;
+                minDistSquared[i] = d * d;
             }
         }
 
@@ -357,7 +354,7 @@ public class KMeansPlusPlusClustererTemp<T extends Clusterable> extends Clustere
 
             // Add one new data point as a center. Each point x is chosen with
             // probability proportional to D(x)2
-           final double r = random.nextDouble() * distSqSum;
+            final double r = random.nextDouble() * distSqSum;
             //final double r = state.random[0].nextDouble() * distSqSum;
 
             // The index of the next point to be added to the resultSet.
@@ -393,7 +390,7 @@ public class KMeansPlusPlusClustererTemp<T extends Clusterable> extends Clustere
 
                 final T p = pointList.get(nextPointIndex);
 
-                resultSet.add(new CentroidCluster<T> (p));
+                resultSet.add(new CentroidCluster<>(p));
 
                 // Mark it as taken.
                 taken[nextPointIndex] = true;
@@ -463,7 +460,7 @@ public class KMeansPlusPlusClustererTemp<T extends Clusterable> extends Clustere
 
         // extract a random point from the cluster
         final List<T> selectedPoints = selected.getPoints();
-        return  selectedPoints.remove(random.nextInt(selectedPoints.size()));
+        return selectedPoints.remove(random.nextInt(selectedPoints.size()));
         //return selectedPoints.remove(state.random[0].nextInt(selectedPoints.size()));
 
     }
@@ -525,9 +522,9 @@ public class KMeansPlusPlusClustererTemp<T extends Clusterable> extends Clustere
             for (int i = 0; i < points.size(); ++i) {
                 final double distance = distance(points.get(i), center);
                 if (distance > maxDistance) {
-                    maxDistance     = distance;
+                    maxDistance = distance;
                     selectedCluster = cluster;
-                    selectedPoint   = i;
+                    selectedPoint = i;
                 }
             }
 
@@ -546,7 +543,7 @@ public class KMeansPlusPlusClustererTemp<T extends Clusterable> extends Clustere
      * Returns the nearest {@link Cluster} to the given point
      *
      * @param clusters the {@link Cluster}s to search
-     * @param point the point to find the nearest {@link Cluster} for
+     * @param point    the point to find the nearest {@link Cluster} for
      * @return the index of the nearest {@link Cluster} to the given point
      */
     public int getNearestCluster(final Collection<CentroidCluster<T>> clusters, final T point) {
@@ -567,7 +564,7 @@ public class KMeansPlusPlusClustererTemp<T extends Clusterable> extends Clustere
     /**
      * Computes the centroid for a set of points.
      *
-     * @param points the set of points
+     * @param points    the set of points
      * @param dimension the point dimension
      * @return the computed centroid for the set of points
      */
@@ -583,6 +580,33 @@ public class KMeansPlusPlusClustererTemp<T extends Clusterable> extends Clustere
             centroid[i] /= points.size();
         }
         return new DoublePoint(centroid);
+    }
+
+    /**
+     * Strategies to use for replacing an empty cluster.
+     */
+    public enum EmptyClusterStrategy {
+
+        /**
+         * Split the cluster with largest distance variance.
+         */
+        LARGEST_VARIANCE,
+
+        /**
+         * Split the cluster with largest number of points.
+         */
+        LARGEST_POINTS_NUMBER,
+
+        /**
+         * Create a cluster around the point farthest from its centroid.
+         */
+        FARTHEST_POINT,
+
+        /**
+         * Generate an error.
+         */
+        ERROR
+
     }
 
 }

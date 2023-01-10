@@ -4,15 +4,14 @@ import ec.EvolutionState;
 import ec.Fitness;
 import ec.multiobjective.MultiObjectiveFitness;
 import ec.util.Parameter;
-//import yimei.jss.algorithm.featureweighted.multiPopCoevolutionaryEvaluator;
 import simulation.definition.FlexibleStaticInstance;
 import simulation.definition.SchedulingSet;
 import simulation.definition.WorkCenter;
-import simulation.rules.rule.AbstractRule;
 import simulation.definition.logic.DynamicSimulation;
 import simulation.definition.logic.Simulation;
 import simulation.definition.logic.StaticSimulation;
 import simulation.definition.logic.state.SystemState;
+import simulation.rules.rule.AbstractRule;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,22 +19,12 @@ import java.util.List;
 /**
  * Created by dyska on 4/07/17.
  */
-public class MultipleRuleEvaluationModel extends AbstractEvaluationModel{
+public class MultipleRuleEvaluationModel extends AbstractEvaluationModel {
 
     /**
      * The starting seed of the simulation models.
      */
     public final static String P_SIM_SEED = "sim-seed";
-
-    //defined by fzhang, 26.4.2018
-    int countBadrun = 0;
-    int countInd = 0;
-    final List<Integer> genNumBadRun = new ArrayList<>();
-    protected long jobSeed;
-
-    //modified by fzhang 21.5.2018 to get the number of finished jobs
-    protected SystemState systemState;
-
     /**
      * Whether to rotate the simulation seed or not.
      */
@@ -49,12 +38,17 @@ public class MultipleRuleEvaluationModel extends AbstractEvaluationModel{
     public final static String P_SIM_UTIL_LEVEL = "util-level";
     public final static String P_SIM_DUE_DATE_FACTOR = "due-date-factor";
     public final static String P_SIM_REPLICATIONS = "replications";
-
-	private static final EvolutionState EvolutionState = null;
-
+    private static final EvolutionState EvolutionState = null;
+    final List<Integer> genNumBadRun = new ArrayList<>();
+    protected long jobSeed;
+    //modified by fzhang 21.5.2018 to get the number of finished jobs
+    protected SystemState systemState;
     protected SchedulingSet schedulingSet;
     protected long simSeed;
     protected boolean rotateSimSeed;
+    //defined by fzhang, 26.4.2018
+    int countBadrun = 0;
+    int countInd = 0;
 
     public SchedulingSet getSchedulingSet() {
         return schedulingSet;
@@ -116,7 +110,7 @@ public class MultipleRuleEvaluationModel extends AbstractEvaluationModel{
             p = b.push(P_SIM_REPLICATIONS);
             int rep = state.parameters.getIntWithDefault(p, null, 1);
 
-            Simulation simulation = null;
+            Simulation simulation;
             //only expecting filePath parameter for Static FJSS, so can use this
             String filePath = state.parameters.getString(new Parameter("filePath"), null);
             if (filePath == null) {
@@ -130,7 +124,7 @@ public class MultipleRuleEvaluationModel extends AbstractEvaluationModel{
                 simulation = new StaticSimulation(null, null, instance);
             }
             trainSimulations.add(simulation);
-            replications.add(new Integer(rep));
+            replications.add(rep);
         }
 
         schedulingSet = new SchedulingSet(trainSimulations, replications, objectives);
@@ -151,7 +145,7 @@ public class MultipleRuleEvaluationModel extends AbstractEvaluationModel{
             return;
         }
         //System.out.println(rules.size()); //2 repeat
-           countInd++;
+        countInd++;
 
         AbstractRule sequencingRule = rules.get(0); // for each arraylist in list, they have two elements, the first one is sequencing rule and the second one is routing rule
         AbstractRule routingRule = rules.get(1);
@@ -175,31 +169,31 @@ public class MultipleRuleEvaluationModel extends AbstractEvaluationModel{
             simulation.run();
 
             for (int i = 0; i < objectives.size(); i++) {
-            	//fzhang 2018.10.23  cancel normalization process
+                //fzhang 2018.10.23  cancel normalization process
 //                double normObjValue = simulation.objectiveValue(objectives.get(i))  // this line: the value of makespan
 //                        / schedulingSet.getObjectiveLowerBound(i, col);
 
                 double ObjValue = simulation.objectiveValue(objectives.get(i));  // this line: the value of makespan
 
-               // multiPopCoevolutionaryEvaluator evalutor = new multiPopCoevolutionaryEvaluator();
+                // multiPopCoevolutionaryEvaluator evalutor = new multiPopCoevolutionaryEvaluator();
                 //in essence, here is useless. because if w.numOpsInQueue() > 100, the simulation has been canceled in run(). here is a double check
-                    for (WorkCenter w: simulation.getSystemState().getWorkCenters()) {
-                        if (w.numOpsInQueue() > 100) {
-                            //this was a bad run
-                            //fzhang 2018.10.23  cancel normalization process
+                for (WorkCenter w : simulation.getSystemState().getWorkCenters()) {
+                    if (w.numOpsInQueue() > 100) {
+                        //this was a bad run
+                        //fzhang 2018.10.23  cancel normalization process
 //                        normObjValue = Double.MAX_VALUE;
-                            //ObjValue = Double.MAX_VALUE;
-                            ObjValue = Double.MAX_VALUE;
+                        //ObjValue = Double.MAX_VALUE;
+                        ObjValue = Double.MAX_VALUE;
 
-                            //System.out.println(systemState.getJobsInSystem().size());
-                            //System.out.println(systemState.getJobsCompleted().size());
-                            //normObjValue = normObjValue*(systemState.getJobsInSystem().size()/systemState.getJobsCompleted().size());
-                            countBadrun++;
-                            break;
-                        }
+                        //System.out.println(systemState.getJobsInSystem().size());
+                        //System.out.println(systemState.getJobsCompleted().size());
+                        //normObjValue = normObjValue*(systemState.getJobsInSystem().size()/systemState.getJobsCompleted().size());
+                        countBadrun++;
+                        break;
                     }
+                }
 
-              //fzhang 2018.10.23  cancel normalization process
+                //fzhang 2018.10.23  cancel normalization process
 //                fitnesses[i] += normObjValue;  //the value of fitness is the normalization of the objective value
                 fitnesses[i] += ObjValue;
 //                System.out.println(fitnesses[i]);
@@ -215,7 +209,7 @@ public class MultipleRuleEvaluationModel extends AbstractEvaluationModel{
 //                            / schedulingSet.getObjectiveLowerBound(i, col);
 //                    fitnesses[i] += normObjValue;
 
-                  //fzhang 2018.10.23  cancel normalization process
+                    //fzhang 2018.10.23  cancel normalization process
                     double ObjValue = simulation.objectiveValue(objectives.get(i));
                     fitnesses[i] += ObjValue; //one object corresponding to one fitness
 
@@ -227,23 +221,23 @@ public class MultipleRuleEvaluationModel extends AbstractEvaluationModel{
             simulation.reset();
         }
 
-      //modified by fzhang 18.04.2018  in order to check this loop works or not after add filter part: does not work
-       // if(countBadrun>0) {
+        //modified by fzhang 18.04.2018  in order to check this loop works or not after add filter part: does not work
+        // if(countBadrun>0) {
         //System.out.println(state.generation);
-     	//System.out.println("The number of badrun grasped in model: "+ countBadrun);
-       // }
+        //System.out.println("The number of badrun grasped in model: "+ countBadrun);
+        // }
 
         for (int i = 0; i < fitnesses.length; i++) {
             fitnesses[i] /= col;
         }
 
-        for (Fitness fitness: currentFitnesses) {
+        for (Fitness fitness : currentFitnesses) {
             MultiObjectiveFitness f = (MultiObjectiveFitness) fitness;
             f.setObjectives(state, fitnesses);
         }
 
         //modified by fzhang, write bad run times to *.csv
-       // if(countInd % 512 == 0) {
+        // if(countInd % 512 == 0) {
      /*   if(countInd % state.population.subpops[0].individuals.length == 0 && Flag.value == false) {
             genNumBadRun.add(countBadrun);
             countBadrun = 0;
@@ -295,9 +289,9 @@ public class MultipleRuleEvaluationModel extends AbstractEvaluationModel{
         schedulingSet.rotateSeed(objectives);
     }
 
-	@Override
-	public void normObjective(List<Fitness> fitnesses, List<AbstractRule> rule, ec.EvolutionState state) {
-		// TODO Auto-generated method stub
+    @Override
+    public void normObjective(List<Fitness> fitnesses, List<AbstractRule> rule, ec.EvolutionState state) {
+        // TODO Auto-generated method stub
 
-	}
+    }
 }

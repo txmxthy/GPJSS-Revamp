@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * The GP node gatherer that collects the unique terminals.
- *
+ * <p>
  * Created by yimei on 10/10/16.
  */
 public class UniqueTerminalsGatherer extends GPNodeGatherer {

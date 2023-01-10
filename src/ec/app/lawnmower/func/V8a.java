@@ -6,65 +6,71 @@
 
 
 package ec.app.lawnmower.func;
-import ec.*;
-import ec.app.lawnmower.*;
-import ec.gp.*;
-import ec.util.*;
 
-/* 
+import ec.EvolutionState;
+import ec.Problem;
+import ec.app.lawnmower.LawnmowerData;
+import ec.gp.ADFStack;
+import ec.gp.GPData;
+import ec.gp.GPIndividual;
+import ec.gp.GPNode;
+
+/*
  * V8a.java
- * 
+ *
  * Created: Wed Nov  3 18:26:37 1999
  * By: Sean Luke
  */
 
 /**
  * @author Sean Luke
- * @version 1.0 
+ * @version 1.0
  */
 
-public class V8a extends GPNode
-    {
+public class V8a extends GPNode {
     public final static int MODULO = 8;  // odd that it doesn't change with map size
 
-    public String toString() { return "v8a"; }
+    public String toString() {
+        return "v8a";
+    }
 
-/*
-  public void checkConstraints(final EvolutionState state,
-  final int tree,
-  final GPIndividual typicalIndividual,
-  final Parameter individualBase)
-  {
-  super.checkConstraints(state,tree,typicalIndividual,individualBase);
-  if (children.length!=2)
-  state.output.error("Incorrect number of children for node " + 
-  toStringForError() + " at " +
-  individualBase);
-  }
-*/
-    public int expectedChildren() { return 2; }
+    /*
+      public void checkConstraints(final EvolutionState state,
+      final int tree,
+      final GPIndividual typicalIndividual,
+      final Parameter individualBase)
+      {
+      super.checkConstraints(state,tree,typicalIndividual,individualBase);
+      if (children.length!=2)
+      state.output.error("Incorrect number of children for node " +
+      toStringForError() + " at " +
+      individualBase);
+      }
+    */
+    public int expectedChildren() {
+        return 2;
+    }
 
     public void eval(final EvolutionState state,
-        final int thread,
-        final GPData input,
-        final ADFStack stack,
-        final GPIndividual individual,
-        final Problem problem)
-        {
+                     final int thread,
+                     final GPData input,
+                     final ADFStack stack,
+                     final GPIndividual individual,
+                     final Problem problem) {
         int resultx;
         int resulty;
 
-        LawnmowerData rd = ((LawnmowerData)(input));
+        LawnmowerData rd = ((LawnmowerData) (input));
 
-        children[0].eval(state,thread,input,stack,individual,problem);
+        children[0].eval(state, thread, input, stack, individual, problem);
         resultx = rd.x;
         resulty = rd.y;
 
-        children[1].eval(state,thread,input,stack,individual,problem);
+        children[1].eval(state, thread, input, stack, individual, problem);
         rd.x = (resultx + rd.x) % MODULO;
         rd.y = (resulty + rd.y) % MODULO;
-        }
     }
+}
 
 
 

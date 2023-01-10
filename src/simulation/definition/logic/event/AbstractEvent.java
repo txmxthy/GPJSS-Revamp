@@ -24,22 +24,17 @@ public abstract class AbstractEvent implements Comparable<AbstractEvent> {
     public abstract void trigger(Simulation simulation);
 
     public abstract void addSequencingDecisionSituation(Simulation simulation,
-                                              List<SequencingDecisionSituation> situations,
-                                              int minQueueLength);
+                                                        List<SequencingDecisionSituation> situations,
+                                                        int minQueueLength);
 
     public abstract void addRoutingDecisionSituation(Simulation simulation,
-                                              List<RoutingDecisionSituation> situations,
-                                              int minOptions);
+                                                     List<RoutingDecisionSituation> situations,
+                                                     int minOptions);
 
     @Override
     public int compareTo(AbstractEvent other) {
-        if (time < other.time)
-            return -1;
+        return Double.compare(time, other.time);
 
-        if (time > other.time)
-            return 1;
-
-        return 0;
     }
 
     @Override

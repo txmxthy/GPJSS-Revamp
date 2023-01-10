@@ -2,9 +2,9 @@ package simulation.rules.rule.workcenter.basic;
 
 import simulation.definition.OperationOption;
 import simulation.definition.WorkCenter;
+import simulation.definition.logic.state.SystemState;
 import simulation.rules.rule.AbstractRule;
 import simulation.rules.rule.RuleType;
-import simulation.definition.logic.state.SystemState;
 
 /**
  * Created by fzhang on 17/04/18.
@@ -20,7 +20,7 @@ public class LAP extends AbstractRule {
 
     @Override
     public double priority(OperationOption op, WorkCenter workCenter, SystemState systemState) {
-        return workCenter.getWorkInQueue()/workCenter.getNumMachines();
+        return workCenter.getWorkInQueue() / workCenter.getNumMachines();
     }
 }
 

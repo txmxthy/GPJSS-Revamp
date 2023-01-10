@@ -25,11 +25,14 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Utility functions for feature selection and construction.
- *
+ * <p>
  * Created by YiMei on 5/10/16.
  */
 
@@ -39,15 +42,16 @@ public class MultiTreeFeatureUtil {
 
     /**
      * Select a diverse set of individuals from the current population.
-     * @param state the current evolution state.
+     *
+     * @param state   the current evolution state.
      * @param archive the archive from which the set will be chosen.
-     * @param n the number of individuals in the diverse set.
+     * @param n       the number of individuals in the diverse set.
      * @return the selected diverse set of individuals.
      */
     public static List<GPIndividual> selectDiverseIndis(EvolutionState state, Individual[] archive,
                                                         int numTrees, int n) {
         //archive: all the individuals in the population  from the smallest to largest
-    	Arrays.sort(archive);
+        Arrays.sort(archive);
 
         PhenoCharacterisation pc = null;
         double radius = 0;
@@ -63,10 +67,12 @@ public class MultiTreeFeatureUtil {
             pc = clearingEvaluator.getPhenoCharacterisation()[numTrees];
             radius = clearingEvaluator.getRadius();
         }
-        
+
         RuleType ruleType = ruleTypes[numTrees];
-        pc.setReferenceRule(new GPRule(ruleType,((GPIndividual)archive[0]).trees[numTrees]));//set the best one to reference rule
-        
+        if (pc != null) {
+            pc.setReferenceRule(new GPRule(ruleType, ((GPIndividual) archive[0]).trees[numTrees]));//set the best one to reference rule
+        }
+
         //pc.setReferenceRule(new GPRule(ruleType,((GPIndividual)archive[0]).trees[0]));//set the best one to reference rule
 
         List<GPIndividual> selIndis = new ArrayList<>();
@@ -78,15 +84,15 @@ public class MultiTreeFeatureUtil {
             GPIndividual gpIndi = (GPIndividual) indi;
 
             //return the distance   charList contains 1 (count 20)
-            int[] charList = pc.characterise(new GPRule(ruleType,gpIndi.trees[numTrees]));
+            int[] charList = pc.characterise(new GPRule(ruleType, gpIndi.trees[numTrees]));
             //int[] charList = pc.characterise(new GPRule(ruleType,gpIndi.trees[0]));
 
             for (int i = 0; i < selIndis.size(); i++) {
                 double distance = PhenoCharacterisation.distance(charList, selIndiCharLists.get(i)); //calculate the distance
                 if (distance <= radius) {// radius: the range of each niche  
-                	//only when distance is zero, they will be too close.  so normally, the selected individuals are always different.
+                    //only when distance is zero, they will be too close.  so normally, the selected individuals are always different.
                     //but if you set radius as a larger number, it means we have more chance to choose some bad individuals
-                	tooClose = true;
+                    tooClose = true;
                     break;
                 }
             }
@@ -117,8 +123,7 @@ public class MultiTreeFeatureUtil {
 
             if (!duplicated)
                 terminals.add(tree);
-        }
-        else {
+        } else {
             for (GPNode child : tree.children) {
                 terminalsInTree(terminals, child);
             }
@@ -135,8 +140,9 @@ public class MultiTreeFeatureUtil {
     /**
      * Calculate the contribution of a feature to an individual
      * using the current training set.
-     * @param state the current evolution state (training set).
-     * @param indi the individual.
+     *
+     * @param state   the current evolution state (training set).
+     * @param indi    the individual.
      * @param feature the feature.
      * @return the contribution of the feature to the individual.
      */
@@ -146,30 +152,30 @@ public class MultiTreeFeatureUtil {
                                       RuleType ruleType) {
         //fzhang 15.7.2018 use multi-tree structure
         RuleOptimizationProblem problem =
-                (RuleOptimizationProblem)state.evaluator.p_problem;
-        Ignorer ignorer = ((FeatureIgnorable)state).getIgnorer();
+                (RuleOptimizationProblem) state.evaluator.p_problem;
+        Ignorer ignorer = ((FeatureIgnorable) state).getIgnorer();
 
         //record to fitness to calculate the difference 
         MultiObjectiveFitness fit1 = (MultiObjectiveFitness) indi.fitness;
         MultiObjectiveFitness fit2 = (MultiObjectiveFitness) fit1.clone(); // the same as fit1
-        
-        GPRule rule = new GPRule(ruleType,(GPTree)indi.trees[0].clone()); //here, the first time, rule is sequencing rule
-        GPRule contextRule = new GPRule(ruleType,(GPTree)indi.trees[1].clone()); //here, the first time, rule is sequencing rule
+
+        GPRule rule = new GPRule(ruleType, (GPTree) indi.trees[0].clone()); //here, the first time, rule is sequencing rule
+        GPRule contextRule = new GPRule(ruleType, (GPTree) indi.trees[1].clone()); //here, the first time, rule is sequencing rule
         int index = 0;
         int contextIndex = 1;
-        
-		if (ruleType == RuleType.ROUTING) {
-			rule = new GPRule(ruleType, (GPTree) indi.trees[1].clone()); // here, the first time, rule is sequencing rule
-			contextRule = new GPRule(ruleType,(GPTree)indi.trees[0].clone()); //here, the first time, rule is sequencing rule
-			index = 1;
-			contextIndex = 0;
-		}
+
+        if (ruleType == RuleType.ROUTING) {
+            rule = new GPRule(ruleType, (GPTree) indi.trees[1].clone()); // here, the first time, rule is sequencing rule
+            contextRule = new GPRule(ruleType, (GPTree) indi.trees[0].clone()); //here, the first time, rule is sequencing rule
+            index = 1;
+            contextIndex = 0;
+        }
 
         rule.ignore(feature, ignorer);
-        
-		//better to read this value from parameter
+
+        //better to read this value from parameter
         int numTrees = 2;
-       
+
         //Fitness[] fitnesses = new Fitness[numTrees];
         Fitness[] fitnesses = new Fitness[numTrees];
         GPRule[] rules = new GPRule[numTrees];
@@ -179,37 +185,36 @@ public class MultiTreeFeatureUtil {
         fitnesses[index] = fit2; //fitnesses[0] is 0.34...866
         rules[index] = rule;  //rules[0] = sequencing rule
 
-        if (numTrees == 2) {
-        	rules[index] = rule;
-            rules[contextIndex] = contextRule; //routing rule
-        }
-        
+        rules[index] = rule;
+        rules[contextIndex] = contextRule; //routing rule
+
         problem.getEvaluationModel().evaluate(Arrays.asList(fitnesses), Arrays.asList(rules), state);
 
         return fit2.fitness() - fit1.fitness(); //return the max objective
-    
-    	}
+
+    }
 
     /**
      * Feature selection by majority voting based on feature contributions.
-     * @param state the current evolution state (training set).
+     *
+     * @param state    the current evolution state (training set).
      * @param selIndis the selected diverse set of individuals.
-     * @param fitUB the upper bound of individual fitness.
-     * @param fitLB the lower bound of individual fitness.
+     * @param fitUB    the upper bound of individual fitness.
+     * @param fitLB    the lower bound of individual fitness.
      * @return the set of selected features.
      */
     //==================select features and save to .cvs===========================================
     public static GPNode[] featureSelection(EvolutionState state,
-                                                List<GPIndividual> selIndis, //selected individuals
-                                                RuleType ruleType,
-                                                double fitUB, double fitLB) {
+                                            List<GPIndividual> selIndis, //selected individuals
+                                            RuleType ruleType,
+                                            double fitUB, double fitLB) {
         DescriptiveStatistics votingWeightStat = new DescriptiveStatistics();
 
         for (GPIndividual selIndi : selIndis) { //normalize all the fitnesses of selected individuals
             double normFit = (selIndi.fitness.fitness() - fitLB) / (fitUB - fitLB);
             //System.out.println("sequencing ");
             //System.out.println(normFit);
-            if (normFit  < 0)
+            if (normFit < 0)
                 normFit = 0;
 
             double votingWeight = normFit; //set the voting weight to normFit
@@ -223,10 +228,9 @@ public class MultiTreeFeatureUtil {
 
         int numTrees = 0;
         if (ruleType == RuleType.ROUTING) {
-        	numTrees = 1;
         }
 
-        GPNode[] terminals = ((TerminalsChangable)state).getTerminals(0); //terminals here contain all the terminals
+        GPNode[] terminals = ((TerminalsChangable) state).getTerminals(0); //terminals here contain all the terminals
 
         for (int i = 0; i < terminals.length; i++) { //terminals: the terminal we defined (all, in systemstate, we have 25 terminals)
             featureContributionStats.add(new DescriptiveStatistics()); //these to are different
@@ -242,10 +246,9 @@ public class MultiTreeFeatureUtil {
 
                 //in this way, if have little difference, we think it is useful.
                 if (c > 0.001) {  //if contribution is larger than 0, actually 0.001, this mean this feature has contribution,
-                	//set the weight as fitness value
+                    //set the weight as fitness value
                     featureVotingWeightStats.get(i).addValue(votingWeightStat.getElement(s));
-                }
-                else {
+                } else {
                     featureVotingWeightStats.get(i).addValue(0);
                 }
             }
@@ -253,10 +256,10 @@ public class MultiTreeFeatureUtil {
 
         // a another way to get seed value
         // after select features, save the information to .fsinfo.csv
-        long jobSeed = ((GPRuleEvolutionState)state).getJobSeed(); 
+        long jobSeed = ((GPRuleEvolutionState) state).getJobSeed();
         String outputPath = initPath(state);
         File featureInfoFile = new File(outputPath + "job." + jobSeed +
-                "-"+ ruleType.name() + ".fsinfo.csv");
+                "-" + ruleType.name() + ".fsinfo.csv");
 
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(featureInfoFile));
@@ -313,10 +316,11 @@ public class MultiTreeFeatureUtil {
     /**
      * Feature construction by majority voting based on contribution.
      * A constructed feature/building block is a depth-2 sub-tree.
-     * @param state the current evolution state (training set).
+     *
+     * @param state    the current evolution state (training set).
      * @param selIndis the selected diverse set of individuals.
-     * @param fitUB the upper bound of individual fitness.
-     * @param fitLB the lower bound of individual fitness.
+     * @param fitUB    the upper bound of individual fitness.
+     * @param fitLB    the lower bound of individual fitness.
      * @return the constructed features (building blocks).
      */
     public static List<GPNode> featureConstruction(EvolutionState state,
@@ -330,7 +334,7 @@ public class MultiTreeFeatureUtil {
         for (GPIndividual selIndi : selIndis) {
             double normFit = (selIndi.fitness.fitness() - fitLB) / (fitUB - fitLB);
 
-            if (normFit  < 0)
+            if (normFit < 0)
                 normFit = 0;
 
             double votingWeight = normFit;
@@ -356,17 +360,16 @@ public class MultiTreeFeatureUtil {
 
                 if (c > 0.001) {
                     BBVotingWeightStats.get(i).addValue(votingWeightStat.getElement(s));
-                }
-                else {
+                } else {
                     BBVotingWeightStats.get(i).addValue(0);
                 }
             }
         }
 
-        long jobSeed = ((GPRuleEvolutionState)state).getJobSeed();
+        long jobSeed = ((GPRuleEvolutionState) state).getJobSeed();
         String outputPath = initPath(state);
         File BBInfoFile = new File(outputPath + "job." + jobSeed +
-                "-"+ ruleType.name() + ".fcinfo.csv");
+                "-" + ruleType.name() + ".fcinfo.csv");
 
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(BBInfoFile));
@@ -402,7 +405,7 @@ public class MultiTreeFeatureUtil {
             }
         }
 
-        File fcFile = new File(outputPath + "job." + jobSeed + "-"+ ruleType.name() + ".bbs.csv");
+        File fcFile = new File(outputPath + "job." + jobSeed + "-" + ruleType.name() + ".bbs.csv");
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(fcFile));
 
@@ -421,6 +424,7 @@ public class MultiTreeFeatureUtil {
 
     /**
      * Find all the depth-k sub-tree as building blocks from a set of individuals.
+     *
      * @param indis the set of individuals.
      * @param depth the depth of the sub-trees/building blocks.
      * @return the building blocks.
@@ -437,9 +441,10 @@ public class MultiTreeFeatureUtil {
 
     /**
      * Collect all the depth-k building blocks from a tree.
+     *
      * @param buildingBlocks the set of building blocks.
-     * @param tree the tree.
-     * @param depth the depth of the building blocks.
+     * @param tree           the tree.
+     * @param depth          the depth of the building blocks.
      */
     public static void collectBuildingBlocks(List<GPNode> buildingBlocks,
                                              GPNode tree,
@@ -456,8 +461,7 @@ public class MultiTreeFeatureUtil {
 
             if (!duplicate)
                 buildingBlocks.add(tree);
-        }
-        else {
+        } else {
             for (GPNode child : tree.children) {
                 collectBuildingBlocks(buildingBlocks, child, depth);
             }
@@ -467,32 +471,33 @@ public class MultiTreeFeatureUtil {
     /**
      * Adapt the current population into three parts based on a changed
      * terminal set.
-     * @param state the current evolution state (new terminal set).
-     * @param fracElites the fraction of elite (directly copy).
+     *
+     * @param state       the current evolution state (new terminal set).
+     * @param fracElites  the fraction of elite (directly copy).
      * @param fracAdapted the fraction of adapted (fix the ignored features to 1.0).
      */
     public static void adaptPopulationThreeParts(EvolutionState state,
                                                  double fracElites,
                                                  double fracAdapted,
                                                  int numTrees) {
-        GPNode[] tree0Terminals = ((TerminalsChangable)state).getTerminals(0); //TerminalsChangable whether to change the old individual
-        GPNode[] tree1Terminals = ((TerminalsChangable)state).getTerminals(1);
+        GPNode[] tree0Terminals = ((TerminalsChangable) state).getTerminals(0); //TerminalsChangable whether to change the old individual
+        GPNode[] tree1Terminals = ((TerminalsChangable) state).getTerminals(1);
         //to 1. If yes, the population will not have old terminals
 		/*for (GPNode sel : terminals) {
 			System.out.println(subPopNum);
 			System.out.println(sel);
 		}*/
-        
+
         //fzhang 27.6.2018  replace/generate the individuals according to cooresponding subpopulation
         Individual[] newPop = state.population.subpops[0].individuals;
         //Individual[] newPop = state.population.subpops[0].individuals;
-        
-        int numElites = (int)(fracElites * newPop.length); //elites: how many individuals to copy directly
-        int numAdapted = (int)(fracAdapted * newPop.length); //how many individuals to replace old terminals to 1
+
+        int numElites = (int) (fracElites * newPop.length); //elites: how many individuals to copy directly
+        int numAdapted = (int) (fracAdapted * newPop.length); //how many individuals to replace old terminals to 1
 
      /*   System.out.println(numElites);  //5
         System.out.println(numAdapted); //51
-*/        
+*/
         // Sort the individuals from best to worst
         Arrays.sort(newPop);
 
@@ -505,30 +510,31 @@ public class MultiTreeFeatureUtil {
         // Part 2: replace the unselected terminals by 1
         for (int i = numElites; i < numElites + numAdapted; i++) {
 //			System.out.println("Indi " + i + ", fitness = " + newPop[i].fitness.fitness());
-            adaptTree(((GPIndividual)newPop[i]).trees[0].child, tree0Terminals);
-            adaptTree(((GPIndividual)newPop[i]).trees[1].child, tree1Terminals);
+            adaptTree(((GPIndividual) newPop[i]).trees[0].child, tree0Terminals);
+            adaptTree(((GPIndividual) newPop[i]).trees[1].child, tree1Terminals);
             newPop[i].evaluated = false;
         }
 
         // Part 3: reinitialize the remaining individuals
         for (int i = numElites + numAdapted; i < newPop.length; i++) {
 //			System.out.println("Indi " + i + ", fitness = " + newPop[i].fitness.fitness());
-        	
-        	//fzhang 27.6.2018 replace/generate the individuals according to cooresponding subpopulation
+
+            //fzhang 27.6.2018 replace/generate the individuals according to cooresponding subpopulation
             //newPop[i] = state.population.subpops[0].species.newIndividual(state, 0);
-        	newPop[i] = state.population.subpops[0].species.newIndividual(state, 0);
-            
+            newPop[i] = state.population.subpops[0].species.newIndividual(state, 0);
+
             newPop[i].evaluated = false;
         }
     }
 
     /**
      * Adapt a tree using the new terminal set.
-     * @param tree the tree.
+     *
+     * @param tree      the tree.
      * @param terminals the new terminal set.
      */
     private static void adaptTree(GPNode tree, GPNode[] terminals) {
-    	//fzhang  21.6.2018  change the selected terminals to 1
+        //fzhang  21.6.2018  change the selected terminals to 1
         if (tree.children.length == 0) {
             // It's a terminal
             boolean selected = false;
@@ -544,14 +550,12 @@ public class MultiTreeFeatureUtil {
                 newTree.parent = tree.parent;
                 newTree.argposition = tree.argposition;
                 if (newTree.parent instanceof GPNode) {
-                    ((GPNode)(newTree.parent)).children[newTree.argposition] = newTree;
-                }
-                else {
-                    ((GPTree)(newTree.parent)).child = newTree;
+                    ((GPNode) (newTree.parent)).children[newTree.argposition] = newTree;
+                } else {
+                    ((GPTree) (newTree.parent)).child = newTree;
                 }
             }
-        }
-        else {
+        } else {
             for (GPNode child : tree.children) {
                 adaptTree(child, terminals);
             }

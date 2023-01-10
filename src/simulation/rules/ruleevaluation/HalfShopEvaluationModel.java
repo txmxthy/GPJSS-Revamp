@@ -4,8 +4,8 @@ import ec.EvolutionState;
 import ec.Fitness;
 import ec.util.Parameter;
 import simulation.definition.SchedulingSet;
-import simulation.rules.rule.AbstractRule;
 import simulation.jss.surrogate.Surrogate;
+import simulation.rules.rule.AbstractRule;
 
 import java.util.List;
 
@@ -15,10 +15,10 @@ import java.util.List;
  * Surrogate-Assisted Genetic Programming With Simplified Models
  * for Automated Design of Dispatching Rules.
  * IEEE Transactions on Cybernetics 1鈥�15.
- *
+ * <p>
  * If use surrogate, then use the HalfShop surrogate model to evaluate.
  * Otherwise, use the original scheduling set.
- *
+ * <p>
  * Created by yimei on 10/11/16.
  */
 public class HalfShopEvaluationModel extends SimpleEvaluationModel implements Surrogate {
@@ -45,7 +45,7 @@ public class HalfShopEvaluationModel extends SimpleEvaluationModel implements Su
         super.setup(state, base);
 
         surrogateSet = schedulingSet.surrogate(5, 500, 100, objectives);
-       //number of workcnter, job recorded, warmup jobs, objectives.
+        //number of workcnter, job recorded, warmup jobs, objectives.
         useSurrogate();
     }
 
@@ -54,9 +54,9 @@ public class HalfShopEvaluationModel extends SimpleEvaluationModel implements Su
                          List<AbstractRule> rules,
                          EvolutionState state) {
         //only expecting one rule here
-        if (rules.size() > 1 || rules.size() == 0) {
+        if (rules.size() != 1) {
             try {
-                throw new Exception(rules.size()+" - unexpected number of rules.");
+                throw new Exception(rules.size() + " - unexpected number of rules.");
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -67,8 +67,7 @@ public class HalfShopEvaluationModel extends SimpleEvaluationModel implements Su
 
         if (useSurrogate) {
             rule.calcFitness(fitness, state, surrogateSet, routingRule, objectives);
-        }
-        else {
+        } else {
             rule.calcFitness(fitness, state, schedulingSet, routingRule, objectives);
         }
     }

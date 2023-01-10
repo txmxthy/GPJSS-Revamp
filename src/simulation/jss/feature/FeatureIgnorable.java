@@ -8,5 +8,6 @@ import simulation.jss.feature.ignore.Ignorer;
 public interface FeatureIgnorable {
 
     Ignorer getIgnorer();
+
     void setIgnorer(Ignorer ignorer);
 }

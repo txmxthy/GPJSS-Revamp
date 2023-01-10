@@ -1,15 +1,14 @@
 package simulation.definition;
 
-import simulation.rules.rule.AbstractRule;
 import simulation.definition.logic.state.SystemState;
+import simulation.rules.rule.AbstractRule;
 
 import java.util.Objects;
 
 /**
  * Created by dyska on 7/05/17.
- *
+ * <p>
  * An operation contains one or more operation options.
- *
  */
 public class OperationOption implements Comparable<OperationOption> {
 
@@ -49,17 +48,24 @@ public class OperationOption implements Comparable<OperationOption> {
         return workCenter;
     }
 
-    public Operation getNext() { return operation.getNext(); }
+    public Operation getNext() {
+        return operation.getNext();
+    }
 
     public OperationOption getNext(SystemState systemState, AbstractRule routingRule) {
         Operation nextOperation = operation.getNext();
         if (nextOperation != null) {
             return nextOperation.chooseOperationOption(systemState, routingRule);
-        } return null;
+        }
+        return null;
     }
-    
+
     public double getReadyTime() {
         return readyTime;
+    }
+
+    public void setReadyTime(double readyTime) {
+        this.readyTime = readyTime;
     }
 
     public Job getJob() {
@@ -70,39 +76,37 @@ public class OperationOption implements Comparable<OperationOption> {
         return workRemaining;
     }
 
-    public int getNumOpsRemaining() {
-        return numOpsRemaining;
-    }
-
-    public double getFlowDueDate() {
-        return flowDueDate;
-    }
-
-    public double getNextProcTime() {
-        return nextProcTime;
-    }
-
-    public double getPriority() {
-        return priority;
-    }
-
     public void setWorkRemaining(double workRemaining) {
         this.workRemaining = workRemaining;
+    }
+
+    public int getNumOpsRemaining() {
+        return numOpsRemaining;
     }
 
     public void setNumOpsRemaining(int numOpsRemaining) {
         this.numOpsRemaining = numOpsRemaining;
     }
 
-    public void setReadyTime(double readyTime) {
-        this.readyTime = readyTime;
+    public double getFlowDueDate() {
+        return flowDueDate;
     }
 
     public void setFlowDueDate(double flowDueDate) {
         this.flowDueDate = flowDueDate;
     }
 
-    public void setNextProcTime(double nextProcTime) {this.nextProcTime = nextProcTime; }
+    public double getNextProcTime() {
+        return nextProcTime;
+    }
+
+    public void setNextProcTime(double nextProcTime) {
+        this.nextProcTime = nextProcTime;
+    }
+
+    public double getPriority() {
+        return priority;
+    }
 
     public void setPriority(double priority) {
         this.priority = priority;
@@ -110,6 +114,7 @@ public class OperationOption implements Comparable<OperationOption> {
 
     /**
      * Compare with another process based on priority.
+     *
      * @param other the other process.
      * @return true if prior to other, and false otherwise.
      */
@@ -125,7 +130,7 @@ public class OperationOption implements Comparable<OperationOption> {
         //the default setting, when the priority is the same, choose the operation that comes first
         return operation.getJob().getId() < other.operation.getJob().getId();
     }*/
-    
+
     //that is to say, the smaller the better
     public boolean priorTo(OperationOption other) {
         if (Double.compare(priority, other.priority) < 0)
@@ -149,13 +154,8 @@ public class OperationOption implements Comparable<OperationOption> {
 
     @Override
     public int compareTo(OperationOption other) {
-        if (readyTime < other.readyTime)
-            return -1;
+        return Double.compare(readyTime, other.readyTime);
 
-        if (readyTime > other.readyTime)
-            return 1;
-
-        return 0;
     }
 
     @Override

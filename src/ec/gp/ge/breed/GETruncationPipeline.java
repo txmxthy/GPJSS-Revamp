@@ -5,9 +5,15 @@
 */
 
 package ec.gp.ge.breed;
-import ec.gp.ge.*;
-import ec.*;
-import ec.util.*;
+
+import ec.BreedingPipeline;
+import ec.EvolutionState;
+import ec.Individual;
+import ec.SelectionMethod;
+import ec.gp.ge.GEDefaults;
+import ec.gp.ge.GEIndividual;
+import ec.gp.ge.GESpecies;
+import ec.util.Parameter;
 
 /*
  * GEProblem.java
@@ -20,7 +26,7 @@ import ec.util.*;
 /**
  * <p>GETruncationPipeline removes the unused genes from the end of the vector.
  * The number of used chromosomes are tracked by GESpecies' <b>comsumed(...)</b> function.
- *
+ * <p>
  * Note: truncaton only occurs if the number of comsumed genes is greater than 1.</p>
  *
  * <p><b>Default Base</b><br>
@@ -30,32 +36,28 @@ import ec.util.*;
  * @version 1.0
  */
 
-public class GETruncationPipeline extends BreedingPipeline
-    {
+public class GETruncationPipeline extends BreedingPipeline {
     public static final String P_TRUNCATION = "truncation";
     public static final int NUM_SOURCES = 1;
 
-    public int numSources()
-        {
+    public int numSources() {
         return NUM_SOURCES;
-        }
+    }
 
-    public Parameter defaultBase()
-        {
+    public Parameter defaultBase() {
         return GEDefaults.base().push(P_TRUNCATION);
-        }
+    }
 
     public int produce(final int min,
-        final int max,
-        final int start,
-        final int subpopulation,
-        final Individual[] inds,
-        final EvolutionState state,
-        final int thread)
-        {
+                       final int max,
+                       final int start,
+                       final int subpopulation,
+                       final Individual[] inds,
+                       final EvolutionState state,
+                       final int thread) {
         // grab individuals from our source and stick 'em right into inds.
         // we'll modify them from there
-        int n = sources[0].produce(min,max,start,subpopulation,inds,state,thread);
+        int n = sources[0].produce(min, max, start, subpopulation, inds, state, thread);
 
 
         // should we bother?
@@ -63,32 +65,29 @@ public class GETruncationPipeline extends BreedingPipeline
             return reproduce(n, start, subpopulation, inds, state, thread, false);  // DON'T produce children from source -- we already did
 
 
-
         // now let's mutate 'em
-        for(int q=start; q < n+start; q++)
-            {
+        for (int q = start; q < n + start; q++) {
             if (sources[0] instanceof SelectionMethod)
-                inds[q] = (Individual)(inds[q].clone());
+                inds[q] = (Individual) (inds[q].clone());
 
-            GEIndividual ind = (GEIndividual)(inds[q]);
+            GEIndividual ind = (GEIndividual) (inds[q]);
             GESpecies species = (GESpecies) (ind.species);
 
             int consumed = species.consumed(state, ind, thread);
-            if (consumed > 1)
-                {
+            if (consumed > 1) {
                 Object[] pieces = new Object[2];
                 //System.err.println(consumed);
-                ind.split(new int[] { consumed }, pieces);
-                ind.join(new Object[] {pieces[0]});
-                }
+                ind.split(new int[]{consumed}, pieces);
+                ind.join(new Object[]{pieces[0]});
             }
+        }
         return n;
-        }
-
-        //fzhang 2019.6.15
-        @Override
-        public int produceFrac(int min, int max, int start, int subpopulation, Individual[] inds, EvolutionState state, int thread) {
-            return 0;
-        }
-
     }
+
+    //fzhang 2019.6.15
+    @Override
+    public int produceFrac(int min, int max, int start, int subpopulation, Individual[] inds, EvolutionState state, int thread) {
+        return 0;
+    }
+
+}

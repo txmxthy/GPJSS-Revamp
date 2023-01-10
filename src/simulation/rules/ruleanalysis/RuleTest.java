@@ -24,8 +24,8 @@ public class RuleTest {
     protected final int numRuns;
     protected final String testScenario;
     protected final String testSetName;
-    protected List<Objective> objectives; // The objectives to test.
     protected final int numPopulations;
+    protected List<Objective> objectives; // The objectives to test.
 
     public RuleTest(String trainPath, RuleType ruleType, int numRuns,
                     String testScenario, String testSetName,
@@ -42,6 +42,43 @@ public class RuleTest {
     public RuleTest(String trainPath, RuleType ruleType, int numRuns,
                     String testScenario, String testSetName, int numPopulations) {
         this(trainPath, ruleType, numRuns, testScenario, testSetName, new ArrayList<>(), numPopulations);
+    }
+
+    /**
+     * Call this main method with several parameters
+     * <p>
+     * /Users/dyska/Desktop/Uni/COMP489/GPJSS/grid_results/dynamic/raw/coevolution-fixed/0.85-max-flowtime/
+     * simple-rule
+     * 30
+     * dynamic-job-shop
+     * missing-0.85-4.0
+     * 2
+     * 1
+     * max-flowtime
+     */
+    public static void main(String[] args) {
+        int idx = 0;
+        String trainPath = args[idx];
+        idx++;
+        RuleType ruleType = RuleType.get(args[idx]);
+        idx++;
+        int numRuns = Integer.parseInt(args[idx]); //30
+        idx++;
+        String testScenario = args[idx]; //dynamic
+        idx++;
+        String testSetName = args[idx]; //missing-0.85-4.0
+        idx++;
+        int numPopulations = Integer.parseInt(args[idx]); //2
+        idx++;
+        int numObjectives = Integer.parseInt(args[idx]); //1
+        idx++;
+        RuleTest ruleTest = new RuleTest(trainPath, ruleType, numRuns, testScenario, testSetName, numPopulations);
+        for (int i = 0; i < numObjectives; i++) {
+            ruleTest.addObjective(args[idx]);
+            idx++;
+        }
+
+        ruleTest.writeToCSV();
     }
 
     public String getTrainPath() {
@@ -181,7 +218,7 @@ public class RuleTest {
                     MultiObjectiveFitness testFit =
                             (MultiObjectiveFitness) result.getGenerationalTestFitness(j);
                     GPRule[] rules = (GPRule[]) result.getGenerationalRules(j);
-                    GPRule seqRule = null;
+                    GPRule seqRule;
                     GPRule routRule = null;
                     if (numPopulations == 2) {
                         if (rules[0].getType() == simulation.rules.rule.RuleType.SEQUENCING) {
@@ -216,8 +253,8 @@ public class RuleTest {
                                 routRuleSize +"," +
                                 numUniqueTerminalsRout +",0," +
                                 trainFit.fitness() + "," +
-                                testFit.fitness()+ ","+ 
-                                result.getGenerationalTime(j)+ ","+ 
+                                testFit.fitness()+ ","+
+                                result.getGenerationalTime(j)+ ","+
                                 result.getGenerationalBadRun(j)); //
                         writer.newLine();
                     }*/
@@ -248,7 +285,7 @@ public class RuleTest {
                                routRuleSize +"," +
                                numUniqueTerminalsRout +",0," +
                                trainFit.fitness() + "," +
-                               testFit.fitness()+ ","+ 
+                               testFit.fitness()+ ","+
                                result.getGenerationalTime(j)); //
                        writer.newLine();
                    }*/
@@ -270,43 +307,5 @@ public class RuleTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-
-    /**
-     * Call this main method with several parameters
-     * <p>
-     * /Users/dyska/Desktop/Uni/COMP489/GPJSS/grid_results/dynamic/raw/coevolution-fixed/0.85-max-flowtime/
-     * simple-rule
-     * 30
-     * dynamic-job-shop
-     * missing-0.85-4.0
-     * 2
-     * 1
-     * max-flowtime
-     */
-    public static void main(String[] args) {
-        int idx = 0;
-        String trainPath = args[idx];
-        idx++;
-        RuleType ruleType = RuleType.get(args[idx]);
-        idx++;
-        int numRuns = Integer.valueOf(args[idx]); //30
-        idx++;
-        String testScenario = args[idx]; //dynamic
-        idx++;
-        String testSetName = args[idx]; //missing-0.85-4.0
-        idx++;
-        int numPopulations = Integer.valueOf(args[idx]); //2
-        idx++;
-        int numObjectives = Integer.valueOf(args[idx]); //1
-        idx++;
-        RuleTest ruleTest = new RuleTest(trainPath, ruleType, numRuns, testScenario, testSetName, numPopulations);
-        for (int i = 0; i < numObjectives; i++) {
-            ruleTest.addObjective(args[idx]);
-            idx++;
-        }
-
-        ruleTest.writeToCSV();
     }
 }

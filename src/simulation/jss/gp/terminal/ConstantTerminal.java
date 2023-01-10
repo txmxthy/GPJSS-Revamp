@@ -10,7 +10,7 @@ import simulation.jss.gp.data.DoubleData;
 
 /**
  * A constant terminal.
- *
+ * <p>
  * Created by YiMei on 29/09/16.
  */
 public class ConstantTerminal extends GPNode {

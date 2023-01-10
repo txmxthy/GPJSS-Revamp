@@ -1,13 +1,14 @@
 package simulation.jss.gp;
 
 import ec.gp.GPNode;
-import simulation.jss.gp.function.*;
+import simulation.jss.gp.function.Div;
+import simulation.jss.gp.function.Mul;
 import simulation.jss.gp.terminal.AttributeGPNode;
 import simulation.jss.gp.terminal.JobShopAttribute;
 
 /**
  * Compare two GP nodes to see if they are equivalent.
- *
+ * <p>
  * Created by YiMei on 5/10/16.
  */
 public class GPNodeComparator {
@@ -20,16 +21,11 @@ public class GPNodeComparator {
 
                 switch (o1.toString()) {
                     case "+":
-                        return sameChildrenUnordered(o1.children, o2.children);
-                    case "-":
-                        return sameChildrenUnordered(o1.children, o2.children);
-                    case "*":
-                        return sameChildrenUnordered(o1.children, o2.children);
-                    case "/":
-                        return sameChildrenUnordered(o1.children, o2.children);
-                    case "max":
-                        return sameChildrenUnordered(o1.children, o2.children);
                     case "min":
+                    case "max":
+                    case "/":
+                    case "*":
+                    case "-":
                         return sameChildrenUnordered(o1.children, o2.children);
                     case "if":
                         return sameChildrenOrdered(o1.children, o2.children);
@@ -56,14 +52,14 @@ public class GPNodeComparator {
                                                 GPNode[] children2) {
         boolean[] matched = new boolean[children2.length];
 
-        for (int i = 0; i < children1.length; i++) {
+        for (GPNode gpNode : children1) {
             boolean foundSame = false;
 
             for (int j = 0; j < children2.length; j++) {
                 if (matched[j])
                     continue;
 
-                boolean same = equals(children1[i], children2[j]);
+                boolean same = equals(gpNode, children2[j]);
 
                 if (same) {
                     foundSame = true;

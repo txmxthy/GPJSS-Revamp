@@ -16,7 +16,7 @@ import java.util.List;
 
 /**
  * The reader of the result file.
- *
+ * <p>
  * Created by YiMei on 12/10/16.
  */
 public class ResultFileReader {
@@ -43,8 +43,8 @@ public class ResultFileReader {
                         line = br.readLine(); //this will be either a fitness or collaborator rule
                         if (numPopulations == 2) {
                             //collaborator rule
-                        	
-                        	//fzhang 2019.1.30 if use simplified version, there are some error in some tests
+
+                            //fzhang 2019.1.30 if use simplified version, there are some error in some tests
                             //line = LispSimplifier.simplifyExpression(line);
 
                             if (i == 0) {
@@ -64,38 +64,37 @@ public class ResultFileReader {
                         br.readLine(); //Tree 0:
                         String expression = br.readLine();
 
-                    	//fzhang 2019.1.30 if use simplified version, there are some error in some tests
+                        //fzhang 2019.1.30 if use simplified version, there are some error in some tests
                         //expression = LispSimplifier.simplifyExpression(expression);
 
                         if (i == 0) {
                             //subpop 0 is sequencing rules
-                            rules[i] = GPRule.readFromLispExpression(simulation.rules.rule.RuleType.SEQUENCING,expression);
+                            rules[i] = GPRule.readFromLispExpression(simulation.rules.rule.RuleType.SEQUENCING, expression);
                         } else {
                             //subpop 1 is routing rules
-                            rules[i] = GPRule.readFromLispExpression(simulation.rules.rule.RuleType.ROUTING,expression);
+                            rules[i] = GPRule.readFromLispExpression(simulation.rules.rule.RuleType.ROUTING, expression);
                         }
                     }
 
                     Fitness fitness = fitnesses[0];
-                    GPRule[] bestRules = rules; //will just be single rule for 1 subpop
 
                     if (numPopulations == 2) {
                         //need to decide which subpop yielded better fitnesses
                         if (fitness.fitness() < fitnesses[1].fitness()) {
                             //subpop 0 was best
-                            bestRules[0] = rules[0];  //sequencing rule
-                            bestRules[1] = collaborators[0]; //routing rule
+                            rules[0] = rules[0];  //sequencing rule
+                            rules[1] = collaborators[0]; //routing rule
                         } else {
                             //subpop 1 was best
                             fitness = fitnesses[1];
-                            bestRules[0] = rules[1];  //routing rule
-                            bestRules[1] = collaborators[1]; //sequencing rule
+                            rules[0] = rules[1];  //routing rule
+                            rules[1] = collaborators[1]; //sequencing rule
                         }
                     }
-                    result.setBestRules(bestRules);
+                    result.setBestRules(rules);
                     result.setBestTrainingFitness(fitness);
 
-                    result.addGenerationalRules(bestRules);
+                    result.addGenerationalRules(rules);
                     result.addGenerationalTrainFitness(fitness);
                     result.addGenerationalValidationFitnesses((Fitness) fitness.clone());
                     result.addGenerationalTestFitnesses((Fitness) fitness.clone());
@@ -113,16 +112,15 @@ public class ResultFileReader {
             // TODO read multi-objective fitness line
             String[] spaceSegments = line.split("\\s+");
             String[] equation = spaceSegments[1].split("=");
-            double fitness = Double.valueOf(equation[1]);
+            double fitness = Double.parseDouble(equation[1]);
             KozaFitness f = new KozaFitness();
             f.setStandardizedFitness(null, fitness);
 
             return f;
-        }
-        else {
+        } else {
             String[] spaceSegments = line.split("\\s+");
             String[] fitVec = spaceSegments[1].split("\\[|\\]");
-            double fitness = Double.valueOf(fitVec[1]);
+            double fitness = Double.parseDouble(fitVec[1]);
             MultiObjectiveFitness f = new MultiObjectiveFitness();
             f.objectives = new double[1];
             f.objectives[0] = fitness;
@@ -138,14 +136,14 @@ public class ResultFileReader {
 
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             br.readLine();
-            while(true) {
+            while (true) {
                 line = br.readLine();
 
                 if (line == null)
                     break;
 
                 String[] commaSegments = line.split(",");
-                generationalTimeStat.addValue(Double.valueOf(commaSegments[1]));
+                generationalTimeStat.addValue(Double.parseDouble(commaSegments[1]));
             }
 
         } catch (IOException e) {
@@ -163,14 +161,14 @@ public class ResultFileReader {
 
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             br.readLine();
-            while(true) {
+            while (true) {
                 line = br.readLine();
 
                 if (line == null)
                     break;
 
                 String[] commaSegments = line.split(",");
-                generationalAveRuleSizeStat.addValue(Double.valueOf(commaSegments[ruleNum])); //read from excel, the first column is 0
+                generationalAveRuleSizeStat.addValue(Double.parseDouble(commaSegments[ruleNum])); //read from excel, the first column is 0
             }
 
         } catch (IOException e) {
@@ -189,14 +187,14 @@ public class ResultFileReader {
 
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             br.readLine();
-            while(true) {
+            while (true) {
                 line = br.readLine();
 
                 if (line == null)
                     break;
 
                 String[] commaSegments = line.split(",");
-                generationalBadRunStat.addValue(Double.valueOf(commaSegments[3])); //read from excel, the first column is 0
+                generationalBadRunStat.addValue(Double.parseDouble(commaSegments[3])); //read from excel, the first column is 0
             }
 
         } catch (IOException e) {
@@ -205,7 +203,7 @@ public class ResultFileReader {
 
         return generationalBadRunStat;
     }
-    
+
     public static List<String> readLispExpressionFromFile(File file,
                                                           RuleType ruleType,
                                                           boolean isMultiObjective) {

@@ -1,9 +1,9 @@
 package solvers.algorithm.surrogategp;
 
+import simulation.definition.logic.DynamicSimulation;
 import simulation.rules.rule.RuleType;
 import simulation.rules.rule.workcenter.basic.SBT;
 import simulation.rules.rule.workcenter.basic.WIQ;
-import simulation.definition.logic.DynamicSimulation;
 
 /**
  * The generator to generate challenging static instances for training.

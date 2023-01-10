@@ -10,13 +10,13 @@ import java.util.List;
  * A flexible static instance. It includes:
  * (1) Number of work centres and jobs
  * (2) For each job
- *   (2.1) Number of operations
- *   (2.2) For each operation
- *     (2.2.1) Works centres which can process operation
- *     (2.2.2) For each work centre
- *       (2.2.2.1) Work centre number
- *       (2.2.2.2) Time taken to complete job on this work centre
- *
+ * (2.1) Number of operations
+ * (2.2) For each operation
+ * (2.2.1) Works centres which can process operation
+ * (2.2.2) For each work centre
+ * (2.2.2.1) Work centre number
+ * (2.2.2.2) Time taken to complete job on this work centre
+ * <p>
  * Created by dyska on 21/04/17.
  */
 public class FlexibleStaticInstance implements JSSInstance {
@@ -36,7 +36,7 @@ public class FlexibleStaticInstance implements JSSInstance {
     }
 
     public FlexibleStaticInstance(int numWorkCenters, int numJobs,
-                          List<JobInformation> jobInformations, List<Double> workCenterReadyTimes) {
+                                  List<JobInformation> jobInformations, List<Double> workCenterReadyTimes) {
         this.numWorkCenters = numWorkCenters;
         this.numJobs = numJobs;
         this.jobInformations = jobInformations;
@@ -65,10 +65,10 @@ public class FlexibleStaticInstance implements JSSInstance {
 
             line = br.readLine();
             segments = line.split("\\s+");
-            int numJobs = Integer.valueOf(segments[0]);
-            int numWorkCenters = Integer.valueOf(segments[1]); //work centers = machines
+            int numJobs = Integer.parseInt(segments[0]);
+            int numWorkCenters = Integer.parseInt(segments[1]); //work centers = machines
 
-            instance = new FlexibleStaticInstance(numWorkCenters,numJobs,file.getPath());
+            instance = new FlexibleStaticInstance(numWorkCenters, numJobs, file.getPath());
 
             int numOperations;
             //Read in the jobs
@@ -80,20 +80,20 @@ public class FlexibleStaticInstance implements JSSInstance {
                     //brandimarte_data starts rows with space, this is a workaround
                     index++;
                 }
-                numOperations = Integer.valueOf(segments[index]);
+                numOperations = Integer.parseInt(segments[index]);
                 index++;
 
                 JobInformation job = new JobInformation(numOperations);
                 int numOperatableMachines;
                 for (int j = 0; j < numOperations; ++j) {
 
-                    numOperatableMachines = Integer.valueOf(segments[index]);
+                    numOperatableMachines = Integer.parseInt(segments[index]);
                     OperationInformation operation = new OperationInformation();
 
                     for (int k = 0; k < numOperatableMachines; ++k) {
                         //read in k (machine, processing time) pairs
-                        int workCentreNumber = Integer.valueOf(segments[2*k+index+1]);
-                        int processingTime = Integer.valueOf(segments[2*k+index+2]);
+                        int workCentreNumber = Integer.parseInt(segments[2 * k + index + 1]);
+                        int processingTime = Integer.parseInt(segments[2 * k + index + 2]);
                         operation.getOperationOptions().add(
                                 new OperationOptionInformation(workCentreNumber, processingTime)
                         );
@@ -105,37 +105,44 @@ public class FlexibleStaticInstance implements JSSInstance {
             }
 
         } catch (FileNotFoundException e) {
-            System.out.println("Couldn't find file "+file);
+            System.out.println("Couldn't find file " + file);
         } catch (IOException e) {
             e.printStackTrace();
         }
         return instance;
     }
 
+    public static void main(String[] args) {
+        FlexibleStaticInstance instance = FlexibleStaticInstance.readFromPath(
+                "FJSS/Brandimarte_Data/Text/Mk01.fjs");
+        //System.out.println(instance.toString());
+        Shop shop = instance.createShop();
+        System.out.println(shop.toString());
+    }
+
     @Override
     public String toString() {
-        String msg = "Number of jobs: "+numJobs+ ", number of work centers: "+numWorkCenters+"\n\n";
+        StringBuilder msg = new StringBuilder("Number of jobs: " + numJobs + ", number of work centers: " + numWorkCenters + "\n\n");
         int i = 1;
-        for (JobInformation job: jobInformations ) {
-            msg += "Job "+ i +" has "+job.getNumOps()+" steps.\n";
+        for (JobInformation job : jobInformations) {
+            msg.append("Job ").append(i).append(" has ").append(job.getNumOps()).append(" steps.\n");
             int j = 1;
-            for (OperationInformation operation: job.getOperations()) {
+            for (OperationInformation operation : job.getOperations()) {
                 int k = 1;
-                msg += "Operation "+j+" - ";
-                for (OperationOptionInformation operationOption: operation.getOperationOptions()) {
-                    msg += "option "+k+": work center number: "
-                            +operationOption.getWorkCenterId()+", time: "+operationOption.getTime()+", ";
+                msg.append("Operation ").append(j).append(" - ");
+                for (OperationOptionInformation operationOption : operation.getOperationOptions()) {
+                    msg.append("option ").append(k).append(": work center number: ").append(operationOption.getWorkCenterId()).append(", time: ").append(operationOption.getTime()).append(", ");
                     k++;
                 }
-                msg = msg.substring(0, msg.length()-2); //remove last ", "
-                msg += "\n";
+                msg = new StringBuilder(msg.substring(0, msg.length() - 2)); //remove last ", "
+                msg.append("\n");
                 j++;
             }
-            msg += "\n";
+            msg.append("\n");
             i++;
         }
 
-        return msg;
+        return msg.toString();
     }
 
     public List<JobInformation> getJobInformations() {
@@ -169,8 +176,8 @@ public class FlexibleStaticInstance implements JSSInstance {
                 for (int l = 0; l < operationInfo.getOperationOptions().size(); ++l) {
                     OperationOptionInformation operationOptionInformation = operationInfo.getOperationOptions().get(l);
                     operation.addOperationOption(new OperationOption(
-                            operation,l,operationOptionInformation.getTime(),
-                             shop.getWorkCenter(operationOptionInformation.getWorkCenterId()-1)));
+                            operation, l, operationOptionInformation.getTime(),
+                            shop.getWorkCenter(operationOptionInformation.getWorkCenterId() - 1)));
                 }
                 job.addOperation(operation);
             }
@@ -202,7 +209,9 @@ public class FlexibleStaticInstance implements JSSInstance {
         return numJobs;
     }
 
-    public String getFilePath() { return filePath; }
+    public String getFilePath() {
+        return filePath;
+    }
 
     @Override
     public List<Double> getWorkCenterReadyTimes() {
@@ -242,40 +251,47 @@ public class FlexibleStaticInstance implements JSSInstance {
             return numOps;
         }
 
-        public double getArrivalTime() {return arrivalTime; }
+        public double getArrivalTime() {
+            return arrivalTime;
+        }
 
-        public double getDueDate() { return dueDate; }
+        public double getDueDate() {
+            return dueDate;
+        }
 
-        public double getWeight() { return weight; }
+        public double getWeight() {
+            return weight;
+        }
     }
 
     public static class OperationInformation {
         private final List<OperationOptionInformation> options;
         private OperationOptionInformation chosenOption;
 
+        public OperationInformation() {
+            this.options = new ArrayList<>();
+        }
+
         public void chooseOperationOption() {
             if (chosenOption == null) {
                 if (options.size() > 1) {
                     OperationOptionInformation bestOption = null;
                     double leastProcTime = Double.MAX_VALUE;
-                    for (OperationOptionInformation op: options) {
+                    for (OperationOptionInformation op : options) {
                         if (op.getTime() < leastProcTime) {
                             leastProcTime = op.getTime();
                             bestOption = op;
                         }
                     }
                     this.chosenOption = bestOption;
-                }
-                else if (options.size() == 1) {
+                } else if (options.size() == 1) {
                     this.chosenOption = options.iterator().next();
                 }
             }
         }
 
-        public OperationOptionInformation getChosenOption() { return chosenOption; }
-
-        public OperationInformation() {
-            this.options = new ArrayList<>();
+        public OperationOptionInformation getChosenOption() {
+            return chosenOption;
         }
 
         public List<OperationOptionInformation> getOperationOptions() {
@@ -299,13 +315,5 @@ public class FlexibleStaticInstance implements JSSInstance {
         public int getTime() {
             return time;
         }
-    }
-
-    public static void main(String[] args) {
-        FlexibleStaticInstance instance = FlexibleStaticInstance.readFromPath(
-                "FJSS/Brandimarte_Data/Text/Mk01.fjs");
-        //System.out.println(instance.toString());
-        Shop shop = instance.createShop();
-        System.out.println(shop.toString());
     }
 }

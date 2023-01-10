@@ -2,11 +2,14 @@ package simulation.jss.niching;
 
 import simulation.definition.FlexibleStaticInstance;
 import simulation.definition.OperationOption;
+import simulation.definition.logic.DynamicSimulation;
+import simulation.definition.logic.RoutingDecisionSituation;
+import simulation.definition.logic.SequencingDecisionSituation;
+import simulation.definition.logic.StaticSimulation;
 import simulation.rules.rule.AbstractRule;
 import simulation.rules.rule.RuleType;
 import simulation.rules.rule.operation.weighted.WSPT;
 import simulation.rules.rule.workcenter.basic.WIQ;
-import simulation.definition.logic.*;
 
 import java.util.Collections;
 import java.util.List;
@@ -14,7 +17,7 @@ import java.util.Random;
 
 /**
  * The phenotypic characterisation of rules.
- *
+ * <p>
  * Created by YiMei on 3/10/16.
  */
 //in this file, we have two class, the first one is PhenoCharacterisation
@@ -24,21 +27,6 @@ public abstract class PhenoCharacterisation {
     public PhenoCharacterisation(AbstractRule referenceRule) {
         this.referenceRule = referenceRule;
     }
-
-    public AbstractRule getReferenceRule() {
-        return referenceRule;
-    }
-
-    abstract void calcReferenceIndexes();
-
-    public void setReferenceRule(AbstractRule rule) {
-        this.referenceRule = rule;
-        calcReferenceIndexes();
-    }
-
-
-
-    public abstract int[] characterise(AbstractRule rule);
 
     //the difference of the two arrays: sqrt
     public static double distance(int[] charList1, int[] charList2) {
@@ -50,6 +38,19 @@ public abstract class PhenoCharacterisation {
 
         return Math.sqrt(distance);
     }
+
+    public AbstractRule getReferenceRule() {
+        return referenceRule;
+    }
+
+    public void setReferenceRule(AbstractRule rule) {
+        this.referenceRule = rule;
+        calcReferenceIndexes();
+    }
+
+    abstract void calcReferenceIndexes();
+
+    public abstract int[] characterise(AbstractRule rule);
 }
 
 //the second class:  SequencingPhenoCharacterisation  extends the first class
@@ -58,51 +59,12 @@ class SequencingPhenoCharacterisation extends PhenoCharacterisation {
     private final int[] referenceIndexes;
 
     public SequencingPhenoCharacterisation(AbstractRule sequencingReferenceRule,
-                                       List<SequencingDecisionSituation> decisionSituations) {
+                                           List<SequencingDecisionSituation> decisionSituations) {
         super(sequencingReferenceRule);
         this.decisionSituations = decisionSituations;
         this.referenceIndexes = new int[decisionSituations.size()];
 
         calcReferenceIndexes();
-    }
-
-    public int[] characterise(AbstractRule rule) {
-        int[] charList = new int[decisionSituations.size()];
-
-        for (int i = 0; i < decisionSituations.size(); i++) {
-            SequencingDecisionSituation situation = decisionSituations.get(i);
-            List<OperationOption> queue = situation.getQueue();
-
-            int refIdx = referenceIndexes[i]; //[0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]  20 values---20 situations
-
-            // Calculate the priority for all the operations.
-            for (OperationOption op : queue) {
-                op.setPriority(rule.priority(
-                        op, situation.getWorkCenter(), situation.getSystemState()));
-            }
-
-            // get the rank of the processing chosen by the reference rule.
-            //the operation chosen by reference rule, rank to where by examined rules
-            int rank = 1;
-            for (int j = 0; j < queue.size(); j++) {
-                if (queue.get(j).priorTo(queue.get(refIdx))) {
-                    rank ++;
-                }
-            }
-
-            charList[i] = rank;
-        }
-
-        return charList;
-    }
-
-    void calcReferenceIndexes() {
-        for (int i = 0; i < decisionSituations.size(); i++) {
-            SequencingDecisionSituation situation = decisionSituations.get(i);
-            OperationOption op = referenceRule.priorOperation(situation);
-            int index = situation.getQueue().indexOf(op);
-            referenceIndexes[i] = index;
-        }
     }
 
     public static PhenoCharacterisation defaultPhenoCharacterisation() {
@@ -131,7 +93,7 @@ class SequencingPhenoCharacterisation extends PhenoCharacterisation {
         //randomly change the sorting of list of situations
 
         situations = situations.subList(0, numDecisionSituations); //Returns a view of the portion of this list between the specified fromIndex,
-        //inclusive, and toIndex, exclusive. (If fromIndex and toIndex are equal, the returned list is empty.) 
+        //inclusive, and toIndex, exclusive. (If fromIndex and toIndex are equal, the returned list is empty.)
         return new SequencingPhenoCharacterisation(defaultSequencingRule, situations);
     }
 
@@ -157,7 +119,7 @@ class SequencingPhenoCharacterisation extends PhenoCharacterisation {
 
         if (minQueueLength == 2 && situations.size() < 20) {
             //no point going to queue length of 1, as this will only have 1 outcome
-            System.out.println("Only "+situations.size() +" instances available for sequencing pheno characterisation.");
+            System.out.println("Only " + situations.size() + " instances available for sequencing pheno characterisation.");
             numDecisionSituations = situations.size();
         }
 
@@ -165,6 +127,45 @@ class SequencingPhenoCharacterisation extends PhenoCharacterisation {
 
         situations = situations.subList(0, numDecisionSituations);
         return new SequencingPhenoCharacterisation(defaultSequencingRule, situations);
+    }
+
+    public int[] characterise(AbstractRule rule) {
+        int[] charList = new int[decisionSituations.size()];
+
+        for (int i = 0; i < decisionSituations.size(); i++) {
+            SequencingDecisionSituation situation = decisionSituations.get(i);
+            List<OperationOption> queue = situation.getQueue();
+
+            int refIdx = referenceIndexes[i]; //[0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]  20 values---20 situations
+
+            // Calculate the priority for all the operations.
+            for (OperationOption op : queue) {
+                op.setPriority(rule.priority(
+                        op, situation.getWorkCenter(), situation.getSystemState()));
+            }
+
+            // get the rank of the processing chosen by the reference rule.
+            //the operation chosen by reference rule, rank to where by examined rules
+            int rank = 1;
+            for (OperationOption operationOption : queue) {
+                if (operationOption.priorTo(queue.get(refIdx))) {
+                    rank++;
+                }
+            }
+
+            charList[i] = rank;
+        }
+
+        return charList;
+    }
+
+    void calcReferenceIndexes() {
+        for (int i = 0; i < decisionSituations.size(); i++) {
+            SequencingDecisionSituation situation = decisionSituations.get(i);
+            OperationOption op = referenceRule.priorOperation(situation);
+            int index = situation.getQueue().indexOf(op);
+            referenceIndexes[i] = index;
+        }
     }
 
     public List<SequencingDecisionSituation> getDecisionSituations() {
@@ -181,48 +182,12 @@ class RoutingPhenoCharacterisation extends PhenoCharacterisation {
     private final int[] referenceIndexes;
 
     public RoutingPhenoCharacterisation(AbstractRule routingReferenceRule,
-                                           List<RoutingDecisionSituation> decisionSituations) {
+                                        List<RoutingDecisionSituation> decisionSituations) {
         super(routingReferenceRule);
         this.decisionSituations = decisionSituations;
         this.referenceIndexes = new int[decisionSituations.size()];
 
         calcReferenceIndexes();
-    }
-
-    public int[] characterise(AbstractRule rule) {
-        int[] charList = new int[decisionSituations.size()];
-
-        for (int i = 0; i < decisionSituations.size(); i++) {
-        	//this is for routing rule
-            RoutingDecisionSituation situation = decisionSituations.get(i);
-            List<OperationOption> queue = situation.getQueue();
-
-            int refIdx = referenceIndexes[i];
-
-            // Calculate the priority for all the operations.
-            for (OperationOption op : queue) {
-                op.setPriority(rule.priority(
-                        op, op.getWorkCenter(), situation.getSystemState()));
-            }
-            // get the rank of the processing chosen by the reference rule.
-            int rank = 1;
-            for (int j = 0; j < queue.size(); j++) {
-                if (queue.get(j).priorTo(queue.get(refIdx))) {
-                    rank ++;
-                }
-            }
-            charList[i] = rank;
-        }
-        return charList;
-    }
-
-    void calcReferenceIndexes() {
-        for (int i = 0; i < decisionSituations.size(); i++) {
-            RoutingDecisionSituation situation = decisionSituations.get(i);
-            OperationOption op = referenceRule.nextOperationOption(situation);
-            int index = situation.getQueue().indexOf(op);
-            referenceIndexes[i] = index;
-        }
     }
 
     public static PhenoCharacterisation defaultPhenoCharacterisation() {
@@ -267,7 +232,7 @@ class RoutingPhenoCharacterisation extends PhenoCharacterisation {
 
         if (minQueueLength == 2 && situations.size() < numDecisionSituations) {
             //no point going to queue length of 1, as this will only have 1 outcome
-            System.out.println("Only "+situations.size() +" instances available for routing pheno characterisation.");
+            System.out.println("Only " + situations.size() + " instances available for routing pheno characterisation.");
             numDecisionSituations = situations.size();
         }
 
@@ -276,6 +241,42 @@ class RoutingPhenoCharacterisation extends PhenoCharacterisation {
 
         situations = situations.subList(0, numDecisionSituations);
         return new RoutingPhenoCharacterisation(defaultRoutingRule, situations);
+    }
+
+    public int[] characterise(AbstractRule rule) {
+        int[] charList = new int[decisionSituations.size()];
+
+        for (int i = 0; i < decisionSituations.size(); i++) {
+            //this is for routing rule
+            RoutingDecisionSituation situation = decisionSituations.get(i);
+            List<OperationOption> queue = situation.getQueue();
+
+            int refIdx = referenceIndexes[i];
+
+            // Calculate the priority for all the operations.
+            for (OperationOption op : queue) {
+                op.setPriority(rule.priority(
+                        op, op.getWorkCenter(), situation.getSystemState()));
+            }
+            // get the rank of the processing chosen by the reference rule.
+            int rank = 1;
+            for (OperationOption operationOption : queue) {
+                if (operationOption.priorTo(queue.get(refIdx))) {
+                    rank++;
+                }
+            }
+            charList[i] = rank;
+        }
+        return charList;
+    }
+
+    void calcReferenceIndexes() {
+        for (int i = 0; i < decisionSituations.size(); i++) {
+            RoutingDecisionSituation situation = decisionSituations.get(i);
+            OperationOption op = referenceRule.nextOperationOption(situation);
+            int index = situation.getQueue().indexOf(op);
+            referenceIndexes[i] = index;
+        }
     }
 
     public List<RoutingDecisionSituation> getDecisionSituations() {

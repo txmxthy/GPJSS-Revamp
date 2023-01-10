@@ -54,32 +54,31 @@ public class WorkCenter {
 
     //fzhang 1.6.2018 get the min work (with min processing time):in the queue the queue here is not the jobs before a machine  F
     public double getMinProcessTimeInQueue() {
-    	if(getQueue().size() == 0)
-    		return 0;
-    	
-    	double minProcessTime = getQueue().get(0).getProcTime();
-        for(int i = 1; i< getQueue().size();i++)
-        {
-        	if(minProcessTime > getQueue().get(i).getProcTime()) {
-        		minProcessTime = getQueue().get(i).getProcTime();
-        	}
+        if (getQueue().size() == 0)
+            return 0;
+
+        double minProcessTime = getQueue().get(0).getProcTime();
+        for (int i = 1; i < getQueue().size(); i++) {
+            if (minProcessTime > getQueue().get(i).getProcTime()) {
+                minProcessTime = getQueue().get(i).getProcTime();
+            }
         }
-		return minProcessTime;
+        return minProcessTime;
     }
 
     public double getMaxProcessTimeInQueue() {
-    	if(getQueue().size() == 0)
-    		return 0;
-    	
-    	double maxProcessTime = getQueue().get(0).getProcTime();
-        for(int i = 1; i< getQueue().size();i++)
-        {
-        	if(maxProcessTime < getQueue().get(i).getProcTime()) {
-        		maxProcessTime = getQueue().get(i).getProcTime();
-        	}
+        if (getQueue().size() == 0)
+            return 0;
+
+        double maxProcessTime = getQueue().get(0).getProcTime();
+        for (int i = 1; i < getQueue().size(); i++) {
+            if (maxProcessTime < getQueue().get(i).getProcTime()) {
+                maxProcessTime = getQueue().get(i).getProcTime();
+            }
         }
-		return maxProcessTime;
+        return maxProcessTime;
     }
+
     //==========================================================================================================
     public List<Double> getMachineReadyTimes() {
         return machineReadyTimes;
@@ -96,41 +95,41 @@ public class WorkCenter {
     public double getBusyTime() {
         return busyTime;
     }
-    
 
-   /* //Created by fzhang on 18/04/18.
-    public double getAverageCostInQueue() {
-    	return workInQueue/queue.size();
-    }
 
-    //Created by fzhang on 18/04/18.
-    double totalAverageCostInQueue = 0;
-    public double getTotalAverageCostInQueue() {
-    	for(int i = 0; i< numMachines; i++) {
-    		//it is not right here, the cost need to multiple a factor according to different mahcines
-           totalAverageCostInQueue += workInQueue/queue.size();
-    	}
-        return totalAverageCostInQueue/numMachines;
-    }
-    //Created by fzhang on 18/04/18.
-    double totalAverageProcessTimeInQueue = 0;
-    public double getTotalAverageProcesTimeInQueue() {
-    	for(int i = 0; i< numMachines; i++) {
-    		totalAverageProcessTimeInQueue += workInQueue/queue.size();
-    	}
-        return totalAverageProcessTimeInQueue/numMachines;
-    }
+    /* //Created by fzhang on 18/04/18.
+     public double getAverageCostInQueue() {
+         return workInQueue/queue.size();
+     }
 
-    //Created by fzhang on 20/04/18.   getAverageProcessTimeInSystem
-    double averageProcessTimeInSystem = 0;
-    double totalProcessTimeInSystem =0;
-    public double getAverageProcesTimeInSystem() {
-    	for(int i = 0; i< numMachines; i++) {
-    		totalProcessTimeInSystem += workInQueue;
-    	}
-        return totalProcessTimeInSystem/queue.size();
-    }
-*/
+     //Created by fzhang on 18/04/18.
+     double totalAverageCostInQueue = 0;
+     public double getTotalAverageCostInQueue() {
+         for(int i = 0; i< numMachines; i++) {
+             //it is not right here, the cost need to multiple a factor according to different mahcines
+            totalAverageCostInQueue += workInQueue/queue.size();
+         }
+         return totalAverageCostInQueue/numMachines;
+     }
+     //Created by fzhang on 18/04/18.
+     double totalAverageProcessTimeInQueue = 0;
+     public double getTotalAverageProcesTimeInQueue() {
+         for(int i = 0; i< numMachines; i++) {
+             totalAverageProcessTimeInQueue += workInQueue/queue.size();
+         }
+         return totalAverageProcessTimeInQueue/numMachines;
+     }
+
+     //Created by fzhang on 20/04/18.   getAverageProcessTimeInSystem
+     double averageProcessTimeInSystem = 0;
+     double totalProcessTimeInSystem =0;
+     public double getAverageProcesTimeInSystem() {
+         for(int i = 0; i< numMachines; i++) {
+             totalProcessTimeInSystem += workInQueue;
+         }
+         return totalProcessTimeInSystem/queue.size();
+     }
+ */
     public double getReadyTime() {
         double readyTime = machineReadyTimes.get(0);
 
@@ -176,7 +175,7 @@ public class WorkCenter {
 
     public void removeFromQueue(OperationOption o) {
         queue.remove(o);
-       // System.out.println("workInQueue(The last work) " + workInQueue);
+        // System.out.println("workInQueue(The last work) " + workInQueue);
         //System.out.println("The time of last operation: "+o.getProcTime());
         //method1: but when we modify the processTime to int, this should be OK.
         //workInQueue -= o.getProcTime();
@@ -184,12 +183,12 @@ public class WorkCenter {
         //these are for system
         //System.out.println("The workInQueue after delete the last operaiton: "+workInQueue);
         //System.out.println("The number of operation after delete the last operaiton: "+o.getNumOpsRemaining());
-       //method2:
-      //modified by fzhang 10.5.2018    in orde to avoid negative, also positive (very equal to 0) value of workInQueue
-      		if(queue.isEmpty())
-      			workInQueue = 0.0;
-      		else
-      			workInQueue = workInQueue-o.getProcTime();
+        //method2:
+        //modified by fzhang 10.5.2018    in orde to avoid negative, also positive (very equal to 0) value of workInQueue
+        if (queue.isEmpty())
+            workInQueue = 0.0;
+        else
+            workInQueue = workInQueue - o.getProcTime();
 
     }
 
@@ -219,6 +218,7 @@ public class WorkCenter {
     }
 
     public WorkCenter clone() {
+        WorkCenter workCenter = (WorkCenter) clone();
         LinkedList<OperationOption> clonedQ = new LinkedList<>(queue);
         List<Double> clonedMRT = new ArrayList<>(machineReadyTimes);
 
@@ -227,19 +227,19 @@ public class WorkCenter {
     }
 
     public String stateToString() {
-        String string = "";
+        StringBuilder string = new StringBuilder();
         for (int i = 0; i < machineReadyTimes.size(); i++) {
-            string += String.format("(M%d,R%.1f) ", i, machineReadyTimes.get(i));
+            string.append(String.format("(M%d,R%.1f) ", i, machineReadyTimes.get(i)));
         }
-        string += "\n Queue: ";
+        string.append("\n Queue: ");
         for (OperationOption o : queue) {
-            string += String.format("(J%d,O%d-%d,R%.1f) ",
+            string.append(String.format("(J%d,O%d-%d,R%.1f) ",
                     o.getOperation().getJob().getId(), o.getOperation().getId(),
-                    o.getOptionId(), o.getReadyTime());
+                    o.getOptionId(), o.getReadyTime()));
         }
-        string += "\n";
+        string.append("\n");
 
-        return string;
+        return string.toString();
     }
 
     @Override

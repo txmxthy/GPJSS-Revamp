@@ -11,17 +11,14 @@ import ec.util.Parameter;
 public class MultiPopCoevolutionaryClearingEvaluator extends MultiPopCoevolutionaryEvaluator {
     public static final String P_RADIUS = "radius";
     public static final String P_CAPACITY = "capacity";
-    
+
     //fzhang 2018.10.9 to get the pre-generation value
     public static final String P_PRE_GENERATIONS = "pre-generations";
-    private int preGenerations;
-
     protected boolean clear = true;
-
     protected double radius;
     protected int capacity;
-
     protected PhenoCharacterisation[] phenoCharacterisation;
+    private int preGenerations;
 
     public double getRadius() {
         return radius;
@@ -69,7 +66,7 @@ public class MultiPopCoevolutionaryClearingEvaluator extends MultiPopCoevolution
     @Override
     public void evaluatePopulation(final EvolutionState state) {
         super.evaluatePopulation(state); //fzhang  all the evolution process is the same. for one individual, get a fitness value
-        
+
         //fzhang 2018.10.9  only use niching at predefined generation
         //2019.1.22 fzhang before predefined generation, should always use niching 
         //================start===============================
@@ -81,7 +78,7 @@ public class MultiPopCoevolutionaryClearingEvaluator extends MultiPopCoevolution
         else
             clear = false;*/
         //======================end===================================
-        
+
         //original one
         //=====================start===========================
      /*   PopulationUtils.sort(state.population);
@@ -93,7 +90,7 @@ public class MultiPopCoevolutionaryClearingEvaluator extends MultiPopCoevolution
         }
 */
         if (clear) {
-        	//  System.out.println("MultiPopCoevolution");
+            //  System.out.println("MultiPopCoevolution");
             Clearing.clearPopulation(state, radius, capacity,
                     phenoCharacterisation);
         }

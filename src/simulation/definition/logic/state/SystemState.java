@@ -1,7 +1,7 @@
 package simulation.definition.logic.state;
 
-import simulation.definition.*;
 import simulation.definition.Process;
+import simulation.definition.*;
 import simulation.definition.logic.DynamicSimulation;
 import simulation.definition.logic.event.ProcessFinishEvent;
 
@@ -9,17 +9,16 @@ import java.util.*;
 
 /**
  * The state of the discrete event simulation system.
- *
+ * <p>
  * Created by yimei on 22/09/16.
  */
 public class SystemState {
 
+    protected DynamicSimulation dynamicSimulation;
     private double clockTime;
     private List<WorkCenter> workCenters;
     private List<Job> jobsInSystem;
     private List<Job> jobsCompleted;
-
-    protected DynamicSimulation dynamicSimulation;
 
     public SystemState(double clockTime, List<WorkCenter> workCenters,
                        List<Job> jobsInSystem, List<Job> jobsCompleted) {
@@ -41,8 +40,16 @@ public class SystemState {
         return clockTime;
     }
 
+    public void setClockTime(double clockTime) {
+        this.clockTime = clockTime;
+    }
+
     public List<WorkCenter> getWorkCenters() {
         return workCenters;
+    }
+
+    public void setWorkCenters(List<WorkCenter> workCenters) {
+        this.workCenters = workCenters;
     }
 
     public WorkCenter getWorkCenter(int idx) {
@@ -53,20 +60,12 @@ public class SystemState {
         return jobsInSystem;
     }
 
-    public List<Job> getJobsCompleted() {
-        return jobsCompleted;
-    }
-
-    public void setClockTime(double clockTime) {
-        this.clockTime = clockTime;
-    }
-
-    public void setWorkCenters(List<WorkCenter> workCenters) {
-        this.workCenters = workCenters;
-    }
-
     public void setJobsInSystem(List<Job> jobsInSystem) {
         this.jobsInSystem = jobsInSystem;
+    }
+
+    public List<Job> getJobsCompleted() {
+        return jobsCompleted;
     }
 
     public void setJobsCompleted(List<Job> jobsCompleted) {
@@ -92,7 +91,7 @@ public class SystemState {
 
     public void addCompletedJob(Job job) {
         jobsCompleted.add(job);
-        
+
 //        System.out.println("the number completed jobs: "+jobsCompleted.size());
 //        if (jobsCompleted.size() == 5000) {
 //            checkDuplicates();
@@ -105,118 +104,119 @@ public class SystemState {
     public DynamicSimulation getdynamicSimulation() {
         return dynamicSimulation;
     }
-    
+
     //fzhang 19.7.2018  calculate total busy time  history
     public double getTotalBusyTime() {
-    	double totalBusyTime = 0;
-    	for(int i = 0; i< workCenters.size(); i++) {
-    		totalBusyTime += workCenters.get(i).getBusyTime();
-    	}
-		return totalBusyTime;
+        double totalBusyTime = 0;
+        for (WorkCenter workCenter : workCenters) {
+            totalBusyTime += workCenter.getBusyTime();
+        }
+        return totalBusyTime;
     }
 
     //modified by fzhang  27.5.2018  get the total work in system
     public double getWorkInSystem() {
-    	double totalProcessTimeInSystem =0;
-    	for(int i = 0; i< workCenters.size(); i++) {
-    		totalProcessTimeInSystem += workCenters.get(i).getWorkInQueue();
-    	}
+        double totalProcessTimeInSystem = 0;
+        for (WorkCenter workCenter : workCenters) {
+            totalProcessTimeInSystem += workCenter.getWorkInQueue();
+        }
         return totalProcessTimeInSystem;
     }
 
     //modified by fzhang  27.5.2018  get the total number of operation in system
     public double getNumOfOperationInSystem() {
-    	double totalNumOfOperationInSystem =0;
-    	for(int i = 0; i< workCenters.size(); i++) {
-    		totalNumOfOperationInSystem += workCenters.get(i).getNumOpsInQueue();
-    	}
+        double totalNumOfOperationInSystem = 0;
+        for (WorkCenter workCenter : workCenters) {
+            totalNumOfOperationInSystem += workCenter.getNumOpsInQueue();
+        }
         return totalNumOfOperationInSystem;
     }
 
     //modified by fzhang  29.5.2018  get the min,max,ave work in next queue
     //========================================================================
     public double getMinWorkInNextQueue(Operation op) {
-    	Operation next  = op.getNext();
+        Operation next = op.getNext();
 
-    	if (next == null)
-    		return 0;
+        if (next == null)
+            return 0;
 
-    	return next.getLeastWorkLoad();
+        return next.getLeastWorkLoad();
     }
 
     public double getMaxWorkInNextQueue(Operation op) {
-    	Operation next  = op.getNext();
+        Operation next = op.getNext();
 
-    	if (next == null)
-    		return 0;
+        if (next == null)
+            return 0;
 
-    	return next.getMaxWorkLoad();
+        return next.getMaxWorkLoad();
     }
 
     public double getAvgWorkInNextQueue(Operation op) {
-    	Operation next  = op.getNext();
+        Operation next = op.getNext();
 
-    	if (next == null)
-    		return 0;
+        if (next == null)
+            return 0;
 
-    	return next.getAveWorkLoad();
+        return next.getAveWorkLoad();
     }
-  //==============================================================
+    //==============================================================
 
     //modified by fzhang 31.5.2018   get the min,max,ave number of operation in next queue
     public double getMinNumOperationInNextQueue(Operation op) {
-    	Operation next  = op.getNext();
+        Operation next = op.getNext();
 
-    	if (next == null)
-    		return 0;
+        if (next == null)
+            return 0;
 
-    	return next.getLeastNumOfOperation();
+        return next.getLeastNumOfOperation();
     }
 
     public double getMaxNumOperationInNextQueue(Operation op) {
-    	Operation next  = op.getNext();
+        Operation next = op.getNext();
 
-    	if (next == null)
-    		return 0;
+        if (next == null)
+            return 0;
 
-    	return next.getMaxNumOfOperation();
+        return next.getMaxNumOfOperation();
     }
 
     public double getAveNumOperationInNextQueue(Operation op) {
-    	Operation next  = op.getNext();
+        Operation next = op.getNext();
 
-    	if (next == null)
-    		return 0;
+        if (next == null)
+            return 0;
 
-    	return next.getAveNumOfOperation();
+        return next.getAveNumOfOperation();
     }
-//=====================================================================================
-  //modified by fzhang 31.5.2018   get the min,max,ave number of operation in next queue
+
+    //=====================================================================================
+    //modified by fzhang 31.5.2018   get the min,max,ave number of operation in next queue
     public double getMinNextProcessTime(Operation op) {
-    	Operation next  = op.getNext();
+        Operation next = op.getNext();
 
-    	if (next == null)
-    		return 0;
+        if (next == null)
+            return 0;
 
-    	return next.getLeastProcessTime();
+        return next.getLeastProcessTime();
     }
 
     public double getMaxNextProcessTime(Operation op) {
-    	Operation next  = op.getNext();
+        Operation next = op.getNext();
 
-    	if (next == null)
-    		return 0;
+        if (next == null)
+            return 0;
 
-    	return next.getMaxProcessTime();
+        return next.getMaxProcessTime();
     }
 
     public double getMedianNextProcessTime(Operation op) {
-    	Operation next  = op.getNext();
+        Operation next = op.getNext();
 
-    	if (next == null)
-    		return 0;
+        if (next == null)
+            return 0;
 
-    	return next.getMedianProcessTime();
+        return next.getMedianProcessTime();
     }
     //modified by fzhang 31.5.2018  get the interArrivalTimeMean value
   /*  public DynamicSimulation getSimulaiton() {
@@ -242,7 +242,6 @@ public class SystemState {
 
         //By looking at all operation values, lets check workDone makes sense
         //It's the average proc time per operation we're sceptical of
-
 
 
         //So with traditional JSS, say we have a job with 10 operations
@@ -291,8 +290,8 @@ public class SystemState {
         //Arrays.sort(jobArrivalTimes);
         //double[] interArrivalTimes = new double[jobsCompleted.size()-1];
         double interArrivalTimesSum = 0.0;
-        for (int i = 0; i < jobsCompleted.size()-1; ++i) {
-            interArrivalTimesSum += (jobArrivalTimes[i+1] - jobArrivalTimes[i]);
+        for (int i = 0; i < jobsCompleted.size() - 1; ++i) {
+            interArrivalTimesSum += (jobArrivalTimes[i + 1] - jobArrivalTimes[i]);
         }
 //        Arrays.sort(interArrivalTimes);
 //        double medianInterArrivalTime;
@@ -305,8 +304,8 @@ public class SystemState {
 //        }
 //
 //        System.out.println("Median inter-arrival time for this simulation: "+medianInterArrivalTime);
-        System.out.println("Mean inter-arrival time for this simulation: "+(interArrivalTimesSum/
-                jobsCompleted.size()-1));
+        System.out.println("Mean inter-arrival time for this simulation: " + (interArrivalTimesSum /
+                jobsCompleted.size() - 1));
         return true;
     }
 
@@ -321,11 +320,11 @@ public class SystemState {
         //for max times we just need to know the earliest and latest operationOption to be performed
         //on a given workcenter right?
         double[] busyTimes = new double[numWorkCenters];
-        for (Job j: jobsCompleted) {
+        for (Job j : jobsCompleted) {
             if (j.getOperations().size() != j.getProcessFinishEvents().size()) {
                 System.out.println("Job isn't finished...");
             }
-            for (ProcessFinishEvent processFinishEvent: j.getProcessFinishEvents()) {
+            for (ProcessFinishEvent processFinishEvent : j.getProcessFinishEvents()) {
                 Process p = processFinishEvent.getProcess();
                 int workCenterId = p.getWorkCenter().getId();
                 if (maxTimesEarliest[workCenterId] > p.getStartTime()) {
@@ -346,7 +345,7 @@ public class SystemState {
             sumBusyTime += busyTimes[i];
         }
 
-        String print = " "+(sumBusyTime*100)/sumMaxTime;
+        String print = " " + (sumBusyTime * 100) / sumMaxTime;
 
 //        //This method should calculate the proportion of the time that the workCenters
 //        //are busy
@@ -416,8 +415,8 @@ public class SystemState {
             processes.add(new ArrayList<Process>());
         }
 
-        for (Job job: jobsCompleted) {
-            for (ProcessFinishEvent processFinishEvent: job.getProcessFinishEvents()) {
+        for (Job job : jobsCompleted) {
+            for (ProcessFinishEvent processFinishEvent : job.getProcessFinishEvents()) {
                 Process p = processFinishEvent.getProcess();
                 processes.get(p.getWorkCenter().getId()).add(p);
                 //List<Process> workCenterSchedule = workCenterAllocations[p.getWorkCenter().getId()];
@@ -437,11 +436,11 @@ public class SystemState {
         for (int i = 0; i < workCenters.size(); ++i) {
             List<Process> workCenterProcesses = processes.get(i);
             Collections.sort(workCenterProcesses);
-            for (int j = 0; j < workCenterProcesses.size()-1; ++j) {
+            for (int j = 0; j < workCenterProcesses.size() - 1; ++j) {
                 //want to check that this process starts after the one in front of it
                 //and finishes before the one after it
                 Process p1 = workCenterProcesses.get(j);
-                Process p2 = workCenterProcesses.get(j+1);
+                Process p2 = workCenterProcesses.get(j + 1);
                 if (p1.getFinishTime() > p2.getStartTime()) {
                     System.out.println("Double up of schedule");
                 }
@@ -497,6 +496,7 @@ public class SystemState {
 
     @Override
     public SystemState clone() {
+        SystemState systemState = (SystemState) clone();
         List<WorkCenter> clonedWCs = new ArrayList<>();
         for (WorkCenter wc : workCenters) {
             clonedWCs.add(wc.clone());

@@ -1,40 +1,39 @@
 package simulation.definition.logic;
 
 import org.apache.commons.math3.random.RandomDataGenerator;
-import simulation.definition.*;
-import simulation.util.random.*;
-import simulation.rules.rule.AbstractRule;
+import simulation.definition.Job;
+import simulation.definition.Operation;
+import simulation.definition.OperationOption;
+import simulation.definition.WorkCenter;
 import simulation.definition.logic.event.AbstractEvent;
 import simulation.definition.logic.event.JobArrivalEvent;
+import simulation.rules.rule.AbstractRule;
+import simulation.util.random.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * The dynamic simulation -- discrete event simulation
- *
+ * <p>
  * Created by yimei on 22/09/16.
  */
 public class DynamicSimulation extends Simulation {
 
     public final static int SEED_ROTATION = 10000;
-
-    private long seed;
     private final RandomDataGenerator randomDataGenerator;
-
     private final int minNumOperations;
     private final int maxNumOperations;
     private final double utilLevel;
     private final double dueDateFactor;
     private final boolean revisit;
-
     private final AbstractIntegerSampler numOperationsSampler;
+    private final AbstractRealSampler procTimeSampler;
     //modified by fzhang, 17.04.2018  in order to set options from 2 to 10
     //private AbstractIntegerSampler numOptionsSampler;
-
-    private final AbstractRealSampler procTimeSampler;
     private final AbstractRealSampler interArrivalTimeSampler;
     private final AbstractRealSampler jobWeightSampler;
+    private long seed;
 
     private DynamicSimulation(long seed,
                               AbstractRule sequencingRule,
@@ -108,6 +107,33 @@ public class DynamicSimulation extends Simulation {
                 new UniformSampler(1, 99),
                 new ExponentialSampler(),
                 new TwoSixTwoSampler());
+    }
+
+    public static DynamicSimulation standardFull(
+            long seed,
+            AbstractRule sequencingRule,
+            AbstractRule routingRule,
+            int numWorkCenters,
+            int numJobsRecorded,
+            int warmupJobs,
+            double utilLevel,
+            double dueDateFactor) {
+        return new DynamicSimulation(seed, sequencingRule, routingRule, numWorkCenters, numJobsRecorded,
+                warmupJobs, numWorkCenters, numWorkCenters, utilLevel,
+                dueDateFactor, false);
+    }
+
+    public static DynamicSimulation standardMissing(
+            long seed,
+            AbstractRule sequencingRule,
+            AbstractRule routingRule,
+            int numWorkCenters,
+            int numJobsRecorded,
+            int warmupJobs,
+            double utilLevel,
+            double dueDateFactor) {
+        return new DynamicSimulation(seed, sequencingRule, routingRule, numWorkCenters, numJobsRecorded,
+                warmupJobs, 1, numWorkCenters, utilLevel, dueDateFactor, false);
     }
 
     public int getNumWorkCenters() {
@@ -191,9 +217,29 @@ public class DynamicSimulation extends Simulation {
         randomDataGenerator.reSeed(seed);
     }
 
+//    private void runExperiments() {
+//        double interArrivalSum = 0.0;
+//        double numOperationsSum = 0.0;
+//        double numOptionsSum = 0.0;
+//        double procTimeSum = 0.0;
+//        int numRuns = 5000000;
+//
+//        for (int i = 0; i < numRuns; ++i) {
+//            interArrivalSum += interArrivalTimeSampler.next(randomDataGenerator);
+//            numOperationsSum += numOperationsSampler.next(randomDataGenerator);
+//            numOptionsSum += numOperationsSampler.next(randomDataGenerator);
+//            procTimeSum += procTimeSampler.next(randomDataGenerator);
+//        }
+//        System.out.println("Average interarrival time: "+interArrivalSum/numRuns);
+//        System.out.println("Average num operations: "+numOperationsSum/numRuns);
+//        System.out.println("Average num options: "+numOptionsSum/numRuns);
+//        System.out.println("Average procedure time: "+procTimeSum/numRuns);
+//        System.out.println();
+//    }
+
     @Override
     public void rotateSeed() {//this is use for changing seed value in next generation
-    	//this only relates to generation
+        //this only relates to generation
         seed += SEED_ROTATION;
         reset();
         //System.out.println(seed);//when seed=0, after Gen0, the value is 10000, after Gen1, the value is 20000....
@@ -202,7 +248,7 @@ public class DynamicSimulation extends Simulation {
     @Override
     public void generateJob() {
         //runExperiments();
-    	//modified by fzhang 15.5.2018  to avoid negative time  finallly decide to keep double type: to avoid same arrival time
+        //modified by fzhang 15.5.2018  to avoid negative time  finallly decide to keep double type: to avoid same arrival time
         double arrivalTime = getClockTime()
                 + interArrivalTimeSampler.next(randomDataGenerator);
         double weight = jobWeightSampler.next(randomDataGenerator);
@@ -226,10 +272,10 @@ public class DynamicSimulation extends Simulation {
             //================start==========
             double procTime = procTimeSampler.next(randomDataGenerator);
             for (int j = 0; j < numOptions; j++) {//9
-                o.addOperationOption(new OperationOption(o,j,procTime,systemState.getWorkCenter(route[j])));
+                o.addOperationOption(new OperationOption(o, j, procTime, systemState.getWorkCenter(route[j])));
             }
             //==========end===========
-            
+
             //modified by fzhang  29.5.2018  set different processing time for different machines
            /* for (int j = 0; j < numOptions; j++) {
             	double procTime = procTimeSampler.next(randomDataGenerator);
@@ -237,7 +283,7 @@ public class DynamicSimulation extends Simulation {
             }
 */
 
-           //fzhang 2019.6.22 set different processtime to each machine
+            //fzhang 2019.6.22 set different processtime to each machine
             //============================start========================================================
             /*double ptmean =  procTimeSampler.next(randomDataGenerator);// set processtime of each option
             AbstractRealSampler ptnsampler=new NormalSampler(ptmean, ptmean/10);
@@ -263,36 +309,16 @@ public class DynamicSimulation extends Simulation {
 //        }
 
         systemState.addJobToSystem(job);
-        numJobsArrived ++;
+        numJobsArrived++;
 
         eventQueue.add(new JobArrivalEvent(job));
     }
 
-//    private void runExperiments() {
-//        double interArrivalSum = 0.0;
-//        double numOperationsSum = 0.0;
-//        double numOptionsSum = 0.0;
-//        double procTimeSum = 0.0;
-//        int numRuns = 5000000;
-//
-//        for (int i = 0; i < numRuns; ++i) {
-//            interArrivalSum += interArrivalTimeSampler.next(randomDataGenerator);
-//            numOperationsSum += numOperationsSampler.next(randomDataGenerator);
-//            numOptionsSum += numOperationsSampler.next(randomDataGenerator);
-//            procTimeSum += procTimeSampler.next(randomDataGenerator);
-//        }
-//        System.out.println("Average interarrival time: "+interArrivalSum/numRuns);
-//        System.out.println("Average num operations: "+numOperationsSum/numRuns);
-//        System.out.println("Average num options: "+numOptionsSum/numRuns);
-//        System.out.println("Average procedure time: "+procTimeSum/numRuns);
-//        System.out.println();
-//    }
-
     //control the inter time of job arrival
     public double interArrivalTimeMean(int numWorkCenters,
-                                             int minNumOps,
-                                             int maxNumOps,
-                                             double utilLevel) {
+                                       int minNumOps,
+                                       int maxNumOps,
+                                       double utilLevel) {
         double meanNumOps = 0.5 * (minNumOps + maxNumOps); //(1+9)/2=5.5 average operations for a job is 5.5
         double meanProcTime = procTimeSampler.getMean(); //(1+99)/2=50   average processing time for a operation is 50
 
@@ -309,7 +335,7 @@ public class DynamicSimulation extends Simulation {
     public List<SequencingDecisionSituation> sequencingDecisionSituations(int minQueueLength) {
         List<SequencingDecisionSituation> sequencingDecisionSituations = new ArrayList<>();
 
-        
+
         while (!eventQueue.isEmpty() && throughput < numJobsRecorded) {
             AbstractEvent nextEvent = eventQueue.poll();
 //            System.out.println("throughput "+throughput);
@@ -339,7 +365,7 @@ public class DynamicSimulation extends Simulation {
 
     @Override
     public Simulation surrogate(int numWorkCenters, int numJobsRecorded,
-                                       int warmupJobs) {
+                                int warmupJobs) {
         int surrogateMaxNumOperations = maxNumOperations;
 
         AbstractIntegerSampler surrogateNumOperationsSampler = numOperationsSampler.clone();
@@ -354,23 +380,21 @@ public class DynamicSimulation extends Simulation {
                     minNumOperations, surrogateMaxNumOperations, utilLevel));
         }
 
-        Simulation surrogate = new DynamicSimulation(seed, sequencingRule, routingRule, numWorkCenters,
-                numJobsRecorded, warmupJobs, minNumOperations, surrogateMaxNumOperations,
-                utilLevel, dueDateFactor, revisit, surrogateNumOperationsSampler,
-                procTimeSampler, surrogateInterArrivalTimeSampler, jobWeightSampler);
-
         //modified by fzhang 17.04.2018
        /* Simulation surrogate = new DynamicSimulation(seed, sequencingRule, routingRule, numWorkCenters,
                 numJobsRecorded, warmupJobs, minNumOperations, surrogateMaxNumOperations,
                 utilLevel, dueDateFactor, revisit, surrogateNumOperationsSampler,
                 numOptionsSampler, procTimeSampler, surrogateInterArrivalTimeSampler, jobWeightSampler);*/
 
-        return surrogate;
+        return new DynamicSimulation(seed, sequencingRule, routingRule, numWorkCenters,
+                numJobsRecorded, warmupJobs, minNumOperations, surrogateMaxNumOperations,
+                utilLevel, dueDateFactor, revisit, surrogateNumOperationsSampler,
+                procTimeSampler, surrogateInterArrivalTimeSampler, jobWeightSampler);
     }
 
     @Override
     public Simulation surrogateBusy(int numWorkCenters, int numJobsRecorded,
-                                int warmupJobs) {
+                                    int warmupJobs) {
         double utilLevel = 1;
         int surrogateMaxNumOperations = maxNumOperations;
 
@@ -385,44 +409,15 @@ public class DynamicSimulation extends Simulation {
                     minNumOperations, surrogateMaxNumOperations, utilLevel));
         }
 
-        Simulation surrogate = new DynamicSimulation(seed, sequencingRule, routingRule, numWorkCenters,
-                numJobsRecorded, warmupJobs, minNumOperations, surrogateMaxNumOperations, utilLevel,
-                dueDateFactor, revisit, surrogateNumOperationsSampler, procTimeSampler,
-                surrogateInterArrivalTimeSampler, jobWeightSampler);
-
         //modified by fzhang 17.04.2018
      /*   Simulation surrogate = new DynamicSimulation(seed, sequencingRule, routingRule, numWorkCenters,
                 numJobsRecorded, warmupJobs, minNumOperations, surrogateMaxNumOperations, utilLevel,
                 dueDateFactor, revisit, surrogateNumOperationsSampler, numOptionsSampler, procTimeSampler,
                 surrogateInterArrivalTimeSampler, jobWeightSampler);*/
 
-        return surrogate;
-    }
-
-    public static DynamicSimulation standardFull(
-            long seed,
-            AbstractRule sequencingRule,
-            AbstractRule routingRule,
-            int numWorkCenters,
-            int numJobsRecorded,
-            int warmupJobs,
-            double utilLevel,
-            double dueDateFactor) {
-        return new DynamicSimulation(seed, sequencingRule, routingRule, numWorkCenters, numJobsRecorded,
-                warmupJobs, numWorkCenters, numWorkCenters, utilLevel,
-                dueDateFactor, false);
-    }
-
-    public static DynamicSimulation standardMissing(
-            long seed,
-            AbstractRule sequencingRule,
-            AbstractRule routingRule,
-            int numWorkCenters,
-            int numJobsRecorded,
-            int warmupJobs,
-            double utilLevel,
-            double dueDateFactor) {
-    	 return new DynamicSimulation(seed, sequencingRule, routingRule, numWorkCenters, numJobsRecorded,
-                 warmupJobs,1, numWorkCenters, utilLevel, dueDateFactor, false);
+        return new DynamicSimulation(seed, sequencingRule, routingRule, numWorkCenters,
+                numJobsRecorded, warmupJobs, minNumOperations, surrogateMaxNumOperations, utilLevel,
+                dueDateFactor, revisit, surrogateNumOperationsSampler, procTimeSampler,
+                surrogateInterArrivalTimeSampler, jobWeightSampler);
     }
 }

@@ -6,10 +6,10 @@ import yimei.jss.rule.AbstractRule;
 import yimei.jss.rule.RuleType;
 import yimei.jss.simulation.state.SystemState;
 
-*//**
- * Created by fzhang on 18/04/18.
- * Average cost in queue.
- * The priority of this method should be the lowest average cost in the queue.
+*//*
+  Created by fzhang on 18/04/18.
+  Average cost in queue.
+  The priority of this method should be the lowest average cost in the queue.
  *//*
 public class LAC extends AbstractRule {
 

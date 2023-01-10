@@ -1,7 +1,5 @@
 package solvers.algorithm.featureweighted;
 
-import java.util.ArrayList;
-
 import ec.EvolutionState;
 import ec.Individual;
 import ec.gp.GPNode;
@@ -15,6 +13,8 @@ import simulation.jss.gp.GPRuleEvolutionState;
 import simulation.jss.gp.TerminalsChangable;
 import simulation.rules.ruleoptimisation.RuleOptimizationProblem;
 
+import java.util.ArrayList;
+
 /**
  * Created by fzhang on 22.5.2019.
  * 1. set the weights of featurs according to the frequency of features (based on top-k individuals)
@@ -22,149 +22,145 @@ import simulation.rules.ruleoptimisation.RuleOptimizationProblem;
  */
 public class FreBadGPRuleEvolutionState extends GPRuleEvolutionState implements TerminalsChangable, FeatureIgnorable {
 
-	public static final String P_IGNORER = "ignorer";
-	public static final String P_PRE_GENERATIONS = "pre-generations";
-	public static final String P_POP_ADAPT_FRAC_ELITES = "pop-adapt-frac-elites";
-	public static final String P_POP_ADAPT_FRAC_ADAPTED = "pop-adapt-frac-adapted";
-	public static final String P_DO_ADAPT = "feature-selection-adapt-population";
-	/*public static final String P_NUM_TOP_INDS = "num-topinds";*/
+    public static final String P_IGNORER = "ignorer";
+    public static final String P_PRE_GENERATIONS = "pre-generations";
+    public static final String P_POP_ADAPT_FRAC_ELITES = "pop-adapt-frac-elites";
+    public static final String P_POP_ADAPT_FRAC_ADAPTED = "pop-adapt-frac-adapted";
+    public static final String P_DO_ADAPT = "feature-selection-adapt-population";
+    /*public static final String P_NUM_TOP_INDS = "num-topinds";*/
+    private final ArrayList<Individual> lastGenEliteIndividual = new ArrayList<>();
+    private Ignorer ignorer;
+    private double fracElites;
+    private double fracAdapted;
 
-	private Ignorer ignorer;
-	private int preGenerations;
-	private double fracElites;
-	private double fracAdapted;
-	private boolean doAdapt;
-	/*private int topInds;
-*/
-	@Override
-	public Ignorer getIgnorer() {
-		return ignorer;
-	}
+    /*private int topInds;
+     */
+    @Override
+    public Ignorer getIgnorer() {
+        return ignorer;
+    }
 
-	@Override
-	public void setIgnorer(Ignorer ignorer) {
-		this.ignorer = ignorer;
-	}
+    @Override
+    public void setIgnorer(Ignorer ignorer) {
+        this.ignorer = ignorer;
+    }
 
-	@Override
-	public void setup(EvolutionState state, Parameter base) {
-		super.setup(state, base);
+    @Override
+    public void setup(EvolutionState state, Parameter base) {
+        super.setup(state, base);
 
-		ignorer = (Ignorer) (state.parameters.getInstanceForParameter(
-				new Parameter(P_IGNORER), null, Ignorer.class)); //ignorer = yimei.jss.feature.ignore.SimpleIgnorer
-		preGenerations = state.parameters.getIntWithDefault(
-				new Parameter(P_PRE_GENERATIONS), null, -1);  //50
-		fracElites = state.parameters.getDoubleWithDefault(
-				new Parameter(P_POP_ADAPT_FRAC_ELITES), null, 0.0); //0.0
-		fracAdapted = state.parameters.getDoubleWithDefault(
-				new Parameter(P_POP_ADAPT_FRAC_ADAPTED), null, 1.0); //0.1
-		doAdapt = state.parameters.getBoolean(new Parameter(P_DO_ADAPT),
-				null, true);
-		/*topInds = state.parameters.getInt(new Parameter(P_NUM_TOP_INDS), null);*/
-	}
+        ignorer = (Ignorer) (state.parameters.getInstanceForParameter(
+                new Parameter(P_IGNORER), null, Ignorer.class)); //ignorer = yimei.jss.feature.ignore.SimpleIgnorer
+        int preGenerations = state.parameters.getIntWithDefault(
+                new Parameter(P_PRE_GENERATIONS), null, -1);  //50
+        fracElites = state.parameters.getDoubleWithDefault(
+                new Parameter(P_POP_ADAPT_FRAC_ELITES), null, 0.0); //0.0
+        fracAdapted = state.parameters.getDoubleWithDefault(
+                new Parameter(P_POP_ADAPT_FRAC_ADAPTED), null, 1.0); //0.1
+        boolean doAdapt = state.parameters.getBoolean(new Parameter(P_DO_ADAPT),
+                null, true);
+        /*topInds = state.parameters.getInt(new Parameter(P_NUM_TOP_INDS), null);*/
+    }
 
+    @Override
+    public GPNode pickTerminalRandom(int subPopNum) {
+        int index; //random[0].nextInt(terminals[subPopNum].lenth)
+        //1. if no weights is set for features, then we will choose features uniformly.
+        if (weights == null || weights[subPopNum] == null) {
+            //output.warning("weights are null");
+            index = random[0].nextInt(terminals[subPopNum].length);
+        } else //2. otherwise, choose features based on their weighting power
+        {
+            //System.out.println(subPopNum);
+            index = RandomChoice.pickFromDistribution(weights[subPopNum], random[0].nextDouble());
+        }
+        //System.out.println("The index of chosen features: " + index);
+        return terminals[subPopNum][index];
+    }
 
-	private final ArrayList<Individual> lastGenEliteIndividual = new ArrayList<>();
+    @Override
+    public int evolve() {
+        output.message("Generation " + generation);
 
-	@Override
-	public GPNode pickTerminalRandom(int subPopNum) {
-		int index = -1; //random[0].nextInt(terminals[subPopNum].lenth)
-		//1. if no weights is set for features, then we will choose features uniformly.
-		if (weights == null || weights[subPopNum] == null) {
-			//output.warning("weights are null");
-			index = random[0].nextInt(terminals[subPopNum].length);
-		} else //2. otherwise, choose features based on their weighting power
-		{
-			//System.out.println(subPopNum);
-			index = RandomChoice.pickFromDistribution(weights[subPopNum], random[0].nextDouble());
-		}
-		//System.out.println("The index of chosen features: " + index);
-		return terminals[subPopNum][index];
-	}
+        // EVALUATION
+        statistics.preEvaluationStatistics(this);
+        evaluator.evaluatePopulation(this); //Feature selection, firstly, evaluate population as usual; then clear population
 
-	@Override
-	public int evolve() {
-		output.message("Generation " + generation);
+        //clearing, niching  MultiPopCoevolutionaryEvaluator
+        statistics.postEvaluationStatistics(this);
 
-		// EVALUATION
-		statistics.preEvaluationStatistics(this);
-		evaluator.evaluatePopulation(this); //Feature selection, firstly, evaluate population as usual; then clear population
+        // SHOULD WE QUIT?
+        if (evaluator.runComplete(this) && quitOnRunComplete) {
+            output.message("Found Ideal Individual");
+            return R_SUCCESS;
+        }
 
-		//clearing, niching  MultiPopCoevolutionaryEvaluator
-		statistics.postEvaluationStatistics(this);
+        // SHOULD WE QUIT?
+        if (generation == numGenerations - 1) {
+            generation++;
+            return R_FAILURE;
+        }
 
-		// SHOULD WE QUIT?
-		if (evaluator.runComplete(this) && quitOnRunComplete) {
-			output.message("Found Ideal Individual");
-			return R_SUCCESS;
-		}
+        // PRE-BREEDING EXCHANGING
+        statistics.prePreBreedingExchangeStatistics(this);
+        population = exchanger.preBreedingExchangePopulation(this);
+        statistics.postPreBreedingExchangeStatistics(this);
 
-		// SHOULD WE QUIT?
-		if (generation == numGenerations - 1) {
-			generation++;
-			return R_FAILURE;
-		}
+        String exchangerWantsToShutdown = exchanger.runComplete(this);
+        if (exchangerWantsToShutdown != null) {
+            output.message(exchangerWantsToShutdown);
+            /*
+             * Don't really know what to return here.  The only place I could
+             * find where runComplete ever returns non-null is
+             * IslandExchange.  However, that can return non-null whether or
+             * not the ideal individual was found (for example, if there was
+             * a communication error with the server).
+             *
+             * Since the original version of this code didn't care, and the
+             * result was initialized to R_SUCCESS before the while loop, I'm
+             * just going to return R_SUCCESS here.
+             */
 
-		// PRE-BREEDING EXCHANGING
-		statistics.prePreBreedingExchangeStatistics(this);
-		population = exchanger.preBreedingExchangePopulation(this);
-		statistics.postPreBreedingExchangeStatistics(this);
+            return R_SUCCESS;
+        }
 
-		String exchangerWantsToShutdown = exchanger.runComplete(this);
-		if (exchangerWantsToShutdown != null) {
-			output.message(exchangerWantsToShutdown);
-			/*
-			 * Don't really know what to return here.  The only place I could
-			 * find where runComplete ever returns non-null is
-			 * IslandExchange.  However, that can return non-null whether or
-			 * not the ideal individual was found (for example, if there was
-			 * a communication error with the server).
-			 *
-			 * Since the original version of this code didn't care, and the
-			 * result was initialized to R_SUCCESS before the while loop, I'm
-			 * just going to return R_SUCCESS here.
-			 */
+        // BREEDING
+        statistics.preBreedingStatistics(this);
 
-			return R_SUCCESS;
-		}
+        population = breeder.breedPopulation(this);
 
-		// BREEDING
-		statistics.preBreedingStatistics(this);
+        //2019.6.1 only applied at interval generation
+        weights = null;
 
-		population = breeder.breedPopulation(this);
+        // POST-BREEDING EXCHANGING
+        statistics.postBreedingStatistics(this);
 
-		//2019.6.1 only applied at interval generation
-		weights = null;
+        // POST-BREEDING EXCHANGING
+        statistics.prePostBreedingExchangeStatistics(this);
+        population = exchanger.postBreedingExchangePopulation(this);
+        statistics.postPostBreedingExchangeStatistics(this);
 
-		// POST-BREEDING EXCHANGING
-		statistics.postBreedingStatistics(this);
+        // Generate new instances if needed
+        RuleOptimizationProblem problem = (RuleOptimizationProblem) evaluator.p_problem;
+        if (problem.getEvaluationModel().isRotatable()) {
+            problem.rotateEvaluationModel();
+        }
 
-		// POST-BREEDING EXCHANGING
-		statistics.prePostBreedingExchangeStatistics(this);
-		population = exchanger.postBreedingExchangePopulation(this);
-		statistics.postPostBreedingExchangeStatistics(this);
+        // INCREMENT GENERATION AND CHECKPOINT
+        generation++;
+        if (checkpoint && generation % checkpointModulo == 0) {
+            output.message("Checkpointing");
+            statistics.preCheckpointStatistics(this);
+            Checkpoint.setCheckpoint(this);
+            statistics.postCheckpointStatistics(this);
+        }
 
-		// Generate new instances if needed
-		RuleOptimizationProblem problem = (RuleOptimizationProblem) evaluator.p_problem;
-		if (problem.getEvaluationModel().isRotatable()) {
-			problem.rotateEvaluationModel();
-		}
+        return R_NOTDONE;
+    }
 
-		// INCREMENT GENERATION AND CHECKPOINT
-		generation++;
-		if (checkpoint && generation % checkpointModulo == 0) {
-			output.message("Checkpointing");
-			statistics.preCheckpointStatistics(this);
-			Checkpoint.setCheckpoint(this);
-			statistics.postCheckpointStatistics(this);
-		}
-
-		return R_NOTDONE;
-	}
-
-	@Override
-	public void adaptPopulation(int subPopNum) {
-		FeatureUtil.adaptPopulationThreeParts(this, fracElites, fracAdapted, subPopNum);
-	}
+    @Override
+    public void adaptPopulation(int subPopNum) {
+        FeatureUtil.adaptPopulationThreeParts(this, fracElites, fracAdapted, subPopNum);
+    }
 }
 

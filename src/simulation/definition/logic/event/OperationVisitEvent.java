@@ -1,7 +1,9 @@
 package simulation.definition.logic.event;
 
-import simulation.definition.*;
+import simulation.definition.Machine;
+import simulation.definition.OperationOption;
 import simulation.definition.Process;
+import simulation.definition.WorkCenter;
 import simulation.definition.logic.RoutingDecisionSituation;
 import simulation.definition.logic.SequencingDecisionSituation;
 import simulation.definition.logic.Simulation;
@@ -34,23 +36,22 @@ public class OperationVisitEvent extends AbstractEvent {
 
         if (earliestMachine.getReadyTime() > time || !simulation.canAddToQueue(p)) {
             workCenter.addToQueue(operationOption);
-        }
-        else {
+        } else {
             simulation.addEvent(new ProcessStartEvent(p));
         }
     }
 
     @Override
     public void addSequencingDecisionSituation(Simulation simulation,
-                                     List<SequencingDecisionSituation> situations,
-                                     int minQueueLength) {
+                                               List<SequencingDecisionSituation> situations,
+                                               int minQueueLength) {
         trigger(simulation);
     }
 
     @Override
     public void addRoutingDecisionSituation(Simulation simulation,
-                                               List<RoutingDecisionSituation> situations,
-                                               int minQueueLength) {
+                                            List<RoutingDecisionSituation> situations,
+                                            int minQueueLength) {
         trigger(simulation);
     }
 
@@ -77,5 +78,7 @@ public class OperationVisitEvent extends AbstractEvent {
         return -1;
     }
 
-    public OperationOption getOperationOption() {return operationOption; }
+    public OperationOption getOperationOption() {
+        return operationOption;
+    }
 }

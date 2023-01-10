@@ -17,11 +17,6 @@ import java.util.List;
 public class SurrogateAccuracyAnalysis {
 
     public static final long simSeed = 31812425;
-
-    private String testScenario;
-    private String testSetName;
-    private List<Objective> objectives; // The objectives to test.
-
     private static final List<AbstractRule> rules = new ArrayList<>();
 
     static {
@@ -53,24 +48,31 @@ public class SurrogateAccuracyAnalysis {
 //        rules.add(new TwoPTplusWINQplusNPT(RuleType.SEQUENCING));
     }
 
+    private String testScenario;
+    private String testSetName;
+    private List<Objective> objectives; // The objectives to test.
+
     public static void main(String[] args) {
         int idx = 0;
         String scenario = args[idx];
-        idx ++;
+        idx++;
         String setName = args[idx];
-        idx ++;
-        int numObjectives = Integer.valueOf(args[idx]);
-        idx ++;
+        idx++;
+        int numObjectives = Integer.parseInt(args[idx]);
+        idx++;
         List<Objective> objectives = new ArrayList<>();
         for (int i = 0; i < numObjectives; i++) {
             objectives.add(Objective.get(args[idx]));
-            idx ++;
+            idx++;
         }
 
         SchedulingSet set = SchedulingSet.generateSet(simSeed,
                 scenario, setName, objectives, 50);
 
-        SchedulingSet surrogateSet = set.surrogate(5, 500, 100, objectives);
+        SchedulingSet surrogateSet = null;
+        if (set != null) {
+            surrogateSet = set.surrogate(5, 500, 100, objectives);
+        }
         List<Integer> reps = new ArrayList<>();
         reps.add(1);
         surrogateSet.setReplications(reps);

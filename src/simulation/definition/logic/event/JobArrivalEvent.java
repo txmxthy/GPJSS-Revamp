@@ -51,15 +51,15 @@ public class JobArrivalEvent extends AbstractEvent {
 
     @Override
     public void addSequencingDecisionSituation(Simulation simulation,
-                                     List<SequencingDecisionSituation> situations,
-                                     int minQueueLength) {
+                                               List<SequencingDecisionSituation> situations,
+                                               int minQueueLength) {
         trigger(simulation);
     }
 
     @Override
     public void addRoutingDecisionSituation(Simulation simulation,
-                                               List<RoutingDecisionSituation> situations,
-                                               int minQueueLength) {
+                                            List<RoutingDecisionSituation> situations,
+                                            int minQueueLength) {
         //System.out.println("============================here========================");
 
         //Job has just arrived, get first operation out
@@ -99,7 +99,7 @@ public class JobArrivalEvent extends AbstractEvent {
             return 1;
 
         if (other instanceof JobArrivalEvent) {
-            JobArrivalEvent otherJAE = (JobArrivalEvent)other;
+            JobArrivalEvent otherJAE = (JobArrivalEvent) other;
 
             if (job.getId() < otherJAE.job.getId())
                 return -1;

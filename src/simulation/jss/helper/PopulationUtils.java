@@ -1,86 +1,70 @@
 package simulation.jss.helper;
 
+import ec.Individual;
+import ec.Population;
+import ec.Subpopulation;
+import ec.gp.GPIndividual;
+import ec.gp.GPNode;
+import simulation.jss.gp.terminal.TerminalERCUniform;
+
 import java.io.*;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 
-import ec.*;
-import ec.gp.GPIndividual;
-import ec.gp.GPNode;
-import simulation.jss.gp.terminal.TerminalERCUniform;
+public class PopulationUtils {
+    /**
+     * Sorts individuals based on their fitness. The method iterates over all subpopulations
+     * and sorts the array of individuals in them based on their fitness so that the first
+     * individual has the best (i.e. least) fitness.
+     *
+     * @param pop a population to sort. Can't be {@code null}.
+     * @return the given pop with individuals sorted.
+     */
+    public static Population sort(Population pop) {
+        Comparator<Individual> comp = Comparator.comparingDouble((Individual o) -> o.fitness.fitness());
 
-public class PopulationUtils
-{
-	/**
-	 * Sorts individuals based on their fitness. The method iterates over all subpopulations
-	 * and sorts the array of individuals in them based on their fitness so that the first
-	 * individual has the best (i.e. least) fitness.
-	 *
-	 * @param pop a population to sort. Can't be {@code null}.
-	 * @return the given pop with individuals sorted.
-	 */
-	public static Population sort(Population pop)
-	{
-		Comparator<Individual> comp = (Individual o1, Individual o2) ->
-		{
-			if(o1.fitness.fitness() < o2.fitness.fitness())
-				return -1;
-			if(o1.fitness.fitness() == o2.fitness.fitness())
-				return 0;
+        for (Subpopulation subpop : pop.subpops)
+            Arrays.sort(subpop.individuals, comp);
 
-			return 1;
-		};
+        return pop;
+    }
 
-		for(Subpopulation subpop : pop.subpops)
-			Arrays.sort(subpop.individuals, comp);
+    static void Frequency(TerminalsStats stats, GPNode node) {
+        if (node == null) {
+            return;
+        }
 
-		return pop;
-	}
+        if (node.children == null || node.children.length == 0) {  //1. a node does not have child is a terminal
+            //2. the length of node's child is 0 (empty array)---it is a terminal
+            stats.update(((TerminalERCUniform) node).getTerminal().name()); //read terminals
+            return;
+        }
 
-	static void Frequency(TerminalsStats stats, GPNode node) {
-		if (node == null) {
-			return;
-		}
+        for (GPNode child : node.children) //repeat to check the terminals
+            Frequency(stats, child);
+    }
 
-		if (node.children == null || node.children.length == 0) {  //1. a node does not have child is a terminal
-			                                                       //2. the length of node's child is 0 (empty array)---it is a terminal
-			stats.update(((TerminalERCUniform)node).getTerminal().name()); //read terminals
-			return;
-		}
+    public static ArrayList<HashMap<String, Integer>> Frequency(Population pop, int topInds) {
+        sort(pop); //sort the subpop separately
 
-		for(GPNode child : node.children) //repeat to check the terminals
-			Frequency(stats, child);
-	}
+        ArrayList<HashMap<String, Integer>> retval = new ArrayList<>();
+        for (Subpopulation subpop : pop.subpops)
+            for (int i = 0; i < topInds; i++) {
+                TerminalsStats stats = new TerminalsStats();
+                Frequency(stats, ((GPIndividual) (subpop.individuals[i])).trees[0].child);
+                retval.add(stats.getStats());
+            }
+        return retval;
+    }
 
-	public static ArrayList<HashMap<String,Integer>> Frequency(Population pop, int topInds) {
-		sort(pop); //sort the subpop separately
+    public static void sort(Individual[] ind) {
+        Comparator<Individual> comp = Comparator.comparingDouble((Individual o) -> o.fitness.fitness());
 
-		ArrayList<HashMap<String,Integer>> retval = new ArrayList<HashMap<String,Integer>>();
-		for(Subpopulation subpop : pop.subpops)
-			for (int i = 0; i < topInds; i++) {
-				TerminalsStats stats = new TerminalsStats();
-				Frequency(stats, ((GPIndividual)(subpop.individuals[i])).trees[0].child);
-				retval.add(stats.getStats());
-		}
-		return retval;
-	}
-
-	public static void sort(Individual[] ind)
-	{
-		Comparator<Individual> comp = (Individual o1, Individual o2) ->
-		{
-			if(o1.fitness.fitness() < o2.fitness.fitness())
-				return -1;
-			if(o1.fitness.fitness() == o2.fitness.fitness())
-				return 0;
-
-			return 1;
-		};
-
-		Arrays.sort(ind, comp);
-	}
+        Arrays.sort(ind, comp);
+    }
 
 //	public void prepareForWriting(Population population, Subpopulation sub) throws IOException
 //	{
@@ -103,53 +87,46 @@ public class PopulationUtils
 //		output.writeObject(ind);
 //	}
 
-	public static void savePopulation(Population pop, String fileName)
-			throws IOException
-	{
-		File file = new File(fileName);
-		if(file.exists())
-			file.delete();
-		try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file)))
-		{
-			int nSubPops = pop.subpops.length;
-			oos.writeInt(nSubPops);
-			for(Subpopulation subpop : pop.subpops)
-			{
-				int nInds = subpop.individuals.length;
-				oos.writeInt(nInds);
-				for(Individual ind : subpop.individuals)
-				{
-					oos.writeObject(ind);
-				}
-			}
-		}
-	}
+    public static void savePopulation(Population pop, String fileName)
+            throws IOException {
+        File file = new File(fileName);
+        if (file.exists())
+            file.delete();
+        try (ObjectOutputStream oos = new ObjectOutputStream(Files.newOutputStream(file.toPath()))) {
+            int nSubPops = pop.subpops.length;
+            oos.writeInt(nSubPops);
+            for (Subpopulation subpop : pop.subpops) {
+                int nInds = subpop.individuals.length;
+                oos.writeInt(nInds);
+                for (Individual ind : subpop.individuals) {
+                    oos.writeObject(ind);
+                }
+            }
+        }
+    }
 
-	public static Population loadPopulation(File file)
-			throws IOException, ClassNotFoundException {
-		Population retval = new Population();
-		try(ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file)))
-		{
-			int numSub = ois.readInt();
-			retval.subpops = new Subpopulation[numSub];
-			for(int subInd = 0; subInd < numSub; subInd++)
-			{
-				int numInd = ois.readInt();
-				retval.subpops[subInd] = new Subpopulation();
-				retval.subpops[subInd].individuals = new Individual[numInd];
-				for(int indIndex = 0; indIndex < numInd; indIndex++)
-				{
-					Object ind = ois.readObject();
-					if(!(ind instanceof Individual))
-						throw new InvalidObjectException("The file contains an object that is not "
-								+ "instance of Individual: " + ind.getClass().toString());
-					retval.subpops[subInd].individuals[indIndex] = (Individual)ind;
-				}
-			}
-		}
+    public static Population loadPopulation(File file)
+            throws IOException, ClassNotFoundException {
+        Population retval = new Population();
+        try (ObjectInputStream ois = new ObjectInputStream(Files.newInputStream(file.toPath()))) {
+            int numSub = ois.readInt();
+            retval.subpops = new Subpopulation[numSub];
+            for (int subInd = 0; subInd < numSub; subInd++) {
+                int numInd = ois.readInt();
+                retval.subpops[subInd] = new Subpopulation();
+                retval.subpops[subInd].individuals = new Individual[numInd];
+                for (int indIndex = 0; indIndex < numInd; indIndex++) {
+                    Object ind = ois.readObject();
+                    if (!(ind instanceof Individual))
+                        throw new InvalidObjectException("The file contains an object that is not "
+                                + "instance of Individual: " + ind.getClass().toString());
+                    retval.subpops[subInd].individuals[indIndex] = (Individual) ind;
+                }
+            }
+        }
 
-		return retval;
-	}
+        return retval;
+    }
 //
 //	public static ArrayList<Population> loadPopulation(String inputFileNamePath, int numGenerations)
 //	{
@@ -171,44 +148,44 @@ public class PopulationUtils
 //		return retval;
 //	}
 
-	public static Population loadPopulation(String fileName)
-			throws IOException, ClassNotFoundException {
-		File file = new File(fileName);
-		return loadPopulation(file);
-	}
+    public static Population loadPopulation(String fileName)
+            throws IOException, ClassNotFoundException {
+        File file = new File(fileName);
+        return loadPopulation(file);
+    }
 
 
-	//fzhang 2019.6.6 get the index of best individuals
-	public static int  getIndexOfbestInds(Population pop, int numSubPop){
-		{
-			int best_index = 0;
-			double best_fitness = pop.subpops[numSubPop].individuals[0].fitness.fitness();
-			for(int ind = 0; ind < pop.subpops[numSubPop].individuals.length; ind++){
-				if(pop.subpops[numSubPop].individuals[ind].fitness.fitness() < best_fitness){
-					best_fitness = pop.subpops[numSubPop].individuals[ind].fitness.fitness();
-					best_index = ind;
-				}
-			}
+    //fzhang 2019.6.6 get the index of best individuals
+    public static int getIndexOfbestInds(Population pop, int numSubPop) {
+        {
+            int best_index = 0;
+            double best_fitness = pop.subpops[numSubPop].individuals[0].fitness.fitness();
+            for (int ind = 0; ind < pop.subpops[numSubPop].individuals.length; ind++) {
+                if (pop.subpops[numSubPop].individuals[ind].fitness.fitness() < best_fitness) {
+                    best_fitness = pop.subpops[numSubPop].individuals[ind].fitness.fitness();
+                    best_index = ind;
+                }
+            }
             return best_index;
-	}
-}
+        }
+    }
 }
 
 
 class TerminalsStats {
-	private final HashMap<String, Integer> stats = new HashMap<>();
+    private final HashMap<String, Integer> stats = new HashMap<>();
 
-	public void update(String nodeName) {
-		if (!stats.containsKey(nodeName)) {
-			stats.put(nodeName, 0); // put: set the value
-		}
+    public void update(String nodeName) {
+        if (!stats.containsKey(nodeName)) {
+            stats.put(nodeName, 0); // put: set the value
+        }
 
-		stats.put(nodeName, stats.get(nodeName) + 1);
-	}
+        stats.put(nodeName, stats.get(nodeName) + 1);
+    }
 
-	public HashMap<String, Integer> getStats() {
-		return stats;
-	}
+    public HashMap<String, Integer> getStats() {
+        return stats;
+    }
 }
 
 

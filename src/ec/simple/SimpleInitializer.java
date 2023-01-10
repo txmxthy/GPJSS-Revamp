@@ -6,10 +6,11 @@
 
 
 package ec.simple;
-import ec.Initializer;
+
 import ec.EvolutionState;
-import ec.util.Parameter;
+import ec.Initializer;
 import ec.Population;
+import ec.util.Parameter;
 
 /*
  * SimpleInitializer.java
@@ -27,35 +28,33 @@ import ec.Population;
  * @version 1.0
  */
 
-public class SimpleInitializer extends Initializer
-    {
+public class SimpleInitializer extends Initializer {
     private static final long serialVersionUID = 1;
 
-    public void setup(final EvolutionState state, final Parameter base)
-        {
-        }
+    public void setup(final EvolutionState state, final Parameter base) {
+    }
 
-    /** Creates, populates, and returns a new population by making a new
-        population, calling setup(...) on it, and calling populate(...)
-        on it, assuming an unthreaded environment (thread 0).
-        Obviously, this is an expensive method.  It should only
-        be called once typically in a run. */
+    /**
+     * Creates, populates, and returns a new population by making a new
+     * population, calling setup(...) on it, and calling populate(...)
+     * on it, assuming an unthreaded environment (thread 0).
+     * Obviously, this is an expensive method.  It should only
+     * be called once typically in a run.
+     */
 
-    public Population initialPopulation(final EvolutionState state, int thread)
-        {
+    public Population initialPopulation(final EvolutionState state, int thread) {
         Population p = setupPopulation(state, thread);  // so far, population is an empty box
         //System.out.println(p);  //ec.Population@1ddc4ec2
         p.populate(state, thread); //Populates the population with new random individuals.
         return p; // finally, get the population with individuals
-        }
+    }
 
-    public Population setupPopulation(final EvolutionState state, int thread)
-        {
+    public Population setupPopulation(final EvolutionState state, int thread) {
         Parameter base = new Parameter(P_POP);
         //System.out.println(base); //pop
-        Population p = (Population) state.parameters.getInstanceForParameterEq(base,null,Population.class);  // Population.class is fine
+        Population p = (Population) state.parameters.getInstanceForParameterEq(base, null, Population.class);  // Population.class is fine
         //System.out.println(p);  //ec.Population@1ddc4ec2
-        p.setup(state,base);
+        p.setup(state, base);
         return p;
-        }
     }
+}

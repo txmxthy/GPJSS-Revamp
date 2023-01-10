@@ -3,12 +3,12 @@ package simulation.rules.ruleanalysis;
 import ec.gp.GPNode;
 import ec.gp.GPTree;
 import ec.multiobjective.MultiObjectiveFitness;
+import simulation.definition.Objective;
+import simulation.definition.SchedulingSet;
 import simulation.jss.feature.ignore.Ignorer;
 import simulation.jss.feature.ignore.SimpleIgnorer;
 import simulation.jss.gp.terminal.AttributeGPNode;
 import simulation.jss.gp.terminal.JobShopAttribute;
-import simulation.definition.Objective;
-import simulation.definition.SchedulingSet;
 import simulation.rules.rule.operation.evolved.GPRule;
 
 import java.io.BufferedWriter;
@@ -47,6 +47,37 @@ public class RuleTestFeatureContribution extends RuleTest {
                                        int numPopulations) {
         this(trainPath, ruleType, numRuns, testScenario, testSetName,
                 new ArrayList<>(), featureSetName, numPopulations);
+    }
+
+    public static void main(String[] args) {
+        //should follow this sorting to set parameters for testing
+        int idx = 0;
+        String trainPath = args[idx];
+        idx++;
+        RuleType ruleType = RuleType.get(args[idx]);
+        idx++;
+        int numRuns = Integer.parseInt(args[idx]);
+        idx++;
+        String testScenario = args[idx];
+        idx++;
+        String testSetName = args[idx];
+        idx++;
+        int numPopulations = Integer.parseInt(args[idx]);
+        idx++;
+        int numObjectives = Integer.parseInt(args[idx]);
+        idx++;
+        List<Objective> objectives = new ArrayList<>();
+        for (int i = 0; i < numObjectives; i++) {
+            objectives.add(Objective.get(args[idx]));
+            idx++;
+        }
+        String featureSetName = String.valueOf(args[idx]);
+        idx++;
+
+        RuleTestFeatureContribution ruleTest = new RuleTestFeatureContribution(trainPath,
+                ruleType, numRuns, testScenario, testSetName, objectives, featureSetName, numPopulations);
+
+        ruleTest.writeToCSV();
     }
 
     public List<GPNode> featuresFromSetName() {
@@ -111,11 +142,11 @@ public class RuleTestFeatureContribution extends RuleTest {
                 GPRule tempSeqRule;
                 GPRule tempRoutingRule;
                 if (bestRules[0].getType() == simulation.rules.rule.RuleType.SEQUENCING) {
-                    tempSeqRule = new GPRule(simulation.rules.rule.RuleType.SEQUENCING, (GPTree)(bestRules[0].getGPTree().clone()));
-                    tempRoutingRule = new GPRule(simulation.rules.rule.RuleType.ROUTING, (GPTree)(bestRules[1].getGPTree().clone()));
+                    tempSeqRule = new GPRule(simulation.rules.rule.RuleType.SEQUENCING, (GPTree) (bestRules[0].getGPTree().clone()));
+                    tempRoutingRule = new GPRule(simulation.rules.rule.RuleType.ROUTING, (GPTree) (bestRules[1].getGPTree().clone()));
                 } else {
-                    tempSeqRule = new GPRule(simulation.rules.rule.RuleType.SEQUENCING, (GPTree)(bestRules[1].getGPTree().clone()));
-                    tempRoutingRule = new GPRule(simulation.rules.rule.RuleType.ROUTING, (GPTree)(bestRules[0].getGPTree().clone()));
+                    tempSeqRule = new GPRule(simulation.rules.rule.RuleType.SEQUENCING, (GPTree) (bestRules[1].getGPTree().clone()));
+                    tempRoutingRule = new GPRule(simulation.rules.rule.RuleType.ROUTING, (GPTree) (bestRules[0].getGPTree().clone()));
                 }
 
                 //TODO: What do we do here? Which rule do we ignore features from? One at a time?
@@ -149,36 +180,5 @@ public class RuleTestFeatureContribution extends RuleTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public static void main(String[] args) {
-    	//should follow this sorting to set parameters for testing
-        int idx = 0;
-        String trainPath = args[idx];
-        idx ++;
-        RuleType ruleType = RuleType.get(args[idx]);
-        idx ++;
-        int numRuns = Integer.valueOf(args[idx]);
-        idx ++;
-        String testScenario = args[idx];
-        idx ++;
-        String testSetName = args[idx];
-        idx ++;
-        int numPopulations = Integer.valueOf(args[idx]);
-        idx ++;
-        int numObjectives = Integer.valueOf(args[idx]);
-        idx ++;
-        List<Objective> objectives = new ArrayList<>();
-        for (int i = 0; i < numObjectives; i++) {
-            objectives.add(Objective.get(args[idx]));
-            idx ++;
-        }
-        String featureSetName = String.valueOf(args[idx]);
-        idx ++;
-
-        RuleTestFeatureContribution ruleTest = new RuleTestFeatureContribution(trainPath,
-                ruleType, numRuns, testScenario, testSetName, objectives, featureSetName, numPopulations);
-
-        ruleTest.writeToCSV();
     }
 }

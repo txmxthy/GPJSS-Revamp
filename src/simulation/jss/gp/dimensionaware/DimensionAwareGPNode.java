@@ -4,7 +4,7 @@ import ec.gp.GPNode;
 
 /**
  * The dimension aware GP node.
- *
+ * <p>
  * Created by yimei on 26/10/16.
  */
 public abstract class DimensionAwareGPNode extends GPNode {
@@ -16,12 +16,12 @@ public abstract class DimensionAwareGPNode extends GPNode {
         return dimensionExponents;
     }
 
-    public double getDimensionInconsistency() {
-        return dimensionInconsistency;
-    }
-
     public void setDimensionExponents(DimensionExponentVector dimensionExponents) {
         this.dimensionExponents = dimensionExponents;
+    }
+
+    public double getDimensionInconsistency() {
+        return dimensionInconsistency;
     }
 
     public void setDimensionInconsistency(double dimensionInconsistency) {

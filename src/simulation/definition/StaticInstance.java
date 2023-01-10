@@ -1,21 +1,24 @@
 package simulation.definition;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * A static instance. It includes:
  * (1) Number of work centers and jobs
  * (2) Ready time of each work center (a work center has only one machine)
  * (3) For each job
- *   (3.1) Arrival time
- *   (3.2) Due date
- *   (3.3) Weight
- *   (3.4) Number of operations
- *   (3.5) For each operation
- *     (3.5.1) Work center to process it
- *     (3.5.2) Processing time
- *
+ * (3.1) Arrival time
+ * (3.2) Due date
+ * (3.3) Weight
+ * (3.4) Number of operations
+ * (3.5) For each operation
+ * (3.5.1) Work center to process it
+ * (3.5.2) Processing time
+ * <p>
  * Created by yimei on 22/11/16.
  */
 
@@ -23,8 +26,8 @@ public class StaticInstance implements JSSInstance {
 
     public final int numWorkCenters;
     public final int numJobs;
-    private List<Double> workCenterReadyTimes;
     private final List<JobInformation> jobInformations;
+    private List<Double> workCenterReadyTimes;
 
     public StaticInstance(int numWorkCenters, int numJobs,
                           List<Double> workCenterReadyTimes,
@@ -46,47 +49,6 @@ public class StaticInstance implements JSSInstance {
                 new ArrayList<>(Collections.nCopies(numWorkCenters, 0.0)));
     }
 
-    public int getNumJobs() { return numJobs; }
-
-    public int getNumWorkCenters() { return numWorkCenters; }
-
-    public List<Double> getWorkCenterReadyTimes() {
-        return workCenterReadyTimes;
-    }
-
-    public List<JobInformation> getJobInformations() {
-        return jobInformations;
-    }
-
-    public void addJob(double arrivalTime, double dueDate, double weight,
-                       int numOps, List<Integer> route, List<Double> procTimes) {
-        jobInformations.add(new JobInformation(arrivalTime, dueDate, weight,
-                numOps, route, procTimes));
-    }
-
-    public class JobInformation {
-        private final double arrivalTime;
-        private final double dueDate;
-        private final double weight;
-        private final int numOps;
-        private List<Integer> route;
-        private final List<Double> procTimes;
-
-        public JobInformation(double arrivalTime,
-                              double dueDate,
-                              double weight,
-                              int numOps,
-                              List<Integer> route,
-                              List<Double> procTimes) {
-            this.arrivalTime = arrivalTime;
-            this.dueDate = dueDate;
-            this.weight = weight;
-            this.numOps = numOps;
-            this.route = route;
-            this.procTimes = procTimes;
-        }
-    }
-
     public static StaticInstance readFromFile(String fileName) {
         String projPath = (new File("")).getAbsolutePath();
         File datafile = new File(projPath + "/data/" + fileName);
@@ -103,8 +65,8 @@ public class StaticInstance implements JSSInstance {
             // Read the number of jobs and machines
             line = br.readLine();
             segments = line.split("\\s+");
-            int numJobs = Integer.valueOf(segments[0]);
-            int numWorkCenters = Integer.valueOf(segments[1]);
+            int numJobs = Integer.parseInt(segments[0]);
+            int numWorkCenters = Integer.parseInt(segments[1]);
 
             // Read the ready times of the work centers
             line = br.readLine();
@@ -123,17 +85,17 @@ public class StaticInstance implements JSSInstance {
 
 //                System.out.println(line);
 
-                double arrivalTime = Double.valueOf(segments[0]);
-                double dueDate = Double.valueOf(segments[1]);
-                double weight = Double.valueOf(segments[2]);
-                int numOps = Integer.valueOf(segments[3]);
+                double arrivalTime = Double.parseDouble(segments[0]);
+                double dueDate = Double.parseDouble(segments[1]);
+                double weight = Double.parseDouble(segments[2]);
+                int numOps = Integer.parseInt(segments[3]);
 
                 List<Integer> route = new ArrayList<>();
                 List<Double> procTimes = new ArrayList<>();
 
                 for (int i = 0; i < numOps; i++) {
-                    int wcid = Integer.valueOf(segments[2 * i + 4]);
-                    double procTime = Double.valueOf(segments[2 * i + 5]);
+                    int wcid = Integer.parseInt(segments[2 * i + 4]);
+                    double procTime = Double.parseDouble(segments[2 * i + 5]);
 
                     route.add(wcid);
                     procTimes.add(procTime);
@@ -146,6 +108,54 @@ public class StaticInstance implements JSSInstance {
         }
 
         return instance;
+    }
+
+    public static void main(String[] args) {
+
+//        StaticInstance instance = readFromFile("complete-20_5_0.txt");
+//
+//        System.out.println(instance.toString());
+//
+//        List<Integer> permutation = new ArrayList<>();
+//        for (int i = 0; i < instance.numWorkCenters; i++) {
+//            permutation.add(i);
+//        }
+//        Collections.shuffle(permutation, new Random(0));
+//
+//        instance.permutateWorkCenter(permutation);
+//
+//        System.out.println(permutation);
+//
+//        System.out.println(instance.toString());
+//
+//        instance.printToFile("complete-20_5_0-perm.txt");
+
+        StaticInstance inst1 = readFromFile("complete-20_5_0.txt");
+        StaticInstance inst2 = readFromFile("complete-20_5_0-perm.txt");
+
+        System.out.println(inst2.distance(inst1));
+    }
+
+    public int getNumJobs() {
+        return numJobs;
+    }
+
+    public int getNumWorkCenters() {
+        return numWorkCenters;
+    }
+
+    public List<Double> getWorkCenterReadyTimes() {
+        return workCenterReadyTimes;
+    }
+
+    public List<JobInformation> getJobInformations() {
+        return jobInformations;
+    }
+
+    public void addJob(double arrivalTime, double dueDate, double weight,
+                       int numOps, List<Integer> route, List<Double> procTimes) {
+        jobInformations.add(new JobInformation(arrivalTime, dueDate, weight,
+                numOps, route, procTimes));
     }
 
     public void printToFile(String fileName) {
@@ -182,6 +192,7 @@ public class StaticInstance implements JSSInstance {
 
     /**
      * Create a shop class based on the information
+     *
      * @return the shop
      */
     public Shop createShop() {
@@ -218,6 +229,7 @@ public class StaticInstance implements JSSInstance {
 
     /**
      * Reset the shop
+     *
      * @param shop the shop
      */
     public void resetShop(Shop shop) {
@@ -254,7 +266,7 @@ public class StaticInstance implements JSSInstance {
 
             int wc1 = jobInformations.get(j).route.get(0);
             int wc2 = other.jobInformations.get(j).route.get(0);
-            counts[wc1][wc2] ++;
+            counts[wc1][wc2]++;
         }
 
         for (int i = 0; i < numWorkCenters; i++) {
@@ -293,8 +305,7 @@ public class StaticInstance implements JSSInstance {
                 for (int i = 0; i < jobInformations.get(j).numOps; i++) {
                     jobDist += jobInformations.get(j).procTimes.get(i);
                 }
-            }
-            else {
+            } else {
                 JobInformation jobInfo1 = jobInformations.get(j);
                 JobInformation jobInfo2 = other.jobInformations.get(j);
 
@@ -302,14 +313,12 @@ public class StaticInstance implements JSSInstance {
                     if (i >= jobInfo2.numOps) {
                         // There is no more operation for the current job in the other instance
                         jobDist += jobInfo1.procTimes.get(i);
-                    }
-                    else {
+                    } else {
                         // Check whether the operations are on the same machine
-                        if (jobInfo1.route.get(i) == jobInfo2.route.get(i)) {
+                        if (jobInfo1.route.get(i).equals(jobInfo2.route.get(i))) {
                             jobDist += Math.abs(jobInfo1.procTimes.get(i)
                                     - jobInfo2.procTimes.get(i));
-                        }
-                        else {
+                        } else {
                             jobDist += jobInfo1.procTimes.get(i)
                                     + jobInfo2.procTimes.get(i);
                         }
@@ -359,53 +368,48 @@ public class StaticInstance implements JSSInstance {
     }
 
     public String toString() {
-        String string = numJobs + "  " + numWorkCenters + "\n";
+        StringBuilder string = new StringBuilder(numJobs + "  " + numWorkCenters + "\n");
 
         for (int i = 0; i < numWorkCenters; i++) {
-            string += "  " + workCenterReadyTimes.get(i);
+            string.append("  ").append(workCenterReadyTimes.get(i));
         }
 
-        string += "\n";
+        string.append("\n");
 
         for (int j = 0; j < numJobs; j++) {
             JobInformation jobInfo = jobInformations.get(j);
-            string += "  " + jobInfo.arrivalTime + "  " + jobInfo.dueDate
-                    + "  " + jobInfo.weight + "  " + jobInfo.numOps;
+            string.append("  ").append(jobInfo.arrivalTime).append("  ").append(jobInfo.dueDate).append("  ").append(jobInfo.weight).append("  ").append(jobInfo.numOps);
 
             for (int k = 0; k < jobInfo.numOps; k++) {
-                string += "  " + jobInfo.route.get(k)
-                        + "  " + jobInfo.procTimes.get(k);
+                string.append("  ").append(jobInfo.route.get(k)).append("  ").append(jobInfo.procTimes.get(k));
             }
 
-            string += "\n";
+            string.append("\n");
         }
 
-        return string;
+        return string.toString();
     }
 
-    public static void main(String[] args) {
+    public static class JobInformation {
+        private final double arrivalTime;
+        private final double dueDate;
+        private final double weight;
+        private final int numOps;
+        private final List<Double> procTimes;
+        private List<Integer> route;
 
-//        StaticInstance instance = readFromFile("complete-20_5_0.txt");
-//
-//        System.out.println(instance.toString());
-//
-//        List<Integer> permutation = new ArrayList<>();
-//        for (int i = 0; i < instance.numWorkCenters; i++) {
-//            permutation.add(i);
-//        }
-//        Collections.shuffle(permutation, new Random(0));
-//
-//        instance.permutateWorkCenter(permutation);
-//
-//        System.out.println(permutation);
-//
-//        System.out.println(instance.toString());
-//
-//        instance.printToFile("complete-20_5_0-perm.txt");
-
-        StaticInstance inst1 = readFromFile("complete-20_5_0.txt");
-        StaticInstance inst2 = readFromFile("complete-20_5_0-perm.txt");
-
-        System.out.println(inst2.distance(inst1));
+        public JobInformation(double arrivalTime,
+                              double dueDate,
+                              double weight,
+                              int numOps,
+                              List<Integer> route,
+                              List<Double> procTimes) {
+            this.arrivalTime = arrivalTime;
+            this.dueDate = dueDate;
+            this.weight = weight;
+            this.numOps = numOps;
+            this.route = route;
+            this.procTimes = procTimes;
+        }
     }
 }

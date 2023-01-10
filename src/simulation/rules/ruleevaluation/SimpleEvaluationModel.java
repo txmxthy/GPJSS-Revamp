@@ -5,17 +5,17 @@ import ec.Fitness;
 import ec.util.Parameter;
 import simulation.definition.FlexibleStaticInstance;
 import simulation.definition.SchedulingSet;
-import simulation.rules.rule.AbstractRule;
 import simulation.definition.logic.DynamicSimulation;
 import simulation.definition.logic.Simulation;
 import simulation.definition.logic.StaticSimulation;
+import simulation.rules.rule.AbstractRule;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * The simple evaluation model: standard simulation.
- *
+ * <p>
  * Created by yimei on 10/11/16.
  */
 public class SimpleEvaluationModel extends AbstractEvaluationModel {
@@ -110,7 +110,7 @@ public class SimpleEvaluationModel extends AbstractEvaluationModel {
             // Number of replications
             p = b.push(P_SIM_REPLICATIONS);
             int rep = state.parameters.getIntWithDefault(p, null, 1);
-            Simulation simulation = null;
+            Simulation simulation;
             //only expecting filePath parameter for Static FJSS, so can use this
             String filePath = state.parameters.getString(new Parameter("filePath"), null);
             if (filePath == null) {
@@ -124,7 +124,7 @@ public class SimpleEvaluationModel extends AbstractEvaluationModel {
                 simulation = new StaticSimulation(null, null, instance);
             }
             trainSimulations.add(simulation);
-            replications.add(new Integer(rep));
+            replications.add(rep);
         }
 
         schedulingSet = new SchedulingSet(trainSimulations, replications, objectives);
@@ -138,9 +138,9 @@ public class SimpleEvaluationModel extends AbstractEvaluationModel {
                          List<AbstractRule> rules,
                          EvolutionState state) {
         //only expecting one rule here
-        if (rules.size() > 1 || rules.size() == 0) {
+        if (rules.size() != 1) {
             try {
-                throw new Exception(rules.size()+" - unexpected number of rules.");
+                throw new Exception(rules.size() + " - unexpected number of rules.");
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -163,9 +163,9 @@ public class SimpleEvaluationModel extends AbstractEvaluationModel {
         schedulingSet.rotateSeed(objectives);
     }
 
-	@Override
-	public void normObjective(List<Fitness> fitnesses, List<AbstractRule> rule, EvolutionState state) {
-		// TODO Auto-generated method stub
+    @Override
+    public void normObjective(List<Fitness> fitnesses, List<AbstractRule> rule, EvolutionState state) {
+        // TODO Auto-generated method stub
 
-	}
+    }
 }

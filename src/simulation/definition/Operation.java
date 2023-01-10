@@ -1,10 +1,10 @@
 package simulation.definition;
 
+import simulation.definition.logic.RoutingDecisionSituation;
+import simulation.definition.logic.state.SystemState;
 import simulation.rules.rule.AbstractRule;
 import simulation.rules.rule.RuleType;
 import simulation.rules.rule.workcenter.basic.WIQ;
-import simulation.definition.logic.RoutingDecisionSituation;
-import simulation.definition.logic.state.SystemState;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,18 +32,18 @@ public class Operation {
         this.operationOptions = new ArrayList<>();
         this.next = null;
         operationOptions.add(new OperationOption(this,
-                operationOptions.size()+1,procTime,workCenter));
+                0 + 1, procTime, workCenter));
     }
 
     public String toString() {
-        String msg = "";
-        for (OperationOption option: operationOptions) {
-            msg += String.format("[J%d O%d-%d, W%d, T%.1f], ",
-                    job.getId(), id, option.getOptionId(), option.getWorkCenter().getId(), option.getProcTime());
+        StringBuilder msg = new StringBuilder();
+        for (OperationOption option : operationOptions) {
+            msg.append(String.format("[J%d O%d-%d, W%d, T%.1f], ",
+                    job.getId(), id, option.getOptionId(), option.getWorkCenter().getId(), option.getProcTime()));
         }
-        msg = msg.substring(0, msg.length()-2);
-        msg += "\n";
-        return msg;
+        msg = new StringBuilder(msg.substring(0, msg.length() - 2));
+        msg.append("\n");
+        return msg.toString();
     }
 
     public Job getJob() {
@@ -54,13 +54,21 @@ public class Operation {
         return id;
     }
 
-    public void setNext(Operation next) {this.next = next; }
+    public Operation getNext() {
+        return next;
+    }
 
-    public void setOperationOptions (List<OperationOption> operationOptions) {this.operationOptions = operationOptions; }
+    public void setNext(Operation next) {
+        this.next = next;
+    }
 
-    public Operation getNext() { return next; }
+    public List<OperationOption> getOperationOptions() {
+        return operationOptions;
+    }
 
-    public List<OperationOption> getOperationOptions() { return operationOptions; }
+    public void setOperationOptions(List<OperationOption> operationOptions) {
+        this.operationOptions = operationOptions;
+    }
 
     public void addOperationOption(OperationOption option) {
         operationOptions.add(option);
@@ -68,103 +76,104 @@ public class Operation {
 
     //modified by fzhang  28.5.2018  get the min workload among candiate machines for the next operation
     public double getLeastWorkLoad() {
-    	double leastWorkLoad = getOperationOptions().get(0).getWorkCenter().getWorkInQueue();
-    	for (int j = 1; j <  getOperationOptions().size(); j++) {
-    		if(getOperationOptions().get(j).getWorkCenter().getWorkInQueue() < leastWorkLoad)
-    			leastWorkLoad = getOperationOptions().get(j).getWorkCenter().getWorkInQueue();
+        double leastWorkLoad = getOperationOptions().get(0).getWorkCenter().getWorkInQueue();
+        for (int j = 1; j < getOperationOptions().size(); j++) {
+            if (getOperationOptions().get(j).getWorkCenter().getWorkInQueue() < leastWorkLoad)
+                leastWorkLoad = getOperationOptions().get(j).getWorkCenter().getWorkInQueue();
         }
-    	return leastWorkLoad;
+        return leastWorkLoad;
     }
 
     //modified by fzhang  28.5.2018  get the max workload among candiate machines for the next operation
     public double getMaxWorkLoad() {
-    	double maxWorkLoad = getOperationOptions().get(0).getWorkCenter().getWorkInQueue();
-    	for (int j = 1; j < getOperationOptions().size(); j++) {
-    		if(getOperationOptions().get(j).getWorkCenter().getWorkInQueue() > maxWorkLoad)
-    			maxWorkLoad = getOperationOptions().get(j).getWorkCenter().getWorkInQueue();
+        double maxWorkLoad = getOperationOptions().get(0).getWorkCenter().getWorkInQueue();
+        for (int j = 1; j < getOperationOptions().size(); j++) {
+            if (getOperationOptions().get(j).getWorkCenter().getWorkInQueue() > maxWorkLoad)
+                maxWorkLoad = getOperationOptions().get(j).getWorkCenter().getWorkInQueue();
         }
-    	return maxWorkLoad;
+        return maxWorkLoad;
     }
 
     //modified by fzhang  28.5.2018  get the average workload among candiate machines for the next operation
     public double getAveWorkLoad() {
-    	double totalWorkLoad = 0;
-    	for (int j = 0; j < getOperationOptions().size(); j++) {
-    		totalWorkLoad += getOperationOptions().get(j).getWorkCenter().getWorkInQueue();
+        double totalWorkLoad = 0;
+        for (int j = 0; j < getOperationOptions().size(); j++) {
+            totalWorkLoad += getOperationOptions().get(j).getWorkCenter().getWorkInQueue();
         }
-    	return totalWorkLoad/getOperationOptions().size();
+        return totalWorkLoad / getOperationOptions().size();
     }
-//==========================================================================================================
+
+    //==========================================================================================================
     //modified by fzhang  28.5.2018  get the min number of operation among candiate machines for the next operation
     public double getLeastNumOfOperation() {
-    	double leastNumOfOperation = getOperationOptions().get(0).getWorkCenter().getNumOpsInQueue();
-    	for (int j = 1; j <  getOperationOptions().size(); j++) {
-    		if(getOperationOptions().get(j).getWorkCenter().getNumOpsInQueue() < leastNumOfOperation)
-    			leastNumOfOperation = getOperationOptions().get(j).getWorkCenter().getNumOpsInQueue();
+        double leastNumOfOperation = getOperationOptions().get(0).getWorkCenter().getNumOpsInQueue();
+        for (int j = 1; j < getOperationOptions().size(); j++) {
+            if (getOperationOptions().get(j).getWorkCenter().getNumOpsInQueue() < leastNumOfOperation)
+                leastNumOfOperation = getOperationOptions().get(j).getWorkCenter().getNumOpsInQueue();
         }
-    	return leastNumOfOperation;
+        return leastNumOfOperation;
     }
 
     //modified by fzhang  28.5.2018  get the max number of operation among candiate machines for the next operation
     public double getMaxNumOfOperation() {
-    	double maxNumOfOperation = getOperationOptions().get(0).getWorkCenter().getNumOpsInQueue();
-    	for (int j = 1; j < getOperationOptions().size(); j++) {
-    		if(getOperationOptions().get(j).getWorkCenter().getNumOpsInQueue() > maxNumOfOperation)
-    			maxNumOfOperation = getOperationOptions().get(j).getWorkCenter().getNumOpsInQueue();
+        double maxNumOfOperation = getOperationOptions().get(0).getWorkCenter().getNumOpsInQueue();
+        for (int j = 1; j < getOperationOptions().size(); j++) {
+            if (getOperationOptions().get(j).getWorkCenter().getNumOpsInQueue() > maxNumOfOperation)
+                maxNumOfOperation = getOperationOptions().get(j).getWorkCenter().getNumOpsInQueue();
         }
-    	return maxNumOfOperation;
+        return maxNumOfOperation;
     }
 
     //modified by fzhang  28.5.2018  get the average number of operation among candiate machines for the next operation
     public double getAveNumOfOperation() {
-    	double totalNumOfOperation = 0;
-    	for (int j = 0; j < getOperationOptions().size(); j++) {
-    		totalNumOfOperation += getOperationOptions().get(j).getWorkCenter().getNumOpsInQueue();
+        double totalNumOfOperation = 0;
+        for (int j = 0; j < getOperationOptions().size(); j++) {
+            totalNumOfOperation += getOperationOptions().get(j).getWorkCenter().getNumOpsInQueue();
         }
-    	return totalNumOfOperation/getOperationOptions().size();
+        return totalNumOfOperation / getOperationOptions().size();
     }
 
     //=========================================================================================
-  //modified by fzhang  28.5.2018  get the min number of operation among candiate machines for the next operation
+    //modified by fzhang  28.5.2018  get the min number of operation among candiate machines for the next operation
     public double getLeastProcessTime() {
-    	double leastProcessTime = getOperationOptions().get(0).getProcTime();
-    	for (int j = 1; j <  getOperationOptions().size(); j++) {
-    		if(getOperationOptions().get(j).getProcTime() < leastProcessTime)
-    			leastProcessTime = getOperationOptions().get(j).getProcTime();
+        double leastProcessTime = getOperationOptions().get(0).getProcTime();
+        for (int j = 1; j < getOperationOptions().size(); j++) {
+            if (getOperationOptions().get(j).getProcTime() < leastProcessTime)
+                leastProcessTime = getOperationOptions().get(j).getProcTime();
         }
-    	return leastProcessTime;
+        return leastProcessTime;
     }
 
     //modified by fzhang  28.5.2018  get the max number of operation among candiate machines for the next operation
     public double getMaxProcessTime() {
-    	double maxProcessTime = getOperationOptions().get(0).getProcTime();
+        double maxProcessTime = getOperationOptions().get(0).getProcTime();
 
-    	for (int j = 1; j < getOperationOptions().size(); j++) {
-    		if(getOperationOptions().get(j).getProcTime() > maxProcessTime)
-    			maxProcessTime = getOperationOptions().get(j).getProcTime();
+        for (int j = 1; j < getOperationOptions().size(); j++) {
+            if (getOperationOptions().get(j).getProcTime() > maxProcessTime)
+                maxProcessTime = getOperationOptions().get(j).getProcTime();
         }
-    	return maxProcessTime;
+        return maxProcessTime;
     }
 
     //modified by fzhang  28.5.2018  get the average number of operation among candiate machines for the next operation
     public double getMedianProcessTime() {
-    	List<Double> totalProcessTime = new ArrayList<Double>();
-    	for (int j = 0; j < getOperationOptions().size(); j++) {
-    		totalProcessTime.add(getOperationOptions().get(j).getProcTime());
+        List<Double> totalProcessTime = new ArrayList<>();
+        for (int j = 0; j < getOperationOptions().size(); j++) {
+            totalProcessTime.add(getOperationOptions().get(j).getProcTime());
         }
-    	return getMedian(totalProcessTime);
+        return getMedian(totalProcessTime);
     }
 
-    public double getMedian(List<Double> arraylist){
+    public double getMedian(List<Double> arraylist) {
 
-    	Collections.sort(arraylist);
+        Collections.sort(arraylist);
         double median;
-            if (arraylist.size()%2 == 0) {
-            	median = (arraylist.get(arraylist.size()/2)+ arraylist.get(arraylist.size()/2 - 1))/2;
-            } else {
-            	median = arraylist.get((arraylist.size()-1)/2);
-            }
-          return median;
+        if (arraylist.size() % 2 == 0) {
+            median = (arraylist.get(arraylist.size() / 2) + arraylist.get(arraylist.size() / 2 - 1)) / 2;
+        } else {
+            median = arraylist.get((arraylist.size() - 1) / 2);
+        }
+        return median;
     }
 
     /*
@@ -175,7 +184,7 @@ public class Operation {
     public OperationOption getOperationOption() {
         double highestProcTime = Double.NEGATIVE_INFINITY;
         OperationOption best = null;
-        for (OperationOption option: operationOptions) {
+        for (OperationOption option : operationOptions) {
             if (option.getProcTime() > highestProcTime || highestProcTime == Double.NEGATIVE_INFINITY) {
                 highestProcTime = option.getProcTime();
                 best = option;
@@ -187,7 +196,7 @@ public class Operation {
     // use routing rule to decide which option we will choose
     public OperationOption chooseOperationOption(SystemState systemState, AbstractRule routingRule) {
 
-    	RoutingDecisionSituation decisionSituation = routingDecisionSituation(systemState);
+        RoutingDecisionSituation decisionSituation = routingDecisionSituation(systemState);
 
         if (routingRule == null) {
             routingRule = new WIQ(RuleType.ROUTING);
@@ -196,7 +205,7 @@ public class Operation {
     }
 
     public RoutingDecisionSituation routingDecisionSituation(SystemState systemState) {
-        return new RoutingDecisionSituation(operationOptions,systemState);
+        return new RoutingDecisionSituation(operationOptions, systemState);
     }
 
     @Override

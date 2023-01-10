@@ -1,57 +1,40 @@
 package simulation.definition.logic;
 
-import simulation.definition.*;
+import ec.gp.GPNode;
+import simulation.definition.Job;
+import simulation.definition.Objective;
 import simulation.definition.Process;
+import simulation.definition.WorkCenter;
+import simulation.definition.logic.event.AbstractEvent;
+import simulation.definition.logic.event.ProcessStartEvent;
+import simulation.definition.logic.state.SystemState;
 import simulation.rules.rule.AbstractRule;
 import simulation.rules.rule.operation.evolved.GPRule;
-import simulation.definition.logic.event.*;
-import simulation.definition.logic.state.SystemState;
+
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.PriorityQueue;
 
-import ec.gp.GPNode;
-
-import static java.util.Arrays.fill;
-
 /**
  * The abstract simulation class for evaluating rules.
- *
+ * <p>
  * Created by yimei on 21/11/16.
  */
 public abstract class Simulation {
-    @Override
-    public String toString() {
-        return "Simulation{" +
-                "sequencingRule=" + sequencingRule +
-                ", routingRule=" + routingRule +
-                ", systemState=" + systemState +
-                ", eventQueue=" + eventQueue +
-                ", numWorkCenters=" + numWorkCenters +
-                ", numJobsRecorded=" + numJobsRecorded +
-                ", warmupJobs=" + warmupJobs +
-                ", numJobsArrived=" + numJobsArrived +
-                ", throughput=" + throughput +
-                '}';
-    }
-
-    protected AbstractRule sequencingRule;
-    protected AbstractRule routingRule;
     protected final SystemState systemState;
     protected final PriorityQueue<AbstractEvent> eventQueue;
-
     protected final int numWorkCenters;
     protected final int numJobsRecorded;
     protected final int warmupJobs;
+    protected AbstractRule sequencingRule;
+    protected AbstractRule routingRule;
     protected int numJobsArrived;
     protected int throughput;
-    //protected int[] jobStates;
-
     //fzhang 3.6.2018  discard the individual(rule) can not complete the whole jobs well, take a long time (prefer to do part of each job)
     int beforeThroughput; //save the throughput value before updated (a job finished)
+    //protected int[] jobStates;
     int afterThroughput; //save the throughput value after updated (a job finished)
     int count = 0;
-
     public Simulation(AbstractRule sequencingRule,
                       AbstractRule routingRule,
                       int numWorkCenters,
@@ -70,29 +53,34 @@ public abstract class Simulation {
 //        this.jobStates = jobStates;
     }
 
+    @Override
+    public String toString() {
+        return "Simulation{" +
+                "sequencingRule=" + sequencingRule +
+                ", routingRule=" + routingRule +
+                ", systemState=" + systemState +
+                ", eventQueue=" + eventQueue +
+                ", numWorkCenters=" + numWorkCenters +
+                ", numJobsRecorded=" + numJobsRecorded +
+                ", warmupJobs=" + warmupJobs +
+                ", numJobsArrived=" + numJobsArrived +
+                ", throughput=" + throughput +
+                '}';
+    }
+
     public AbstractRule getSequencingRule() {
         return sequencingRule;
     }
 
 //    public int[] getJobStates() { return jobStates; }
 
-    public AbstractRule getRoutingRule() {
-        return routingRule;
-    }
-
-    public SystemState getSystemState() {
-        return systemState;
-    }
-
-    public PriorityQueue<AbstractEvent> getEventQueue() {
-        return eventQueue;
-    }
-
     public void setSequencingRule(AbstractRule sequencingRule) {
         this.sequencingRule = sequencingRule;
     }
 
-//    public void setJobStates(int[] jobStates) { this.jobStates = jobStates; }
+    public AbstractRule getRoutingRule() {
+        return routingRule;
+    }
 
     public void setRoutingRule(AbstractRule routingRule) {
         this.routingRule = routingRule;
@@ -100,6 +88,16 @@ public abstract class Simulation {
         //with workcenters are chosen using this routing rule, so current
         //values are outdated
         resetState();
+    }
+
+    public SystemState getSystemState() {
+        return systemState;
+    }
+
+//    public void setJobStates(int[] jobStates) { this.jobStates = jobStates; }
+
+    public PriorityQueue<AbstractEvent> getEventQueue() {
+        return eventQueue;
     }
 
     public double getClockTime() {
@@ -128,27 +126,27 @@ public abstract class Simulation {
 
 //            System.out.println("EventQueue's size: " + eventQueue.size());
             //fzhang 3.6.2018  fix the stuck problem
-        	beforeThroughput = throughput; //save the throughput value before updated (a job finished)
+            beforeThroughput = throughput; //save the throughput value before updated (a job finished)
 
             systemState.setClockTime(nextEvent.getTime());
             nextEvent.trigger(this); //nextEvent includes many different types of events
 
             afterThroughput = throughput; //save the throughput value after updated (a job finished)
 
-            if(throughput > warmupJobs & afterThroughput - beforeThroughput == 0) { //if the value was not updated
-          	   count++;
+            if (throughput > warmupJobs & afterThroughput - beforeThroughput == 0) { //if the value was not updated
+                count++;
             }
 
             //System.out.println("count "+count);
-            if(count > 100000) {
-            	 count = 0;
-            	 systemState.setClockTime(Double.MAX_VALUE);
-                 eventQueue.clear();
+            if (count > 100000) {
+                count = 0;
+                systemState.setClockTime(Double.MAX_VALUE);
+                eventQueue.clear();
             }
 
             //===================ignore busy machine here==============================
             //when nextEvent was done, check the numOpsInQueue
-            for (WorkCenter w: systemState.getWorkCenters()) {
+            for (WorkCenter w : systemState.getWorkCenters()) {
                 if (w.numOpsInQueue() > 100) {
                     systemState.setClockTime(Double.MAX_VALUE);
                     eventQueue.clear();
@@ -187,12 +185,12 @@ public abstract class Simulation {
 //    }
 
     public void rerun() {
-    	//original
-    	//fzhang 2018.11.5 this is used for generate different instances in a generation.
-    	//if the replications is 1, does not have influence
-    	resetState();
-   	
-    	//reset(): reset seed value, will get the same instance
+        //original
+        //fzhang 2018.11.5 this is used for generate different instances in a generation.
+        //if the replications is 1, does not have influence
+        resetState();
+
+        //reset(): reset seed value, will get the same instance
         //reset();
         run();
     }
@@ -204,9 +202,9 @@ public abstract class Simulation {
 
             count = 0;
 
-          
+
             systemState.addCompletedJob(job);
-            
+
 //            int a = systemState.getJobsCompleted().size();
 //            System.out.println("The number of completed jobs: "+systemState.getJobsCompleted().size());
         }
@@ -310,50 +308,48 @@ public abstract class Simulation {
         double value = 0.0;
         for (Job job : systemState.getJobsCompleted()) {
             if (job.getCompletionTime() > job.getDueDate())
-                value ++;
+                value++;
         }
 
         return value / numJobsRecorded;
     }
-    
+
     //2018.12.20 define rule size as an objective
     public int rulesize() {
-    	int value = 0;
-    	GPRule seqRule = null;
-    	GPRule routRule = null;
-    	 
-    	seqRule = (GPRule) this.getSequencingRule();
-    	routRule = (GPRule) this.getRoutingRule();
-    	int seqRuleSize = seqRule.getGPTree().child.numNodes(GPNode.NODESEARCH_ALL);
-    	int routRuleSize = routRule.getGPTree().child.numNodes(GPNode.NODESEARCH_ALL);
-   
-    	value = seqRuleSize + routRuleSize;   
+        int value;
+        GPRule seqRule;
+        GPRule routRule;
+
+        seqRule = (GPRule) this.getSequencingRule();
+        routRule = (GPRule) this.getRoutingRule();
+        int seqRuleSize = seqRule.getGPTree().child.numNodes(GPNode.NODESEARCH_ALL);
+        int routRuleSize = routRule.getGPTree().child.numNodes(GPNode.NODESEARCH_ALL);
+
+        value = seqRuleSize + routRuleSize;
     	/*System.out.println("==========================");
     	System.out.println("RuleSize "+value);*/
-    	return value;
+        return value;
     }
-    
+
     //2019.2.26 define routing rule size as an objective
     public int rulesizeR() {
-    	int value = 0;
-    	GPRule routRule = null;
-    	routRule = (GPRule) this.getRoutingRule();
-    	int routRuleSize = routRule.getGPTree().child.numNodes(GPNode.NODESEARCH_ALL);
-//    	System.out.println("routRuleSize "+routRuleSize);
-    	value = routRuleSize;   	
-    	return value;
+        int value;
+        GPRule routRule;
+        routRule = (GPRule) this.getRoutingRule();
+        //    	System.out.println("routRuleSize "+routRuleSize);
+        value = routRule.getGPTree().child.numNodes(GPNode.NODESEARCH_ALL);
+        return value;
     }
-    
+
     public int rulesizeS() {
-    	int value = 0;
-    	GPRule seqRule = null;
-    	seqRule = (GPRule) this.getSequencingRule();
-    	int seqRuleSize = seqRule.getGPTree().child.numNodes(GPNode.NODESEARCH_ALL);
-//    	System.out.println("seqRuleSize "+seqRuleSize);
-    	value = seqRuleSize;   	
-    	return value;
+        int value;
+        GPRule seqRule;
+        seqRule = (GPRule) this.getSequencingRule();
+        //    	System.out.println("seqRuleSize "+seqRuleSize);
+        value = seqRule.getGPTree().child.numNodes(GPNode.NODESEARCH_ALL);
+        return value;
     }
-    
+
     public double objectiveValue(Objective objective) {
         switch (objective) {
             case MAKESPAN:
@@ -377,11 +373,11 @@ public abstract class Simulation {
             case PROP_TARDY_JOBS:
                 return propTardyJobs();
             case RULESIZE:
-            	return rulesize();
+                return rulesize();
             case RULESIZER:
-            	return rulesizeR();
+                return rulesizeR();
             case RULESIZES:
-            	return rulesizeS();
+                return rulesizeS();
         }
 
         return -1.0;
@@ -392,13 +388,13 @@ public abstract class Simulation {
     }
 
     public String workCenterUtilLevelsToString() {
-        String string = "[";
+        StringBuilder string = new StringBuilder("[");
         for (int i = 0; i < systemState.getWorkCenters().size(); i++) {
-            string += String.format("%.3f ", workCenterUtilLevel(i));
+            string.append(String.format("%.3f ", workCenterUtilLevel(i)));
         }
-        string += "]";
+        string.append("]");
 
-        return string;
+        return string.toString();
     }
 
     public abstract void setup();
@@ -426,8 +422,8 @@ public abstract class Simulation {
     public int hashCode() {
         int result = sequencingRule != null ? sequencingRule.hashCode() : 0;
         result = 31 * result + (routingRule != null ? routingRule.hashCode() : 0);
-        result = 31 * result + (systemState != null ? systemState.hashCode() : 0);
-        result = 31 * result + (eventQueue != null ? eventQueue.hashCode() : 0);
+        result = 31 * result + systemState.hashCode();
+        result = 31 * result + eventQueue.hashCode();
         result = 31 * result + numWorkCenters;
         result = 31 * result + numJobsRecorded;
         result = 31 * result + warmupJobs;
@@ -437,11 +433,16 @@ public abstract class Simulation {
     }
 
     public abstract void resetState();
+
     public abstract void reset();
+
     public abstract void rotateSeed();
+
     public abstract void generateJob();
+
     public abstract Simulation surrogate(int numWorkCenters, int numJobsRecorded,
                                          int warmupJobs);
+
     public abstract Simulation surrogateBusy(int numWorkCenters, int numJobsRecorded,
                                              int warmupJobs);
 }

@@ -8,7 +8,7 @@ import ec.util.ParameterDatabase;
 
 /**
  * The main program of GP used, extended/simplified from ec.Evolve.
- *
+ * <p>
  * Created by YiMei on 12/09/16.
  */
 public class GPRun extends Evolve {
@@ -30,8 +30,7 @@ public class GPRun extends Evolve {
         // experimenter is free to scribble all over the parameter database and it'd be nice to
         // have everything fresh and clean.  It doesn't take long to load the database anyway,
         // it's usually small.
-        for(int job = 0; job < numJobs; job++)
-        {
+        for (int job = 0; job < numJobs; job++) {
             // We used to have a try/catch here to catch errors thrown by this job and continue to the next.
             // But the most common error is an OutOfMemoryException, and printing its stack trace would
             // just create another OutOfMemoryException!  Which dies anyway and has a worthless stack
@@ -62,10 +61,10 @@ public class GPRun extends Evolve {
 
                 // now we let it go
                 //System.out.println(EvolutionState.C_STARTED_FRESH); //0, like a boolean value to check which way to go
-                
-              //modified by fzhang  30.4.2018  in order to get generation information
+
+                //modified by fzhang  30.4.2018  in order to get generation information
                 //AbstractRuleHelper.state = state;
-                
+
                 state.run(EvolutionState.C_STARTED_FRESH);
                 cleanup(state);  // flush and close various streams, print out parameters if necessary
                 parameters = null;  // so we load a fresh database next time around

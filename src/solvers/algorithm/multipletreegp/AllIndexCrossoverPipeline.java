@@ -24,9 +24,7 @@ public class AllIndexCrossoverPipeline extends CrossoverPipeline {
                        final int subpopulation,
                        final Individual[] inds,
                        final EvolutionState state,
-                       final int thread)
-
-    {
+                       final int thread) {
         // how many individuals should we make?
         int n = typicalIndsProduced();
         if (n < min) n = min;
@@ -111,7 +109,9 @@ public class AllIndexCrossoverPipeline extends CrossoverPipeline {
 
                 // Fill in various tree information that didn't get filled in there
                 j1.trees = new GPTree[parents[0].trees.length];
-                if (n - (q - start) >= 2 && !tossSecondParent) j2.trees = new GPTree[parents[1].trees.length];
+                if (n - (q - start) >= 2 && !tossSecondParent) if (j2 != null) {
+                    j2.trees = new GPTree[parents[1].trees.length];
+                }
 
                 // at this point, p1 or p2, or both, may be null.
                 // If not, swap one in.  Else just copy the parent.
@@ -136,22 +136,24 @@ public class AllIndexCrossoverPipeline extends CrossoverPipeline {
                 }
 
                 if (n - (q - start) >= 2 && !tossSecondParent)
-                    for (int x = 0; x < j2.trees.length; x++) {
-                        if (p2[x] != null)  // we've got a tree with a kicking cross position!
-                        {
-                            j2.trees[x] = parents[1].trees[x].lightClone();
-                            j2.trees[x].owner = j2;
-                            j2.trees[x].child = parents[1].trees[x].child.cloneReplacing(p1[x], p2[x]);
-                            j2.trees[x].child.parent = j2.trees[x];
-                            j2.trees[x].child.argposition = 0;
-                            j2.evaluated = false;
-                        } // it's changed
-                        else {
-                            j2.trees[x] = parents[1].trees[x].lightClone();
-                            j2.trees[x].owner = j2;
-                            j2.trees[x].child = (GPNode) (parents[1].trees[x].child.clone());
-                            j2.trees[x].child.parent = j2.trees[x];
-                            j2.trees[x].child.argposition = 0;
+                    if (j2 != null) {
+                        for (int x = 0; x < j2.trees.length; x++) {
+                            if (p2[x] != null)  // we've got a tree with a kicking cross position!
+                            {
+                                j2.trees[x] = parents[1].trees[x].lightClone();
+                                j2.trees[x].owner = j2;
+                                j2.trees[x].child = parents[1].trees[x].child.cloneReplacing(p1[x], p2[x]);
+                                j2.trees[x].child.parent = j2.trees[x];
+                                j2.trees[x].child.argposition = 0;
+                                j2.evaluated = false;
+                            } // it's changed
+                            else {
+                                j2.trees[x] = parents[1].trees[x].lightClone();
+                                j2.trees[x].owner = j2;
+                                j2.trees[x].child = (GPNode) (parents[1].trees[x].child.clone());
+                                j2.trees[x].child.parent = j2.trees[x];
+                                j2.trees[x].child.argposition = 0;
+                            }
                         }
                     }
 

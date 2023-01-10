@@ -1,6 +1,9 @@
 package simulation.jss.surrogate;
 
-import ec.*;
+import ec.EvolutionState;
+import ec.Individual;
+import ec.Initializer;
+import ec.Population;
 import ec.simple.SimpleEvaluator;
 import ec.util.Parameter;
 import simulation.rules.ruleevaluation.AbstractEvaluationModel;
@@ -24,8 +27,7 @@ public class SurrogateEvaluator extends SimpleEvaluator {
         int subpopsLength = state.parameters.getInt(p.push(Population.P_SIZE), null, 1);
         Parameter p_subpop;
         archiveSizes = new int[subpopsLength];
-        for (int i = 0; i < subpopsLength; i++)
-        {
+        for (int i = 0; i < subpopsLength; i++) {
             p_subpop = new Parameter(EvolutionState.P_EVALUATOR).push(P_ARCHIVE_SIZE).push("" + i);
             archiveSizes[i] = state.parameters.getInt(p_subpop, null, 1);
         }
@@ -34,9 +36,9 @@ public class SurrogateEvaluator extends SimpleEvaluator {
     public void evaluatePopulation(final EvolutionState state) {
         // Evaluate using the surrogate model
         AbstractEvaluationModel evaluationModel =
-                ((RuleOptimizationProblem)state.evaluator.p_problem).getEvaluationModel();
+                ((RuleOptimizationProblem) state.evaluator.p_problem).getEvaluationModel();
 
-        ((Surrogate)evaluationModel).useSurrogate(); //500 jobs
+        ((Surrogate) evaluationModel).useSurrogate(); //500 jobs
         super.evaluatePopulation(state);
 
         // Keep archives of best individuals in terms of surrogate fitness
@@ -58,7 +60,7 @@ public class SurrogateEvaluator extends SimpleEvaluator {
 //        }
 
         // Evaluate using the orignial model
-        ((Surrogate)evaluationModel).useOriginal();
+        ((Surrogate) evaluationModel).useOriginal();
         super.evaluatePopulation(state);
 
 //        List<Double> testfitness = new ArrayList<>();

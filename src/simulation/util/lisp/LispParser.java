@@ -113,12 +113,10 @@ public class LispParser {
                 default:
                     break;
             }
-        }
-        else {
+        } else {
             if (NumberUtils.isNumber(expression)) {
-                node = new ConstantTerminal(Double.valueOf(expression));
-            }
-            else {
+                node = new ConstantTerminal(Double.parseDouble(expression));
+            } else {
                 node = new AttributeGPNode(JobShopAttribute.get(expression));
             }
             node.children = new GPNode[0];
@@ -160,9 +158,9 @@ public class LispParser {
 //            }
 //        }
 
-        String expression = "(min (+ (- (max (/ (* (+ NOR W) (+ NOR TIS)) (min (min TIS PT) (max NIQ WIQ))) (min WKR (* PT PT))) (* (/ WIQ (- OWT OWT)) (- (- (min TIS W) (+ PT NIQ)) MWT))) (- (max NOR (min WKR (* PT PT))) (* (/ WIQ (- OWT OWT)) (- (- (min TIS W) (min TIS W)) (+ PT NIQ))))) (+ (- (min TIS W) (- (min TIS W) (+ PT NIQ))) (+ (+ (/ WKR TIS) (* PT PT)) (* PT PT))))" + 
-        		"\n" + 
-        		"";
+        String expression = "(min (+ (- (max (/ (* (+ NOR W) (+ NOR TIS)) (min (min TIS PT) (max NIQ WIQ))) (min WKR (* PT PT))) (* (/ WIQ (- OWT OWT)) (- (- (min TIS W) (+ PT NIQ)) MWT))) (- (max NOR (min WKR (* PT PT))) (* (/ WIQ (- OWT OWT)) (- (- (min TIS W) (min TIS W)) (+ PT NIQ))))) (+ (- (min TIS W) (- (min TIS W) (+ PT NIQ))) (+ (+ (/ WKR TIS) (* PT PT)) (* PT PT))))" +
+                "\n" +
+                "";
         expression = LispSimplifier.simplifyExpression(expression);
         GPTree tree = LispParser.parseJobShopRule(expression);
         System.out.println(tree.child.makeGraphvizTree());

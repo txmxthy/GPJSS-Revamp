@@ -25,7 +25,7 @@ public class DoubleERC extends RegERC {
                      final ADFStack stack,
                      final GPIndividual individual,
                      final Problem problem) {
-        DoubleData a = ((DoubleData)(input));
+        DoubleData a = ((DoubleData) (input));
         a.value = value;
     }
 }

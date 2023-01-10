@@ -1,19 +1,17 @@
 package simulation.definition.logic;
 
-import simulation.definition.*;
 import simulation.definition.Process;
-import simulation.rules.rule.AbstractRule;
+import simulation.definition.*;
 import simulation.definition.logic.event.AbstractEvent;
 import simulation.definition.logic.event.ProcessFinishEvent;
+import simulation.rules.rule.AbstractRule;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.util.Arrays.fill;
-
 /**
  * The simulation based on static job shop instance.
- *
+ * <p>
  * Created by yimei on 21/11/16.
  */
 public class StaticSimulation extends Simulation {
@@ -110,8 +108,8 @@ public class StaticSimulation extends Simulation {
 
     @Override
     public Simulation surrogateBusy(int numWorkCenters,
-                                int numJobsRecorded,
-                                int warmupJobs) {
+                                    int numJobsRecorded,
+                                    int warmupJobs) {
         return this;
     }
 
@@ -146,11 +144,10 @@ public class StaticSimulation extends Simulation {
     }
 
     public Process createDummyProcess(WorkCenter workCenter, double readyTime) {
-        Job job = new Job(-1-workCenter.getId(), new ArrayList<>());
+        Job job = new Job(-1 - workCenter.getId(), new ArrayList<>());
         Operation op = new Operation(job, 0, readyTime, workCenter);
-        Process process = new Process(workCenter, 0, op.chooseOperationOption(systemState,routingRule), 0);
 
-        return process;
+        return new Process(workCenter, 0, op.chooseOperationOption(systemState, routingRule), 0);
     }
 
     @Override

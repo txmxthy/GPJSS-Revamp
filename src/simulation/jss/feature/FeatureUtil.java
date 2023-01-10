@@ -12,7 +12,6 @@ import ec.gp.GPTree;
 import ec.multiobjective.MultiObjectiveFitness;
 import ec.simple.SimpleInitializer;
 import ec.util.RandomChoice;
-
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import simulation.jss.feature.ignore.Ignorer;
 import simulation.jss.gp.GPNodeComparator;
@@ -30,23 +29,33 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Utility functions for feature selection and construction.
- *
+ * <p>
  * Created by YiMei on 5/10/16.
  */
 
 public class FeatureUtil {
 
     public static final RuleType[] ruleTypes = {RuleType.SEQUENCING, RuleType.ROUTING};
+    /**
+     * mimic top k% individuals and randomly generate other individuals with selected features
+     */
+    static final ArrayList<Double> savePheDistanceSubPop0 = new ArrayList<>();
+    static final ArrayList<Double> savePheDistanceSubPop1 = new ArrayList<>();
+    static Population newpop = null;
 
     /**
      * Select a diverse set of individuals from the current population.
-     * @param state the current evolution state.
+     *
+     * @param state   the current evolution state.
      * @param archive the archive from which the set will be chosen.
-     * @param n the number of individuals in the diverse set.
+     * @param n       the number of individuals in the diverse set.
      * @return the selected diverse set of individuals.
      */
     public static List<GPIndividual> selectDiverseIndis(EvolutionState state, Individual[] archive,
@@ -68,7 +77,9 @@ public class FeatureUtil {
         }
 
         RuleType ruleType = ruleTypes[subPopNum];
-        pc.setReferenceRule(new GPRule(ruleType,((GPIndividual)archive[0]).trees[0]));//set the best one to reference rule  //also the smallest one
+        if (pc != null) {
+            pc.setReferenceRule(new GPRule(ruleType, ((GPIndividual) archive[0]).trees[0]));//set the best one to reference rule  //also the smallest one
+        }
 
         List<GPIndividual> selIndis = new ArrayList<>();
         List<int[]> selIndiCharLists = new ArrayList<>();
@@ -78,7 +89,7 @@ public class FeatureUtil {
 
             GPIndividual gpIndi = (GPIndividual) indi; //check the individual one by one
 
-            int[] charList = pc.characterise(new GPRule(ruleType,gpIndi.trees[0]));//the measured rule
+            int[] charList = pc.characterise(new GPRule(ruleType, gpIndi.trees[0]));//the measured rule
 
             for (int i = 0; i < selIndis.size(); i++) {
                 double distance = PhenoCharacterisation.distance(charList, selIndiCharLists.get(i)); //calculate the distance
@@ -114,8 +125,7 @@ public class FeatureUtil {
 
             if (!duplicated)
                 terminals.add(tree);
-        }
-        else {
+        } else {
             for (GPNode child : tree.children) {
                 terminalsInTree(terminals, child);
             }
@@ -132,8 +142,9 @@ public class FeatureUtil {
     /**
      * Calculate the contribution of a feature to an individual
      * using the current training set.
-     * @param state the current evolution state (training set).
-     * @param indi the individual.
+     *
+     * @param state   the current evolution state (training set).
+     * @param indi    the individual.
      * @param feature the feature.
      * @return the contribution of the feature to the individual.
      */
@@ -142,12 +153,12 @@ public class FeatureUtil {
                                       GPNode feature,
                                       RuleType ruleType) {
         RuleOptimizationProblem problem =
-                (RuleOptimizationProblem)state.evaluator.p_problem;
-        Ignorer ignorer = ((FeatureIgnorable)state).getIgnorer();
+                (RuleOptimizationProblem) state.evaluator.p_problem;
+        Ignorer ignorer = ((FeatureIgnorable) state).getIgnorer();
 
         MultiObjectiveFitness fit1 = (MultiObjectiveFitness) indi.fitness; //[1475.0335218025866]
         MultiObjectiveFitness fit2 = (MultiObjectiveFitness) fit1.clone(); // the same as fit1  1475.0335218025866
-        GPRule rule = new GPRule(ruleType,(GPTree)indi.trees[0].clone()); //here, the first time, rule is sequencing rule
+        GPRule rule = new GPRule(ruleType, (GPTree) indi.trees[0].clone()); //here, the first time, rule is sequencing rule
         rule.ignore(feature, ignorer);
         int numSubPops = state.population.subpops.length;
 
@@ -187,21 +198,22 @@ public class FeatureUtil {
         //if the result is larger---> without this feature makes the performance worse ---> then this feature is good;
         //if the result is smaller ---> without this feature makes the performance better---> then this feature is bad.
         //if equal = 0 ---> 1. no this feature   2. have this feature, but not have contribution
-    	}
+    }
 
     /**
      * Feature selection by majority voting based on feature contributions.
-     * @param state the current evolution state (training set).
+     *
+     * @param state    the current evolution state (training set).
      * @param selIndis the selected diverse set of individuals.
-     * @param fitUB the upper bound of individual fitness.
-     * @param fitLB the lower bound of individual fitness.
+     * @param fitUB    the upper bound of individual fitness.
+     * @param fitLB    the lower bound of individual fitness.
      * @return the set of selected features.
      */
     //==================select features and save to .cvs===========================================
     public static GPNode[] featureSelection(EvolutionState state,
-                                                List<GPIndividual> selIndis, //selected individuals
-                                                RuleType ruleType,
-                                                double fitUB, double fitLB) {
+                                            List<GPIndividual> selIndis, //selected individuals
+                                            RuleType ruleType,
+                                            double fitUB, double fitLB) {
         DescriptiveStatistics votingWeightStat = new DescriptiveStatistics();
 
         for (GPIndividual selIndi : selIndis) { //normalize all the fitnesses of selected individuals
@@ -212,7 +224,7 @@ public class FeatureUtil {
             //double fitness = 1 / (1 + selIndi.fitness.fitness());
 
             double normFit;
-            if(fitUB == fitLB)
+            if (fitUB == fitLB)
                 normFit = selIndi.fitness.fitness();
             else
                 normFit = (fitUB - selIndi.fitness.fitness()) / (fitUB - fitLB); //selIndi.fitness.fitness() is larger than fitLB
@@ -224,7 +236,7 @@ public class FeatureUtil {
 
             if (normFit  < 0)
                 normFit = 0;*/
-          //=========================end=======================
+            //=========================end=======================
 
             double votingWeight = normFit; //set the voting weight to normFit
             votingWeightStat.addValue(votingWeight); //votingWeightStat: save all the norm fitnesses of selected individuals
@@ -240,7 +252,7 @@ public class FeatureUtil {
             subPopNum = 1;
         }
 
-        GPNode[] terminals = ((TerminalsChangable)state).getTerminals(subPopNum); //terminals here contain all the terminals
+        GPNode[] terminals = ((TerminalsChangable) state).getTerminals(subPopNum); //terminals here contain all the terminals
 
         for (int i = 0; i < terminals.length; i++) { //terminals: the terminal we defined (all, in systemstate, we have 25 terminals)
             featureContributionStats.add(new DescriptiveStatistics()); //these to are different
@@ -257,10 +269,9 @@ public class FeatureUtil {
                 //in this way, if have little difference, we think it is useful.
                 //if (c > 0.001) { //original
                 if (c > 0) {  //if contribution is larger than 0, actually 0.001, this mean this feature has contribution,
-                	//set the weight as fitness value
+                    //set the weight as fitness value
                     featureVotingWeightStats.get(i).addValue(votingWeightStat.getElement(s));
-                }
-                else {
+                } else {
                     featureVotingWeightStats.get(i).addValue(0);
                 }
             }
@@ -268,10 +279,10 @@ public class FeatureUtil {
 
         // a another way to get seed value
         // after select features, save the information to .fsinfo.csv
-        long jobSeed = ((GPRuleEvolutionState)state).getJobSeed();
+        long jobSeed = ((GPRuleEvolutionState) state).getJobSeed();
         String outputPath = initPath(state);
         File featureInfoFile = new File(outputPath + "job." + jobSeed +
-                "-"+ ruleType.name() + ".fsinfo.csv");
+                "-" + ruleType.name() + ".fsinfo.csv");
 
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(featureInfoFile));
@@ -307,7 +318,7 @@ public class FeatureUtil {
             }
 
 
-           //========================start======================
+            //========================start======================
          /*   double threshold = 0.5;
             if(subPopNum == 1)
                threshold = 0.3;
@@ -337,13 +348,13 @@ public class FeatureUtil {
         return selFeatures.toArray(new GPNode[0]);
     }
 
-
     /**
      * Feature selection by majority voting based on feature contributions.
-     * @param state the current evolution state (training set).
+     *
+     * @param state    the current evolution state (training set).
      * @param selIndis the selected diverse set of individuals.
-     * @param fitUB the upper bound of individual fitness.
-     * @param fitLB the lower bound of individual fitness.
+     * @param fitUB    the upper bound of individual fitness.
+     * @param fitLB    the lower bound of individual fitness.
      * @return the set of selected features.
      * fzhang 2019.7.4 change the type of individual parameter from GPIndividual to Individual
      */
@@ -368,7 +379,7 @@ public class FeatureUtil {
             subPopNum = 1;
         }
 
-        GPNode[] terminals = ((TerminalsChangable)state).getTerminals(subPopNum); //terminals here contain all the terminals
+        GPNode[] terminals = ((TerminalsChangable) state).getTerminals(subPopNum); //terminals here contain all the terminals
 
         for (int i = 0; i < terminals.length; i++) { //terminals: the terminal we defined (all, in systemstate, we have 25 terminals)
             featureContributionStats.add(new DescriptiveStatistics()); //these to are different
@@ -387,8 +398,7 @@ public class FeatureUtil {
                 if (c > 0) {  //if contribution is larger than 0, actually 0.001, this mean this feature has contribution,
                     //set the weight as fitness value
                     featureVotingWeightStats.get(i).addValue(votingWeightStat.getElement(s));
-                }
-                else {
+                } else {
                     featureVotingWeightStats.get(i).addValue(0);
                 }
             }
@@ -396,10 +406,10 @@ public class FeatureUtil {
 
         // a another way to get seed value
         // after select features, save the information to .fsinfo.csv
-        long jobSeed = ((GPRuleEvolutionState)state).getJobSeed();
+        long jobSeed = ((GPRuleEvolutionState) state).getJobSeed();
         String outputPath = initPath(state);
         File featureInfoFile = new File(outputPath + "job." + jobSeed +
-                "-"+ ruleType.name() + ".fsinfo.csv");
+                "-" + ruleType.name() + ".fsinfo.csv");
 
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(featureInfoFile));
@@ -468,10 +478,11 @@ public class FeatureUtil {
     /**
      * Feature construction by majority voting based on contribution.
      * A constructed feature/building block is a depth-2 sub-tree.
-     * @param state the current evolution state (training set).
+     *
+     * @param state    the current evolution state (training set).
      * @param selIndis the selected diverse set of individuals.
-     * @param fitUB the upper bound of individual fitness.
-     * @param fitLB the lower bound of individual fitness.
+     * @param fitUB    the upper bound of individual fitness.
+     * @param fitLB    the lower bound of individual fitness.
      * @return the constructed features (building blocks).
      */
     public static List<GPNode> featureConstruction(EvolutionState state,
@@ -485,7 +496,7 @@ public class FeatureUtil {
         for (GPIndividual selIndi : selIndis) {
             double normFit = (selIndi.fitness.fitness() - fitLB) / (fitUB - fitLB);
 
-            if (normFit  < 0)
+            if (normFit < 0)
                 normFit = 0;
 
             double votingWeight = normFit;
@@ -511,17 +522,16 @@ public class FeatureUtil {
 
                 if (c > 0.001) {
                     BBVotingWeightStats.get(i).addValue(votingWeightStat.getElement(s));
-                }
-                else {
+                } else {
                     BBVotingWeightStats.get(i).addValue(0);
                 }
             }
         }
 
-        long jobSeed = ((GPRuleEvolutionState)state).getJobSeed();
+        long jobSeed = ((GPRuleEvolutionState) state).getJobSeed();
         String outputPath = initPath(state);
         File BBInfoFile = new File(outputPath + "job." + jobSeed +
-                "-"+ ruleType.name() + ".fcinfo.csv");
+                "-" + ruleType.name() + ".fcinfo.csv");
 
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(BBInfoFile));
@@ -557,7 +567,7 @@ public class FeatureUtil {
             }
         }
 
-        File fcFile = new File(outputPath + "job." + jobSeed + "-"+ ruleType.name() + ".bbs.csv");
+        File fcFile = new File(outputPath + "job." + jobSeed + "-" + ruleType.name() + ".bbs.csv");
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(fcFile));
 
@@ -576,6 +586,7 @@ public class FeatureUtil {
 
     /**
      * Find all the depth-k sub-tree as building blocks from a set of individuals.
+     *
      * @param indis the set of individuals.
      * @param depth the depth of the sub-trees/building blocks.
      * @return the building blocks.
@@ -592,9 +603,10 @@ public class FeatureUtil {
 
     /**
      * Collect all the depth-k building blocks from a tree.
+     *
      * @param buildingBlocks the set of building blocks.
-     * @param tree the tree.
-     * @param depth the depth of the building blocks.
+     * @param tree           the tree.
+     * @param depth          the depth of the building blocks.
      */
     public static void collectBuildingBlocks(List<GPNode> buildingBlocks,
                                              GPNode tree,
@@ -611,8 +623,7 @@ public class FeatureUtil {
 
             if (!duplicate)
                 buildingBlocks.add(tree);
-        }
-        else {
+        } else {
             for (GPNode child : tree.children) {
                 collectBuildingBlocks(buildingBlocks, child, depth);
             }
@@ -622,23 +633,24 @@ public class FeatureUtil {
     /**
      * Adapt the current population into three parts based on a changed
      * terminal set.
-     * @param state the current evolution state (new terminal set).
-     * @param fracElites the fraction of elite (directly copy).
+     *
+     * @param state       the current evolution state (new terminal set).
+     * @param fracElites  the fraction of elite (directly copy).
      * @param fracAdapted the fraction of adapted (fix the ignored features to 1.0).
      */
     public static void adaptPopulationThreeParts(EvolutionState state,
                                                  double fracElites,
                                                  double fracAdapted,
                                                  int subPopNum) {
-        GPNode[] terminals = ((TerminalsChangable)state).getTerminals(subPopNum); //TerminalsChangable whether to change the old individual
+        GPNode[] terminals = ((TerminalsChangable) state).getTerminals(subPopNum); //TerminalsChangable whether to change the old individual
         //to 1. If yes, the population will not have old terminals
 
         //fzhang 27.6.2018  replace/generate the individuals according to cooresponding subpopulation
         Individual[] newPop = state.population.subpops[subPopNum].individuals;
         //Individual[] newPop = state.population.subpops[0].individuals;
 
-        int numElites = (int)(fracElites * newPop.length); //elites: how many individuals to copy directly
-        int numAdapted = (int)(fracAdapted * newPop.length); //how many individuals to replace old terminals to 1
+        int numElites = (int) (fracElites * newPop.length); //elites: how many individuals to copy directly
+        int numAdapted = (int) (fracAdapted * newPop.length); //how many individuals to replace old terminals to 1
 
         // Sort the individuals from best to worst
         //Arrays.sort(newPop);
@@ -646,7 +658,7 @@ public class FeatureUtil {
         // Part 2: replace the unselected terminals by 1
         for (int i = numElites; i < numElites + numAdapted; i++) {
 //			System.out.println("Indi " + i + ", fitness = " + newPop[i].fitness.fitness());
-            adaptTree(((GPIndividual)newPop[i]).trees[0].child, terminals);
+            adaptTree(((GPIndividual) newPop[i]).trees[0].child, terminals);
             newPop[i].evaluated = false;
         }
 
@@ -654,22 +666,21 @@ public class FeatureUtil {
         for (int i = numElites + numAdapted; i < newPop.length; i++) {
 //			System.out.println("Indi " + i + ", fitness = " + newPop[i].fitness.fitness());
 
-        	//fzhang 27.6.2018 replace/generate the individuals according to cooresponding subpopulation
+            //fzhang 27.6.2018 replace/generate the individuals according to cooresponding subpopulation
             //newPop[i] = state.population.subpops[0].species.newIndividual(state, 0);
-        	newPop[i] = state.population.subpops[subPopNum].species.newIndividual(state, 0);
+            newPop[i] = state.population.subpops[subPopNum].species.newIndividual(state, 0);
             newPop[i].evaluated = false;
         }
     }
 
-
     //fzhang 2019.6.26 adapt individuals based on selected individuals by clustering
-    public static void adaptPopulationReplacedByOne(EvolutionState state, Individual[] individuals, int subPopNum){
+    public static void adaptPopulationReplacedByOne(EvolutionState state, Individual[] individuals, int subPopNum) {
 
         Individual[] newPop = state.population.subpops[subPopNum].individuals;
-        GPNode[] terminals = ((TerminalsChangable)state).getTerminals(subPopNum); //TerminalsChangable whether to change the old individual
+        GPNode[] terminals = ((TerminalsChangable) state).getTerminals(subPopNum); //TerminalsChangable whether to change the old individual
 
-        for(int ind = 0; ind < individuals.length; ind++){
-            adaptTree(((GPIndividual)newPop[ind]).trees[0].child, terminals);
+        for (int ind = 0; ind < individuals.length; ind++) {
+            adaptTree(((GPIndividual) newPop[ind]).trees[0].child, terminals);
             newPop[ind].evaluated = false;
         }
 
@@ -680,14 +691,14 @@ public class FeatureUtil {
         }
     }
 
-
     /**
      * Adapt a tree using the new terminal set.
-     * @param tree the tree.
+     *
+     * @param tree      the tree.
      * @param terminals the new terminal set.
      */
     private static void adaptTree(GPNode tree, GPNode[] terminals) {
-    	//fzhang  21.6.2018  change the selected terminals to 1
+        //fzhang  21.6.2018  change the selected terminals to 1
         if (tree.children.length == 0) {
             // It's a terminal
             boolean selected = false;
@@ -703,14 +714,12 @@ public class FeatureUtil {
                 newTree.parent = tree.parent;
                 newTree.argposition = tree.argposition;
                 if (newTree.parent instanceof GPNode) {
-                    ((GPNode)(newTree.parent)).children[newTree.argposition] = newTree;
-                }
-                else {
-                    ((GPTree)(newTree.parent)).child = newTree;
+                    ((GPNode) (newTree.parent)).children[newTree.argposition] = newTree;
+                } else {
+                    ((GPTree) (newTree.parent)).child = newTree;
                 }
             }
-        }
-        else {
+        } else {
             for (GPNode child : tree.children) {
                 adaptTree(child, terminals);
             }
@@ -734,82 +743,81 @@ public class FeatureUtil {
         return "";
     }
 
-	public static double[] featureWeighting(EvolutionState state, List<GPIndividual> selIndis, // selected individuals
-			RuleType ruleType, double fitUB, double fitLB) {
-		DescriptiveStatistics votingWeightStat = new DescriptiveStatistics();
+    public static double[] featureWeighting(EvolutionState state, List<GPIndividual> selIndis, // selected individuals
+                                            RuleType ruleType, double fitUB, double fitLB) {
+        DescriptiveStatistics votingWeightStat = new DescriptiveStatistics();
 
-		for (GPIndividual selIndi : selIndis) { // normalize all the fitnesses of selected individuals
-			double normFit = (selIndi.fitness.fitness() - fitLB) / (fitUB - fitLB); // selIndi.fitness.fitness() is
+        for (GPIndividual selIndi : selIndis) { // normalize all the fitnesses of selected individuals
+            double normFit = (selIndi.fitness.fitness() - fitLB) / (fitUB - fitLB); // selIndi.fitness.fitness() is
 
-			if (normFit < 0)
-				normFit = 0;
+            if (normFit < 0)
+                normFit = 0;
 
-			double votingWeight = normFit; // set the voting weight to normFit
-			votingWeightStat.addValue(votingWeight); // votingWeightStat: save all the norm fitnesses of selected
-														// individuals
-		}
+            double votingWeight = normFit; // set the voting weight to normFit
+            votingWeightStat.addValue(votingWeight); // votingWeightStat: save all the norm fitnesses of selected
+            // individuals
+        }
 
-		List<DescriptiveStatistics> featureContributionStats = new ArrayList<>(); // Maintains a dataset of values of a
-																					// single variable and computes
-																					// descriptive statistics based on
-																					// stored data.
-		List<DescriptiveStatistics> featureVotingWeightStats = new ArrayList<>();
+        List<DescriptiveStatistics> featureContributionStats = new ArrayList<>(); // Maintains a dataset of values of a
+        // single variable and computes
+        // descriptive statistics based on
+        // stored data.
+        List<DescriptiveStatistics> featureVotingWeightStats = new ArrayList<>();
 
-		int subPopNum = 0;
-		if (ruleType == RuleType.ROUTING) {
-			subPopNum = 1;
-		}
+        int subPopNum = 0;
+        if (ruleType == RuleType.ROUTING) {
+            subPopNum = 1;
+        }
 
-		GPNode[] terminals = ((TerminalsChangable) state).getTerminals(subPopNum); // terminals here contain all the
-																					// terminals
+        GPNode[] terminals = ((TerminalsChangable) state).getTerminals(subPopNum); // terminals here contain all the
+        // terminals
 
-		for (int i = 0; i < terminals.length; i++) { // terminals: the terminal we defined (all, in systemstate, we have
-														// 25 terminals)
-			featureContributionStats.add(new DescriptiveStatistics()); // these to are different
-			featureVotingWeightStats.add(new DescriptiveStatistics()); // stats are used to save the information of each
-																		// feature
-		}
+        for (int i = 0; i < terminals.length; i++) { // terminals: the terminal we defined (all, in systemstate, we have
+            // 25 terminals)
+            featureContributionStats.add(new DescriptiveStatistics()); // these to are different
+            featureVotingWeightStats.add(new DescriptiveStatistics()); // stats are used to save the information of each
+            // feature
+        }
 
-		//fzhang 2019.5.19 set the contribution as the weighting power for each terminal
-		double[] weights = new double[terminals.length];
-		for (int s = 0; s < selIndis.size(); s++) {
-			GPIndividual selIndi = selIndis.get(s); // the first selected individual
+        //fzhang 2019.5.19 set the contribution as the weighting power for each terminal
+        double[] weights = new double[terminals.length];
+        for (int s = 0; s < selIndis.size(); s++) {
+            GPIndividual selIndi = selIndis.get(s); // the first selected individual
 
-			for (int i = 0; i < terminals.length; i++) {
-				double c = contribution(state, selIndi, terminals[i], ruleType); // terminals[i]: all the terminals
-				featureContributionStats.get(i).addValue(c);
+            for (int i = 0; i < terminals.length; i++) {
+                double c = contribution(state, selIndi, terminals[i], ruleType); // terminals[i]: all the terminals
+                featureContributionStats.get(i).addValue(c);
 
-				// in this way, if have little difference, we think it is useful.
+                // in this way, if have little difference, we think it is useful.
                 //if (c > 0.001) { // original code
-				if (c > 0) { // if contribution is larger than 0, actually 0.001, this mean this feature has
-									// contribution,
-					// set the weight as fitness value
-					featureVotingWeightStats.get(i).addValue(votingWeightStat.getElement(s));
-				} else {
-					featureVotingWeightStats.get(i).addValue(0);
-				}
-			}
-		}
+                if (c > 0) { // if contribution is larger than 0, actually 0.001, this mean this feature has
+                    // contribution,
+                    // set the weight as fitness value
+                    featureVotingWeightStats.get(i).addValue(votingWeightStat.getElement(s));
+                } else {
+                    featureVotingWeightStats.get(i).addValue(0);
+                }
+            }
+        }
 
-		for (int i = 0; i < weights.length; i++) {
-			weights[i] = featureVotingWeightStats.get(i).getMean();
-		}
+        for (int i = 0; i < weights.length; i++) {
+            weights[i] = featureVotingWeightStats.get(i).getMean();
+        }
 
 		/*for (int j = 0; j < weights.length; j++) {
 			System.out.println("The weights are " + weights[j]);
 		}*/
 
-		RandomChoice.organizeDistribution(weights); //based on the weights to random choose
-		return weights;
-	}
+        RandomChoice.organizeDistribution(weights); //based on the weights to random choose
+        return weights;
+    }
 
     /**
      * based on the information of stage1, and use phenotype to generate new individuals with selected features
-     *replace the individuals and then evaluate them directly
+     * replace the individuals and then evaluate them directly
      * ---generated new individuals based on phenotype information and copy the rest directly(still have unselected features---not use this one)
-     * @param state
-     * @param subPopNum
-     * fzhang 2019.5.29
+     *
+     * @param subPopNum fzhang 2019.5.29
      */
     public static void adaptPopulationBasedOnPhenotype(EvolutionState state, double fracElites, int subPopNum) {
         Individual[] newPop = state.population.subpops[subPopNum].individuals;
@@ -831,19 +839,22 @@ public class FeatureUtil {
 
         for (int ind = 0; ind < newPop.length * fracElites; ind++) {
             GPIndividual gpIndi = (GPIndividual) newPop[ind]; //check the individual one by one
-            int[] charList = pc.characterise(new GPRule(ruleType,gpIndi.trees[0]));//the measured rule
+            int[] charList = new int[0];//the measured rule
+            if (pc != null) {
+                charList = pc.characterise(new GPRule(ruleType, gpIndi.trees[0]));
+            }
             GPIndividual newInd;
-            double distance = 0.0;
+            double distance;
             int i = 0;
             double tempDistance = Double.MAX_VALUE;
             GPIndividual tempNewInd = null;
             do {
                 i++;
-                newInd = (GPIndividual) state.population.subpops[subPopNum].species.newIndividual(state,0);
+                newInd = (GPIndividual) state.population.subpops[subPopNum].species.newIndividual(state, 0);
                 int[] charListNewInd = pc.characterise(new GPRule(ruleType, newInd.trees[0]));//the measured rule
                 distance = PhenoCharacterisation.distance(charList, charListNewInd); //calculate the distance
 
-                if(distance < tempDistance){
+                if (distance < tempDistance) {
                     tempDistance = distance;
                     tempNewInd = newInd;
                 }
@@ -851,15 +862,14 @@ public class FeatureUtil {
             } while (distance != 0 && i != 100000);
             //} while (newPop[ind].genotypeToString() != newInd.genotypeToString());
             //read eliteIndividuals for coevolution
-            Individual[][] eliteIndividuals = ((MultiPopCoevolutionaryEvaluator)(state.evaluator)).getEliteindividual();
+            Individual[][] eliteIndividuals = ((MultiPopCoevolutionaryEvaluator) (state.evaluator)).getEliteindividual();
             for (int k = 0; k < eliteIndividuals[subPopNum].length; k++) { //2
                 for (int ind1 = 0; ind1 < inds.length; ind1++) { //2
                     if (ind1 == subPopNum) {   //j = 0, 1  (ind j) ---> (0 0) or (1 1) that is to say, this is the subpopulation1
                         inds[ind1] = tempNewInd; //inds[0] = individual = state.population.subpops[0].individuals[0];
                         //the individuals to evaluate together
                         updates[ind1] = true;   // updates[0] = true    updates[1] = true   evaluate
-                    }
-                    else {  // this is subpopulation2
+                    } else {  // this is subpopulation2
                         inds[ind1] = eliteIndividuals[ind1][k];   // (ind j) ---> (0 1) or (1 0)
                         updates[ind1] = false;  // do not evaluate
                     }
@@ -867,8 +877,10 @@ public class FeatureUtil {
             }
 
             //evaluate new individuals
-            tempNewInd.fitness.trials = new ArrayList();//this is always make trials.size == 1, actually useless
-            ((GroupedProblemForm)(state.evaluator.p_problem)).evaluate(state, inds
+            if (tempNewInd != null) {
+                tempNewInd.fitness.trials = new ArrayList();//this is always make trials.size == 1, actually useless
+            }
+            ((GroupedProblemForm) (state.evaluator.p_problem)).evaluate(state, inds
                     , updates // Should the fitness of individuals be updated? Here it says yes and yes.
                     , false
                     , new int[]{0, 1} // Which subpopulation to use? Here we have two subpops and we want to use them both so it should be 0 and 1
@@ -879,14 +891,9 @@ public class FeatureUtil {
         }
     }
 
-    /**
-     * mimic top k% individuals and randomly generate other individuals with selected features
-     */
-    static final ArrayList<Double> savePheDistanceSubPop0 = new ArrayList<>();
-    static final ArrayList<Double> savePheDistanceSubPop1 = new ArrayList<>();
     public static void adaptPopulationBasedOnPhenotypeWhole(EvolutionState state, double fracElites, int subPopNum) {
         Individual[] newPop = state.population.subpops[subPopNum].individuals;
-        int numElites = (int)(fracElites * newPop.length);
+        int numElites = (int) (fracElites * newPop.length);
 
         PhenoCharacterisation pc = null;
         if (state.evaluator instanceof ClearingEvaluator) {
@@ -902,20 +909,23 @@ public class FeatureUtil {
 
         for (int ind = 0; ind < numElites; ind++) {
             GPIndividual gpIndi = (GPIndividual) newPop[ind]; //check the individual one by one
-            int[] charList = pc.characterise(new GPRule(ruleType,gpIndi.trees[0]));//the measured rule
+            int[] charList = new int[0];//the measured rule
+            if (pc != null) {
+                charList = pc.characterise(new GPRule(ruleType, gpIndi.trees[0]));
+            }
             GPIndividual newInd;
-            double distance = 0.0;
+            double distance;
             int i = 0;
             double tempDistance = Double.MAX_VALUE;
             GPIndividual tempNewInd = null;
             do {
                 i++;
-                newInd = (GPIndividual) state.population.subpops[subPopNum].species.newIndividual(state,0);
+                newInd = (GPIndividual) state.population.subpops[subPopNum].species.newIndividual(state, 0);
                 int[] charListNewInd = pc.characterise(new GPRule(ruleType, newInd.trees[0]));//the measured rule
                 distance = PhenoCharacterisation.distance(charList, charListNewInd); //calculate the distance
 //                System.out.println("distance "+ distance);
 
-                if(distance < tempDistance){
+                if (distance < tempDistance) {
                     tempDistance = distance;
                     tempNewInd = newInd;
                 }
@@ -929,7 +939,9 @@ public class FeatureUtil {
                 savePheDistanceSubPop1.add(distance);*/
 
             newPop[ind] = tempNewInd;
-            newPop[ind].evaluated = false;
+            if (newPop[ind] != null) {
+                newPop[ind].evaluated = false;
+            }
         }
 
         //randomly initialize other individuals
@@ -942,7 +954,7 @@ public class FeatureUtil {
     //save the phenotype distance for measuring the effectiveness of consistence between surrogate and real fitness
     public static void savePheDistance(final EvolutionState state) {
         //fzhang 2019.5.21 save the weight values
-        long jobSeed = ((GPRuleEvolutionState)state).getJobSeed();
+        long jobSeed = ((GPRuleEvolutionState) state).getJobSeed();
         File pheDistanceFile = new File("job." + jobSeed + ".pheDistance.csv"); // jobSeed = 0
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(pheDistanceFile));
@@ -952,7 +964,7 @@ public class FeatureUtil {
             for (int i = 0; i < savePheDistanceSubPop0.size(); i++) { //every two into one generation
                 //writer.newLine();
                 writer.write(savePheDistanceSubPop0.get(i) + ", ");
-                writer.write(+ savePheDistanceSubPop1.get(i) + "\n");
+                writer.write(savePheDistanceSubPop1.get(i) + "\n");
             }
             writer.close();
         } catch (IOException e) {
@@ -962,17 +974,15 @@ public class FeatureUtil {
 
     public static ArrayList<Double> getPheDistance(int subPopNum) {
         if (subPopNum == 0)
-           return savePheDistanceSubPop0;
+            return savePheDistanceSubPop0;
         else
-           return savePheDistanceSubPop1;
+            return savePheDistanceSubPop1;
     }
 
-
-    static Population newpop= null;
     public static void adaptPopulationBasedOnPhenotypeGeneticOperator(EvolutionState state, double fracElites, int subPopNum) {
 
         //Individual[] newPop = state.population.subpops[subPopNum].individuals;
-        int numElites = (int)(fracElites * state.population.subpops[subPopNum].individuals.length);
+        int numElites = (int) (fracElites * state.population.subpops[subPopNum].individuals.length);
         Individual[] newPop = new Individual[numElites];
 
         Individual[] inds = new Individual[state.population.subpops.length]; // individuals to evaluate together
@@ -991,48 +1001,50 @@ public class FeatureUtil {
         RuleType ruleType = ruleTypes[subPopNum];
 
 
-        if(subPopNum == 0){
+        if (subPopNum == 0) {
             SimpleInitializer simpleInitializer = new SimpleInitializer();
-            newpop = simpleInitializer.setupPopulation(state,0);
+            newpop = simpleInitializer.setupPopulation(state, 0);
         }
 
 
         for (int ind = 0; ind < numElites; ind++) {
             GPIndividual gpIndi = (GPIndividual) state.population.subpops[subPopNum].individuals[ind]; //check the individual one by one
-            int[] charList = pc.characterise(new GPRule(ruleType,gpIndi.trees[0]));//the measured rule
+            int[] charList = new int[0];//the measured rule
+            if (pc != null) {
+                charList = pc.characterise(new GPRule(ruleType, gpIndi.trees[0]));
+            }
             GPIndividual newInd;
-            double distance = 0.0;
+            double distance;
             int i = 0;
             double tempDistance = Double.MAX_VALUE;
             GPIndividual tempNewInd = null;
             do {
                 i++;
-                newInd = (GPIndividual) state.population.subpops[subPopNum].species.newIndividual(state,0);
+                newInd = (GPIndividual) state.population.subpops[subPopNum].species.newIndividual(state, 0);
                 int[] charListNewInd = pc.characterise(new GPRule(ruleType, newInd.trees[0]));//the measured rule
                 distance = PhenoCharacterisation.distance(charList, charListNewInd); //calculate the distance
 
-                if(distance < tempDistance){
+                if (distance < tempDistance) {
                     tempDistance = distance;
                     tempNewInd = newInd;
                 }
 
             } while (distance != 0 && i != 10000);
             //System.out.println(distance);
-            if(subPopNum == 0)
+            if (subPopNum == 0)
                 savePheDistanceSubPop0.add(distance);
                 //savePheDistanceSubPop0[ind] = distance;
             else
                 savePheDistanceSubPop1.add(distance);
 
-            Individual[][] eliteIndividuals = ((MultiPopCoevolutionaryEvaluator)(state.evaluator)).getEliteindividual();
+            Individual[][] eliteIndividuals = ((MultiPopCoevolutionaryEvaluator) (state.evaluator)).getEliteindividual();
             for (int k = 0; k < eliteIndividuals[subPopNum].length; k++) { //2
                 for (int ind1 = 0; ind1 < inds.length; ind1++) { //2
                     if (ind1 == subPopNum) {   //j = 0, 1  (ind j) ---> (0 0) or (1 1) that is to say, this is the subpopulation1
                         inds[ind1] = tempNewInd; //inds[0] = individual = state.population.subpops[0].individuals[0];
                         //the individuals to evaluate together
                         updates[ind1] = true;   // updates[0] = true    updates[1] = true   evaluate
-                    }
-                    else {  // this is subpopulation2
+                    } else {  // this is subpopulation2
                         inds[ind1] = eliteIndividuals[ind1][k];   // (ind j) ---> (0 1) or (1 0)
                         updates[ind1] = false;  // do not evaluate
                     }
@@ -1040,8 +1052,10 @@ public class FeatureUtil {
             }
 
             //evaluate new individuals
-            tempNewInd.fitness.trials = new ArrayList();//this is always make trials.size == 1, actually useless
-            ((GroupedProblemForm)(state.evaluator.p_problem)).evaluate(state, inds
+            if (tempNewInd != null) {
+                tempNewInd.fitness.trials = new ArrayList();//this is always make trials.size == 1, actually useless
+            }
+            ((GroupedProblemForm) (state.evaluator.p_problem)).evaluate(state, inds
                     , updates // Should the fitness of individuals be updated? Here it says yes and yes.
                     , false
                     , new int[]{0, 1} // Which subpopulation to use? Here we have two subpops and we want to use them both so it should be 0 and 1
@@ -1055,12 +1069,11 @@ public class FeatureUtil {
 
         //now, we got the 20% individuals in the two subpops---newpop
         //fzhang 2019.6.8 generate new individuals based on the top k% individuals by crossover and mutation
-        if(subPopNum == 1){
-            Population breedpop = breedPopulation(state, newpop); //breedpop get subpop[0].individuals.length individuals
-            state.population = breedpop;
+        if (subPopNum == 1) {
+            state.population = breedPopulation(state, newpop);
 
-            for(int i = 0; i < state.population.subpops.length; i++){
-                PopulationThreeParts(state, 1-2*fracElites,i);
+            for (int i = 0; i < state.population.subpops.length; i++) {
+                PopulationThreeParts(state, 1 - 2 * fracElites, i);
             }
         }
 
@@ -1077,17 +1090,17 @@ public class FeatureUtil {
         }*/
     }
 
-    public static Population breedPopulation(EvolutionState state, Population pop){
+    public static Population breedPopulation(EvolutionState state, Population pop) {
         return state.breeder.breedPopulation(state, pop);
     }
 
     public static void PopulationThreeParts(EvolutionState state,
-                                                 double fracAdapted,
-                                                 int subPopNum) {
+                                            double fracAdapted,
+                                            int subPopNum) {
 
         Individual[] newPop = state.population.subpops[subPopNum].individuals;
 
-        int numAdapted = (int)(fracAdapted * newPop.length); //how many individuals to replace old terminals to 1
+        int numAdapted = (int) (fracAdapted * newPop.length); //how many individuals to replace old terminals to 1
 
         // Part 3: reinitialize the remaining individuals
         for (int i = 0; i < numAdapted; i++) {
@@ -1096,7 +1109,7 @@ public class FeatureUtil {
         }
     }
 
-    public static Population getNewpop(){
+    public static Population getNewpop() {
         return newpop;
     }
 }

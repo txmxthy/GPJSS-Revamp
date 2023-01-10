@@ -19,7 +19,6 @@ import static simulation.jss.helper.GridResultCleaner.writeLine;
 
 /**
  * Created by dyska on 30/09/17.
- *
  */
 public class GenerateTerminalSet {
 
@@ -32,8 +31,8 @@ public class GenerateTerminalSet {
 
         // grid_results/dynamic/raw/simple_feature_selection/
         // dynamic/raw/simple_feature_selection/
-        String path = "";
-        String outputDirectory = "";
+        String path;
+        String outputDirectory;
         if (args.length > 0) {
             //allow more specific folder or file paths to be used
             path = args[0];
@@ -46,7 +45,7 @@ public class GenerateTerminalSet {
 
         List<Path> directoryNames = getDirectoryNames(Paths.get(path));
         for (Path d : directoryNames) {
-            System.out.println("Terminal counts for "+d.toString());
+            System.out.println("Terminal counts for " + d.toString());
             List<String> terminalCSVs = getFileNames(new ArrayList<>(), d, ".terminals.csv");
             //if no routing files, will not do anything, so can safely call this also
             chooseTerminals(outputDirectory, d, RuleType.ROUTING, terminalCSVs);
@@ -54,7 +53,7 @@ public class GenerateTerminalSet {
         }
     }
 
-    public static List<Path> getDirectoryNames(Path dir) {
+    public static List getDirectoryNames(Path dir) {
         List directoryNames = new ArrayList();
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir)) {
             for (Path path : stream) {
@@ -70,10 +69,10 @@ public class GenerateTerminalSet {
 
     public static List<String> readFromFile(String fileName) {
         File csvFile = new File(fileName);
-        LinkedList<String> terminals = new LinkedList<String>();
+        LinkedList<String> terminals = new LinkedList<>();
 
         BufferedReader br = null;
-        String line = "";
+        String line;
 
         try {
             br = new BufferedReader(new FileReader(csvFile));
@@ -82,8 +81,6 @@ public class GenerateTerminalSet {
                 AttributeGPNode attribute = new AttributeGPNode(a);
                 terminals.add(attribute.toString());
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -107,11 +104,11 @@ public class GenerateTerminalSet {
         int[][] attributeCounts = new int[numAttributes][30];
         boolean isRead = false;
 
-        for (String fileName: terminalCSVs) {
+        for (String fileName : terminalCSVs) {
             if (fileName.contains(ruleType.name())) {
                 isRead = true;
                 List<String> terminals = readFromFile(fileName);
-                for (String terminal: terminals) {
+                for (String terminal : terminals) {
                     //what is the index of this terminal?
                     int index = -1;
                     for (int i = 0; i < numAttributes && index == -1; ++i) {
@@ -136,24 +133,24 @@ public class GenerateTerminalSet {
     }
 
     public static File createFileName(String outputDirectory, Path d, RuleType ruleType) {
-        outputDirectory = (new File("")).getAbsolutePath()+"/feature_selection/"+outputDirectory+"/";
+        outputDirectory = (new File("")).getAbsolutePath() + "/feature_selection/" + outputDirectory + "/";
         String path = d.toString();
-        String fileName = outputDirectory + path.split("/")[path.split("/").length-1];
-        fileName += "-"+ruleType.name()+".csv";
+        String fileName = outputDirectory + path.split("/")[path.split("/").length - 1];
+        fileName += "-" + ruleType.name() + ".csv";
         return new File(fileName);
     }
 
     public static void outputToFile(File csvFile, int[][] attributeCounts) {
         try (FileWriter writer = new FileWriter(csvFile)) {
-            List<String> headers = new ArrayList<String>();
+            List<String> headers = new ArrayList<>();
             headers.add("Terminal");
             for (int i = 0; i < 30; ++i) {
-                headers.add("J"+i);
+                headers.add("J" + i);
             }
             writeLine(writer, headers);
             JobShopAttribute[] attributes = relativeAttributes();
             for (int i = 0; i < attributeCounts.length; ++i) {
-                List<String> terminalLine = new ArrayList<String>();
+                List<String> terminalLine = new ArrayList<>();
                 terminalLine.add(attributes[i].getName());
                 for (int j = 0; j < 30; ++j) {
                     terminalLine.add(String.valueOf(attributeCounts[i][j]));

@@ -21,6 +21,74 @@ public class Shop {
         this.workCenters = new ArrayList<>();
     }
 
+    public static Shop readFromFile(String fileName) {
+        String projPath = (new File("")).getAbsolutePath();
+        File datafile = new File(projPath + "/data/" + fileName);
+
+        return readFromFile(datafile);
+    }
+
+    public static Shop readFromFile(File file) {
+        Shop shop = new Shop();
+
+        String line;
+        String[] segments;
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            // Read the number of jobs and machines
+            line = br.readLine();
+            segments = line.split("\\s+");
+            int numJobs = Integer.parseInt(segments[0]);
+            int numWorkCenters = Integer.parseInt(segments[1]);
+
+            // Add the work centers to the shop
+            for (int i = 0; i < numWorkCenters; i++) {
+                shop.addWorkCenter(new WorkCenter(i));
+            }
+
+            // Read the jobs
+            for (int j = 0; j < numJobs; j++) {
+                line = br.readLine();
+                segments = line.split("\\s+");
+
+                System.out.println(line);
+
+                Job job = new Job(j, new ArrayList<>(), 0, 0, 0, 1);
+
+                double totalProcTime = 0.0;
+                for (int i = 0; i < numWorkCenters; i++) {
+                    int wcid = Integer.parseInt(segments[2 * i + 1]);
+                    double procTime = Double.parseDouble(segments[2 * i + 2]);
+                    totalProcTime += procTime;
+
+                    Operation o = new Operation(job, i, procTime, shop.getWorkCenter(wcid));
+
+                    job.addOperation(o);
+                }
+
+                job.linkOperations();
+
+                double dueDate = job.getReleaseTime() + 4 * totalProcTime;
+                job.setDueDate(dueDate);
+
+                // Add job to the shop
+                shop.addJob(job);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return shop;
+    }
+
+    public static void main(String[] args) {
+
+
+        Shop shop = Shop.readFromFile("20_5_0.txt");
+
+        System.out.println(shop);
+
+    }
+
     public List<Job> getJobs() {
         return jobs;
     }
@@ -54,79 +122,11 @@ public class Shop {
     }
 
     public String toString() {
-        String str = "";
+        StringBuilder str = new StringBuilder();
         for (Job job : jobs) {
-            str += job.toString() + "\n";
+            str.append(job.toString()).append("\n");
         }
 
-        return str;
-    }
-
-    public static Shop readFromFile(String fileName) {
-        String projPath = (new File("")).getAbsolutePath();
-        File datafile = new File(projPath + "/data/" + fileName);
-
-        return readFromFile(datafile);
-    }
-
-    public static Shop readFromFile(File file) {
-        Shop shop = new Shop();
-
-        String line;
-        String[] segments;
-        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-            // Read the number of jobs and machines
-            line = br.readLine();
-            segments = line.split("\\s+");
-            int numJobs = Integer.valueOf(segments[0]);
-            int numWorkCenters = Integer.valueOf(segments[1]);
-
-            // Add the work centers to the shop
-            for (int i = 0; i < numWorkCenters; i++) {
-                shop.addWorkCenter(new WorkCenter(i));
-            }
-
-            // Read the jobs
-            for (int j = 0; j < numJobs; j++) {
-                line = br.readLine();
-                segments = line.split("\\s+");
-
-                System.out.println(line);
-
-                Job job = new Job(j, new ArrayList<>(), 0, 0, 0, 1);
-
-                double totalProcTime = 0.0;
-                for (int i = 0; i < numWorkCenters; i++) {
-                    int wcid = Integer.valueOf(segments[2 * i + 1]);
-                    double procTime = Double.valueOf(segments[2 * i + 2]);
-                    totalProcTime += procTime;
-
-                    Operation o = new Operation(job, i, procTime, shop.getWorkCenter(wcid));
-
-                    job.addOperation(o);
-                }
-
-                job.linkOperations();
-
-                double dueDate = job.getReleaseTime() + 4 * totalProcTime;
-                job.setDueDate(dueDate);
-
-                // Add job to the shop
-                shop.addJob(job);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return shop;
-    }
-
-    public static void main(String[] args) {
-
-
-        Shop shop = Shop.readFromFile("20_5_0.txt");
-
-        System.out.println(shop);
-
+        return str.toString();
     }
 }

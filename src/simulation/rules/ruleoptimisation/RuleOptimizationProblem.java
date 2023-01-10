@@ -6,20 +6,20 @@ import ec.gp.GPIndividual;
 import ec.gp.GPProblem;
 import ec.simple.SimpleProblemForm;
 import ec.util.Parameter;
-import simulation.rules.rule.RuleType;
-import simulation.rules.ruleevaluation.AbstractEvaluationModel;
 import simulation.definition.Objective;
+import simulation.rules.rule.RuleType;
 import simulation.rules.rule.operation.evolved.GPRule;
+import simulation.rules.ruleevaluation.AbstractEvaluationModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * The rule optimisation problem.
- *
+ * <p>
  * In the problem, a rule is evaluated by being
  * applied to the training set.
- *
+ * <p>
  * Created by YiMei on 29/09/16.
  */
 public class RuleOptimizationProblem extends GPProblem implements SimpleProblemForm {
@@ -45,7 +45,7 @@ public class RuleOptimizationProblem extends GPProblem implements SimpleProblemF
         super.setup(state, base);  //about ADFStack and ADFContext
 
         Parameter p = base.push(P_EVAL_MODEL);  //yimei.jss.ruleevaluation.MultipleRuleEvaluationModel  here is different with before.
-        evaluationModel = (AbstractEvaluationModel)(
+        evaluationModel = (AbstractEvaluationModel) (
                 state.parameters.getInstanceForParameter(
                         p, null, AbstractEvaluationModel.class));
 
@@ -57,7 +57,7 @@ public class RuleOptimizationProblem extends GPProblem implements SimpleProblemF
                          Individual indi,
                          int subpopulation,
                          int threadnum) {
-        GPRule rule = new GPRule(RuleType.SEQUENCING,((GPIndividual)indi).trees[0]);
+        GPRule rule = new GPRule(RuleType.SEQUENCING, ((GPIndividual) indi).trees[0]);
 
         if (getObjectives().size() > 1) {
             System.err.println("ERROR:");
@@ -74,9 +74,9 @@ public class RuleOptimizationProblem extends GPProblem implements SimpleProblemF
         indi.evaluated = true;
     }
 
-	@Override
-	public void normObjective(EvolutionState state, Individual ind, int subpopulation, int threadnum) {
-		// TODO Auto-generated method stub
+    @Override
+    public void normObjective(EvolutionState state, Individual ind, int subpopulation, int threadnum) {
+        // TODO Auto-generated method stub
 
-	}
+    }
 }

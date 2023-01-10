@@ -8,8 +8,8 @@ import java.util.List;
  */
 public class Schedule {
 
-    private final List<List<Process>> processLists;
     final List<Job> jobs;
+    private final List<List<Process>> processLists;
 
     public Schedule(int numWorkCenters) {
         processLists = new ArrayList<>();

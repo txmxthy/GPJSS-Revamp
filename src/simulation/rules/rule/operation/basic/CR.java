@@ -1,10 +1,10 @@
 package simulation.rules.rule.operation.basic;
 
-import simulation.rules.rule.AbstractRule;
 import simulation.definition.OperationOption;
 import simulation.definition.WorkCenter;
-import simulation.rules.rule.RuleType;
 import simulation.definition.logic.state.SystemState;
+import simulation.rules.rule.AbstractRule;
+import simulation.rules.rule.RuleType;
 
 /**
  * Created by yimei on 5/12/16.
