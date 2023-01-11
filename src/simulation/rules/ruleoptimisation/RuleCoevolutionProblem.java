@@ -141,6 +141,13 @@ public class RuleCoevolutionProblem extends RuleOptimizationProblem implements G
             // Name the file bestFitness.txt
             // Overwrite any existing file with that name
 
+            // Make the dir
+            try {
+                Files.createDirectories(Paths.get("./schedules/"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             String path = "schedules/" + best_schedule_makespan + ".txt";
 
             try (BufferedWriter bf = Files.newBufferedWriter(Paths.get(path), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {

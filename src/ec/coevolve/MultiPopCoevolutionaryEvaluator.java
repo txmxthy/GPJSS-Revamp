@@ -476,7 +476,7 @@ public class MultiPopCoevolutionaryEvaluator extends Evaluator {
                 state.population = currentPopulation;
             }
 
-        state.output.message("MPOP_COEV: Evaluations: " + evaluations);
+        state.output.message("\tEvaluations: " + evaluations);
     }
 
 

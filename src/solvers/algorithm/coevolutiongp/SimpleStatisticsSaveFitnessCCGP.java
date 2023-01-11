@@ -220,7 +220,7 @@ public class SimpleStatisticsSaveFitnessCCGP extends Statistics implements Stead
             }
             if (doMessage && !silentPrint) {
                 assert best_i[x] != null;
-                state.output.message("Subpop$$ " + x + " best fitness of generation" +
+                state.output.message("\tSubpop " + x + "]" +
                         (best_i[x].evaluated ? " " : " (evaluated flag not set): ") +
                         best_i[x].fitness.fitnessToStringForHumans());
             }

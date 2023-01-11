@@ -290,4 +290,5 @@ terminals-from = relative
 #terminals-from = systemstate
 
 # Append the path to the instance with the grid script
-filePath = ./instances/flexible/abz5.fjs
+# filePath = ./instances/flexible/abz5.fjs
+filePath = /home/kali/PycharmProjects/GeneticProgramming/instances/flexible/abz5.fjs
