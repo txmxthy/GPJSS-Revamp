@@ -249,7 +249,7 @@ public class SurrogateSubPopMultiPopCoevolutionaryEvaluator extends MultiPopCoev
                 state.population = currentPopulation;
             }
 
-        state.output.message("Evaluations: " + evaluations);
+        state.output.message("Evaluations (4): " + evaluations);
     }
 }
 

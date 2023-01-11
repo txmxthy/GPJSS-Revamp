@@ -272,7 +272,7 @@ gp.fs.1.func.6.nc = nc2
 
 eval.problem = simulation.rules.ruleoptimisation.RuleCoevolutionProblem
 eval.problem.data = solvers.gp.data.DoubleData
-eval.problem.eval-model = simulation.rules.ruleevaluation.MultipleTreeMultipleRuleEvaluationModel.java
+eval.problem.eval-model = simulation.rules.ruleevaluation.MultipleRuleEvaluationModel
 eval.problem.eval-model.objectives = 1
 eval.problem.eval-model.objectives.0 = makespan
 eval.problem.eval-model.sim-models = 1

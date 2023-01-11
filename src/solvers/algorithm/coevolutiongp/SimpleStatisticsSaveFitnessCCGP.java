@@ -15,12 +15,14 @@ import ec.steadystate.SteadyStateStatisticsForm;
 import ec.util.Output;
 import ec.util.Parameter;
 
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /*
  * SimpleStatistics.java
@@ -212,10 +214,16 @@ public class SimpleStatisticsSaveFitnessCCGP extends Statistics implements Stead
 
         for (int x = 0; x < state.population.subpops.length; x++) {
             if (doGeneration) state.output.println("Subpopulation " + x + ":", statisticslog);
-            if (doGeneration) best_i[x].printIndividualForHumans(state, statisticslog);
-            if (doMessage && !silentPrint) state.output.message("Subpop " + x + " best fitness of generation" +
-                    (best_i[x].evaluated ? " " : " (evaluated flag not set): ") +
-                    best_i[x].fitness.fitnessToStringForHumans());
+            if (doGeneration) {
+                assert best_i[x] != null;
+                best_i[x].printIndividualForHumans(state, statisticslog);
+            }
+            if (doMessage && !silentPrint) {
+                assert best_i[x] != null;
+                state.output.message("Subpop$$ " + x + " best fitness of generation" +
+                        (best_i[x].evaluated ? " " : " (evaluated flag not set): ") +
+                        best_i[x].fitness.fitnessToStringForHumans());
+            }
 
             //save the fitness values to .csv  26/3/2018   fzhang
          /*   if(x==0)

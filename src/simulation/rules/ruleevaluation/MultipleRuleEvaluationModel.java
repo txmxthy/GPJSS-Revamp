@@ -5,6 +5,7 @@ import ec.Fitness;
 import ec.multiobjective.MultiObjectiveFitness;
 import ec.util.Parameter;
 import simulation.definition.FlexibleStaticInstance;
+import simulation.definition.Job;
 import simulation.definition.SchedulingSet;
 import simulation.definition.WorkCenter;
 import simulation.definition.logic.DynamicSimulation;
@@ -12,6 +13,8 @@ import simulation.definition.logic.Simulation;
 import simulation.definition.logic.StaticSimulation;
 import simulation.definition.logic.state.SystemState;
 import simulation.rules.rule.AbstractRule;
+import simulation.rules.rule.RuleType;
+import simulation.rules.rule.operation.basic.SPT;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +42,22 @@ public class MultipleRuleEvaluationModel extends AbstractEvaluationModel {
     public final static String P_SIM_DUE_DATE_FACTOR = "due-date-factor";
     public final static String P_SIM_REPLICATIONS = "replications";
     private static final EvolutionState EvolutionState = null;
+
     final List<Integer> genNumBadRun = new ArrayList<>();
+    @Override
+    public List<Job> getBest_schedule() {
+        return best_schedule;
+    }
+
+    List<Job> best_schedule = new ArrayList<>();
+
+    @Override
+    public double getBest_schedule_makespan() {
+        return best_schedule_makespan;
+    }
+
+    double best_schedule_makespan = Double.MAX_VALUE;
+
     protected long jobSeed;
     //modified by fzhang 21.5.2018 to get the number of finished jobs
     protected SystemState systemState;
@@ -144,6 +162,7 @@ public class MultipleRuleEvaluationModel extends AbstractEvaluationModel {
             System.out.println("Expecting 2 rules, only 1 found.");
             return;
         }
+
         //System.out.println(rules.size()); //2 repeat
         countInd++;
 
@@ -152,9 +171,12 @@ public class MultipleRuleEvaluationModel extends AbstractEvaluationModel {
         //System.out.println(objectives.size()); //1  repeat
         //code taken from Abstract Rule
         double[] fitnesses = new double[objectives.size()];
-
+        List<Job> schedule = new ArrayList<>();
+        boolean writeSchedule = false;
         List<Simulation> simulations = schedulingSet.getSimulations();
         int col = 0;
+
+        double bestFitness = Double.MAX_VALUE;
 
         //System.out.println(simulations.size()); // 1 repeat
         //System.out.println(schedulingSet.getReplications().get(0)); //1 repeat
@@ -163,38 +185,32 @@ public class MultipleRuleEvaluationModel extends AbstractEvaluationModel {
             Simulation simulation = simulations.get(j);
 
             //========================change here======================================
-            simulation.setSequencingRule(sequencingRule); //indicate different individuals
+            // @ Changed by TIM for GP Only evolving Routing (Compare better with project)
+            simulation.setSequencingRule(new SPT(RuleType.SEQUENCING));
             simulation.setRoutingRule(routingRule);
             //System.out.println(simulation);
             simulation.run();
 
             for (int i = 0; i < objectives.size(); i++) {
-                //fzhang 2018.10.23  cancel normalization process
-//                double normObjValue = simulation.objectiveValue(objectives.get(i))  // this line: the value of makespan
-//                        / schedulingSet.getObjectiveLowerBound(i, col);
-
                 double ObjValue = simulation.objectiveValue(objectives.get(i));  // this line: the value of makespan
-
+                List<Job> simSchedule = simulation.getSchedule();
                 // multiPopCoevolutionaryEvaluator evalutor = new multiPopCoevolutionaryEvaluator();
                 //in essence, here is useless. because if w.numOpsInQueue() > 100, the simulation has been canceled in run(). here is a double check
                 for (WorkCenter w : simulation.getSystemState().getWorkCenters()) {
                     if (w.numOpsInQueue() > 100) {
-                        //this was a bad run
-                        //fzhang 2018.10.23  cancel normalization process
-//                        normObjValue = Double.MAX_VALUE;
-                        //ObjValue = Double.MAX_VALUE;
                         ObjValue = Double.MAX_VALUE;
-
-                        //System.out.println(systemState.getJobsInSystem().size());
-                        //System.out.println(systemState.getJobsCompleted().size());
-                        //normObjValue = normObjValue*(systemState.getJobsInSystem().size()/systemState.getJobsCompleted().size());
                         countBadrun++;
                         break;
                     }
                 }
+                if (ObjValue < bestFitness) {
 
-                //fzhang 2018.10.23  cancel normalization process
-//                fitnesses[i] += normObjValue;  //the value of fitness is the normalization of the objective value
+                    bestFitness = ObjValue;
+                    schedule = simSchedule;
+                    best_schedule = schedule;
+                    best_schedule_makespan = ObjValue;
+
+                }
                 fitnesses[i] += ObjValue;
 //                System.out.println(fitnesses[i]);
             }
@@ -211,7 +227,16 @@ public class MultipleRuleEvaluationModel extends AbstractEvaluationModel {
 
                     //fzhang 2018.10.23  cancel normalization process
                     double ObjValue = simulation.objectiveValue(objectives.get(i));
+                    List<Job> simSchedule = simulation.getSchedule();
                     fitnesses[i] += ObjValue; //one object corresponding to one fitness
+                    if (ObjValue < bestFitness) {
+
+
+                        bestFitness = ObjValue;
+                        schedule = simSchedule;
+                        best_schedule = schedule;
+                        best_schedule_makespan = ObjValue;
+                    }
 
                 }
 
@@ -221,11 +246,6 @@ public class MultipleRuleEvaluationModel extends AbstractEvaluationModel {
             simulation.reset();
         }
 
-        //modified by fzhang 18.04.2018  in order to check this loop works or not after add filter part: does not work
-        // if(countBadrun>0) {
-        //System.out.println(state.generation);
-        //System.out.println("The number of badrun grasped in model: "+ countBadrun);
-        // }
 
         for (int i = 0; i < fitnesses.length; i++) {
             fitnesses[i] /= col;
@@ -236,47 +256,11 @@ public class MultipleRuleEvaluationModel extends AbstractEvaluationModel {
             f.setObjectives(state, fitnesses);
         }
 
-        //modified by fzhang, write bad run times to *.csv
-        // if(countInd % 512 == 0) {
-     /*   if(countInd % state.population.subpops[0].individuals.length == 0 && Flag.value == false) {
-            genNumBadRun.add(countBadrun);
-            countBadrun = 0;
-         }*/
-
-        // if(countInd == 1024*512)
-      /* if(countInd == state.population.subpops[0].individuals.length*state.population.subpops.length*state.numGenerations)
-         WriteCountBadrun(state,null);*/
+        best_schedule = schedule;
     }
 
 
-    //modified by fzhang 26.4.2018   write bad run times to *.csv
-/*    public void WriteCountBadrun(EvolutionState state, final Parameter base) {
 
-    	Parameter p;
-		// Get the job seed.
-		p = new Parameter("seed").push(""+0);
-        jobSeed = state.parameters.getLongWithDefault(p, null, 0);
-        File countBadRunFile = new File("job." + jobSeed + ".BadRun.csv");
-
-     	try {
-			BufferedWriter writer = new BufferedWriter(new FileWriter(countBadRunFile));
-			writer.write("generation,numBadRunSequening, numBadRunRouting,numTotalBadRun");
-			writer.newLine();
-           *//* for(int cutPoint = 0; cutPoint < genNumBadRun.size()/2; cutPoint++) {
-   	 	        writer.write(cutPoint + "," +genNumBadRun.get(2*cutPoint)+ "," + genNumBadRun.get(2*cutPoint+1) + ","
-                 + (genNumBadRun.get(2*cutPoint)+genNumBadRun.get(2*cutPoint+1)));*//*
-
-            for(int cutPoint = 0; cutPoint < genNumBadRun.size(); cutPoint+=2) {
-                writer.write(cutPoint/2 + "," +genNumBadRun.get(cutPoint)+ "," + genNumBadRun.get(cutPoint+1) + ","
-                        + (genNumBadRun.get(cutPoint)+genNumBadRun.get(cutPoint+1)));
-
-   		    writer.newLine();
-            }
-			writer.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-    }*/
 
 
     @Override

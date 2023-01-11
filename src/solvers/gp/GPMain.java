@@ -21,7 +21,7 @@ public class GPMain {
         String objective = "max-flowtime";
 
         gpRunArgs.add("/Users/dyska/Desktop/Uni/COMP489/GPJSS/src/yimei/jss/algorithm/featureconstruction/fcgp-simplegp-dynamic.params");
-        //gpRunArgs.add("/Users/dyska/Desktop/Uni/COMP489/GPJSS/src/yimei/jss/algorithm/coevolutiongp/baseline-coevolutiongp-dynamic.params");
+        //gpRunArgs.add("/Users/dyska/Desktop/Uni/COMP489/GPJSS/src/yimei/jss/algorithm/coevolutiongp/baseline-coevolutiongp-benchmark-makespan.params");
         //gpRunArgs.add("/Users/dyska/Desktop/Uni/COMP489/GPJSS/src/yimei/jss/algorithm/simplegp/simplegp-dynamic.params");
         gpRunArgs.add("-p");
         gpRunArgs.add("eval.problem.eval-model.sim-models.0.util-level=" + utilLevel);

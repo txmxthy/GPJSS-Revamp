@@ -381,43 +381,6 @@ public class MultiPopCoevolutionaryEvaluator extends Evaluator {
                 }
             }
         }
-        //System.out.println(evaluations); //0
-
-//        if (state.generation > 0) {
-//            //want to find out whether elite individuals and or their collaborators are being included
-//            //in the next generation
-//            boolean[][] found = new boolean[2][2]; //should all be false
-//
-//            for (int subpop = 0; subpop < state.population.subpops.length; subpop++)
-//            {
-//                GPIndividual eliteInd = (GPIndividual) eliteIndividuals[subpop][0]; //one for each subpop
-//                int otherSubpop = (subpop+1)%2;
-//                GPIndividual otherEliteCollab = (GPIndividual) eliteIndividuals[otherSubpop][0].fitness.context[0];
-//                //checking each individual
-//                for (int i = state.population.subpops[subpop].individuals.length-2;
-//                     i < state.population.subpops[subpop].individuals.length; i++)
-//                {
-//                    GPIndividual ind = (GPIndividual) state.population.subpops[subpop].individuals[i];
-//                    if (ind.equals(eliteInd) || ind == eliteInd) {
-//                        found[subpop][0] = true;
-//                    }
-//                    if (ind.equals(otherEliteCollab) || ind == otherEliteCollab) {
-//                        found[otherSubpop][1] = true;
-//                    }
-//                }
-//            }
-//            for (int i = 0; i < 2; ++i) {
-//                for (int j = 0; j < 2; ++j) {
-//                    if (!found[i][j]) {
-//                        if (j == 0) {
-//                            System.out.println("Elite missing: "+i+" "+j);
-//                        } else {
-//                            System.out.println("Collab missing: "+i+" "+j);
-//                        }
-//                    }
-//                }
-//            }
-//        }
 
         //==========================useful and important part=======================================
         //step 4: for each subpopulation, j means subPopulation   2*512*4*2= 8192  cost
@@ -513,7 +476,7 @@ public class MultiPopCoevolutionaryEvaluator extends Evaluator {
                 state.population = currentPopulation;
             }
 
-        state.output.message("Evaluations: " + evaluations);
+        state.output.message("MPOP_COEV: Evaluations: " + evaluations);
     }
 
 

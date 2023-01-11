@@ -23,7 +23,10 @@ public abstract class Simulation {
     protected final int numWorkCenters;
     protected final int numJobsRecorded;
     protected final int warmupJobs;
-    private Map<Job, List<Object>> schedule;
+
+
+    public List<Job> schedule;
+    private double best_makespan = Double.MAX_VALUE;
     protected AbstractRule sequencingRule;
     protected AbstractRule routingRule;
     protected int numJobsArrived;
@@ -44,7 +47,7 @@ public abstract class Simulation {
         this.numWorkCenters = numWorkCenters;
         this.numJobsRecorded = numJobsRecorded;
         this.warmupJobs = warmupJobs;
-        this.schedule = new HashMap<>();
+        this.schedule = new ArrayList<>();
         systemState = new SystemState();
         eventQueue = new PriorityQueue<>();
 //        int[] jobStates = new int[numJobsRecorded];
@@ -76,7 +79,9 @@ public abstract class Simulation {
     public void setSequencingRule(AbstractRule sequencingRule) {
         this.sequencingRule = sequencingRule;
     }
-
+    public List<Job> getSchedule() {
+        return schedule;
+    }
     public AbstractRule getRoutingRule() {
         return routingRule;
     }
@@ -216,17 +221,14 @@ public abstract class Simulation {
             double tmp = job.getCompletionTime();
             if (value < tmp) {
                 value = tmp;
-                List<Object> components = new ArrayList<>();
-                int id = job.getId();
-                for (Operation operation : job.getOperations()) {
-
-                    components.add(operation.toList());
-                }
-                schedule.put(job, components);
 
             }
         }
-
+        if (value < best_makespan){
+            schedule = new ArrayList<>();
+            best_makespan = value;
+            schedule.addAll(systemState.getJobsCompleted());
+        }
         return value;
     }
 

@@ -8,12 +8,18 @@ import ec.coevolve.GroupedProblemForm;
 import ec.gp.GPIndividual;
 import ec.multiobjective.MultiObjectiveFitness;
 import ec.util.Parameter;
+import simulation.definition.Job;
 import simulation.definition.Objective;
 import simulation.rules.rule.AbstractRule;
 import simulation.rules.rule.RuleType;
 import simulation.rules.rule.operation.evolved.GPRule;
 import simulation.rules.ruleevaluation.AbstractEvaluationModel;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +31,8 @@ public class RuleCoevolutionProblem extends RuleOptimizationProblem implements G
     public static final String P_EVAL_MODEL = "eval-model";
     public static final String P_SHOULD_SET_CONTEXT = "set-context";
     boolean shouldSetContext;
-
+    public double best_schedule_makespan = Double.MAX_VALUE;
+    public List<Job> best_schedule = new ArrayList<>();
     private AbstractEvaluationModel evaluationModel;
 
     public AbstractEvaluationModel getEvaluationModel() {
@@ -107,6 +114,7 @@ public class RuleCoevolutionProblem extends RuleOptimizationProblem implements G
                     " but number of individuals provided to RuleCoevolutionProblem is 1.");
         }
 
+        boolean writeSchedule = false;
         List<AbstractRule> rules = new ArrayList<>();
         List<Fitness> fitnesses = new ArrayList<>();
 
@@ -119,6 +127,31 @@ public class RuleCoevolutionProblem extends RuleOptimizationProblem implements G
         fitnesses.add(ind[1].fitness);
 
         evaluationModel.evaluate(fitnesses, rules, state);  // yimei.jss.ruleevaluation.MultipleRuleEvaluationModel
+        double found = evaluationModel.getBest_schedule_makespan();
+        if (found < best_schedule_makespan) {
+//            @TODO
+            best_schedule_makespan = found;
+            best_schedule = evaluationModel.getBest_schedule();
+            writeSchedule = true;
+
+        }
+
+        if (writeSchedule) {
+            // Create an empty file in ./schedules/ dir
+            // Name the file bestFitness.txt
+            // Overwrite any existing file with that name
+
+            String path = "schedules/" + best_schedule_makespan + ".txt";
+
+            try (BufferedWriter bf = Files.newBufferedWriter(Paths.get(path), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
+                for (Job job : best_schedule) {
+                    bf.write(job.toString());
+                    bf.newLine();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
         //okay, we have run a trial for the above individuals/rules - now we add a trial for each
         // update individuals to reflect the trial

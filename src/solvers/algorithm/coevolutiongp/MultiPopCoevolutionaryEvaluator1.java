@@ -134,6 +134,7 @@ public class MultiPopCoevolutionaryEvaluator1 extends Evaluator {
     }
 
     public void evaluatePopulation(final EvolutionState state) {
+
         // determine who needs to be evaluated
         boolean[] preAssessFitness = new boolean[state.population.subpops.length];
         boolean[] postAssessFitness = new boolean[state.population.subpops.length];
@@ -432,7 +433,7 @@ public class MultiPopCoevolutionaryEvaluator1 extends Evaluator {
                 state.population = currentPopulation;
             }
 
-        state.output.message("Evaluations: " + evaluations);
+        state.output.message("Evaluations (1): " + evaluations);
     }
 
 

@@ -33,7 +33,6 @@ public class MultipleTreeMultipleRuleEvaluationModel extends MultipleRuleEvaluat
         //System.out.println(objectives.size()); //1  repeat
         //code taken from Abstract Rule
         double[] fitnesses = new double[objectives.size()];
-
         List<Simulation> simulations = schedulingSet.getSimulations();
         int col = 0;
 

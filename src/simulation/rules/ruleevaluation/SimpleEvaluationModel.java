@@ -4,6 +4,7 @@ import ec.EvolutionState;
 import ec.Fitness;
 import ec.util.Parameter;
 import simulation.definition.FlexibleStaticInstance;
+import simulation.definition.Job;
 import simulation.definition.SchedulingSet;
 import simulation.definition.logic.DynamicSimulation;
 import simulation.definition.logic.Simulation;
@@ -55,6 +56,16 @@ public class SimpleEvaluationModel extends AbstractEvaluationModel {
 
     public boolean isRotateSimSeed() {
         return rotateSimSeed;
+    }
+
+    @Override
+    public List<Job> getBest_schedule() {
+        return null;
+    }
+
+    @Override
+    public double getBest_schedule_makespan() {
+        return 0;
     }
 
     @Override

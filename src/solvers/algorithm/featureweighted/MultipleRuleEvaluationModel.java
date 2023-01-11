@@ -5,6 +5,7 @@ import ec.Fitness;
 import ec.multiobjective.MultiObjectiveFitness;
 import ec.util.Parameter;
 import simulation.definition.FlexibleStaticInstance;
+import simulation.definition.Job;
 import simulation.definition.SchedulingSet;
 import simulation.definition.WorkCenter;
 import simulation.definition.logic.DynamicSimulation;
@@ -68,6 +69,16 @@ public class MultipleRuleEvaluationModel extends AbstractEvaluationModel {
 
     public boolean isRotateSimSeed() {
         return rotateSimSeed;
+    }
+
+    @Override
+    public List<Job> getBest_schedule() {
+        return null;
+    }
+
+    @Override
+    public double getBest_schedule_makespan() {
+        return 0;
     }
 
     @Override
