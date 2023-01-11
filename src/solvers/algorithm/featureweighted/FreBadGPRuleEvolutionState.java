@@ -9,8 +9,8 @@ import ec.util.RandomChoice;
 import simulation.jss.feature.FeatureIgnorable;
 import simulation.jss.feature.FeatureUtil;
 import simulation.jss.feature.ignore.Ignorer;
-import simulation.jss.gp.GPRuleEvolutionState;
-import simulation.jss.gp.TerminalsChangable;
+import solvers.gp.GPRuleEvolutionState;
+import solvers.gp.TerminalsChangable;
 import simulation.rules.ruleoptimisation.RuleOptimizationProblem;
 
 import java.util.ArrayList;

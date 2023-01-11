@@ -1,19 +1,16 @@
 package simulation.definition.logic;
 
 import ec.gp.GPNode;
-import simulation.definition.Job;
-import simulation.definition.Objective;
+import org.apache.commons.lang3.text.StrBuilder;
+import simulation.definition.*;
 import simulation.definition.Process;
-import simulation.definition.WorkCenter;
 import simulation.definition.logic.event.AbstractEvent;
 import simulation.definition.logic.event.ProcessStartEvent;
 import simulation.definition.logic.state.SystemState;
 import simulation.rules.rule.AbstractRule;
 import simulation.rules.rule.operation.evolved.GPRule;
 
-import java.util.Iterator;
-import java.util.Objects;
-import java.util.PriorityQueue;
+import java.util.*;
 
 /**
  * The abstract simulation class for evaluating rules.
@@ -26,6 +23,7 @@ public abstract class Simulation {
     protected final int numWorkCenters;
     protected final int numJobsRecorded;
     protected final int warmupJobs;
+    private Map<Job, List<Object>> schedule;
     protected AbstractRule sequencingRule;
     protected AbstractRule routingRule;
     protected int numJobsArrived;
@@ -35,6 +33,7 @@ public abstract class Simulation {
     //protected int[] jobStates;
     int afterThroughput; //save the throughput value after updated (a job finished)
     int count = 0;
+
     public Simulation(AbstractRule sequencingRule,
                       AbstractRule routingRule,
                       int numWorkCenters,
@@ -45,7 +44,7 @@ public abstract class Simulation {
         this.numWorkCenters = numWorkCenters;
         this.numJobsRecorded = numJobsRecorded;
         this.warmupJobs = warmupJobs;
-
+        this.schedule = new HashMap<>();
         systemState = new SystemState();
         eventQueue = new PriorityQueue<>();
 //        int[] jobStates = new int[numJobsRecorded];
@@ -215,8 +214,17 @@ public abstract class Simulation {
         double value = 0.0;
         for (Job job : systemState.getJobsCompleted()) {
             double tmp = job.getCompletionTime();
-            if (value < tmp)
+            if (value < tmp) {
                 value = tmp;
+                List<Object> components = new ArrayList<>();
+                int id = job.getId();
+                for (Operation operation : job.getOperations()) {
+
+                    components.add(operation.toList());
+                }
+                schedule.put(job, components);
+
+            }
         }
 
         return value;
@@ -354,30 +362,30 @@ public abstract class Simulation {
         switch (objective) {
             case MAKESPAN:
                 return makespan();
-            case MEAN_FLOWTIME:
-                return meanFlowtime();
-            case MAX_FLOWTIME:
-                return maxFlowtime();
-            case MEAN_WEIGHTED_FLOWTIME:
-                return meanWeightedFlowtime();
-            case MAX_WEIGHTED_FLOWTIME:
-                return maxWeightedFlowtime();
-            case MEAN_TARDINESS:
-                return meanTardiness();
-            case MAX_TARDINESS:
-                return maxTardiness();
-            case MEAN_WEIGHTED_TARDINESS:
-                return meanWeightedTardiness();
-            case MAX_WEIGHTED_TARDINESS:
-                return maxWeightedTardiness();
-            case PROP_TARDY_JOBS:
-                return propTardyJobs();
-            case RULESIZE:
-                return rulesize();
-            case RULESIZER:
-                return rulesizeR();
-            case RULESIZES:
-                return rulesizeS();
+//            case MEAN_FLOWTIME:
+//                return meanFlowtime();
+//            case MAX_FLOWTIME:
+//                return maxFlowtime();
+//            case MEAN_WEIGHTED_FLOWTIME:
+//                return meanWeightedFlowtime();
+//            case MAX_WEIGHTED_FLOWTIME:
+//                return maxWeightedFlowtime();
+//            case MEAN_TARDINESS:
+//                return meanTardiness();
+//            case MAX_TARDINESS:
+//                return maxTardiness();
+//            case MEAN_WEIGHTED_TARDINESS:
+//                return meanWeightedTardiness();
+//            case MAX_WEIGHTED_TARDINESS:
+//                return maxWeightedTardiness();
+//            case PROP_TARDY_JOBS:
+//                return propTardyJobs();
+//            case RULESIZE:
+//                return rulesize();
+//            case RULESIZER:
+//                return rulesizeR();
+//            case RULESIZES:
+//                return rulesizeS();
         }
 
         return -1.0;

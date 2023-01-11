@@ -4,10 +4,10 @@ parent.0 = ecsuite.params
 # The problem
 # ==============================
 
-state =                                 simulation.jss.gp.GPRuleEvolutionState
+state =                                 solvers.gp.GPRuleEvolutionState
 eval =                                  ec.coevolve.MultiPopCoevolutionaryEvaluator
 eval.problem =                          simulation.rules.ruleoptimisation.RuleCoevolutionProblem
-eval.problem.data =                     simulation.jss.gp.data.DoubleData
+eval.problem.data =                     solvers.gp.data.DoubleData
 eval.problem.type =                     rosenbrock
 eval.problem.eval-model =               simulation.rules.ruleevaluation.MultipleRuleEvaluationModel
 eval.problem.eval-model.objectives =    1
@@ -236,36 +236,36 @@ gp.adf-stack.context =                  ec.gp.ADFContext
 gp.fs.size =                            2
 gp.fs.0.name =                          f0
 gp.fs.0.size =                          7
-gp.fs.0.func.0 =                        simulation.jss.gp.terminal.TerminalERCUniform
+gp.fs.0.func.0 =                        solvers.gp.terminal.TerminalERCUniform
 gp.fs.0.func.0.nc =                     nc0
-gp.fs.0.func.1 =                        simulation.jss.gp.function.Add
+gp.fs.0.func.1 =                        solvers.gp.function.Add
 gp.fs.0.func.1.nc =                     nc2
-gp.fs.0.func.2 =                        simulation.jss.gp.function.Sub
+gp.fs.0.func.2 =                        solvers.gp.function.Sub
 gp.fs.0.func.2.nc =                     nc2
-gp.fs.0.func.3 =                        simulation.jss.gp.function.Mul
+gp.fs.0.func.3 =                        solvers.gp.function.Mul
 gp.fs.0.func.3.nc =                     nc2
-gp.fs.0.func.4 =                        simulation.jss.gp.function.Div
+gp.fs.0.func.4 =                        solvers.gp.function.Div
 gp.fs.0.func.4.nc =                     nc2
-gp.fs.0.func.5 =                        simulation.jss.gp.function.Max
+gp.fs.0.func.5 =                        solvers.gp.function.Max
 gp.fs.0.func.5.nc =                     nc2
-gp.fs.0.func.6 =                        simulation.jss.gp.function.Min
+gp.fs.0.func.6 =                        solvers.gp.function.Min
 gp.fs.0.func.6.nc =                     nc2
 
 gp.fs.1.name =                          f1
 gp.fs.1.size =                          7
-gp.fs.1.func.0 =                        simulation.jss.gp.terminal.TerminalERCUniform
+gp.fs.1.func.0 =                        solvers.gp.terminal.TerminalERCUniform
 gp.fs.1.func.0.nc =                     nc0
-gp.fs.1.func.1 =                        simulation.jss.gp.function.Add
+gp.fs.1.func.1 =                        solvers.gp.function.Add
 gp.fs.1.func.1.nc =                     nc2
-gp.fs.1.func.2 =                        simulation.jss.gp.function.Sub
+gp.fs.1.func.2 =                        solvers.gp.function.Sub
 gp.fs.1.func.2.nc =                     nc2
-gp.fs.1.func.3 =                        simulation.jss.gp.function.Mul
+gp.fs.1.func.3 =                        solvers.gp.function.Mul
 gp.fs.1.func.3.nc =                     nc2
-gp.fs.1.func.4 =                        simulation.jss.gp.function.Div
+gp.fs.1.func.4 =                        solvers.gp.function.Div
 gp.fs.1.func.4.nc =                     nc2
-gp.fs.1.func.5 =                        simulation.jss.gp.function.Max
+gp.fs.1.func.5 =                        solvers.gp.function.Max
 gp.fs.1.func.5.nc =                     nc2
-gp.fs.1.func.6 =                        simulation.jss.gp.function.Min
+gp.fs.1.func.6 =                        solvers.gp.function.Min
 gp.fs.1.func.6.nc =                     nc2
 
 # ==============================

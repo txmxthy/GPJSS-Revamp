@@ -5,7 +5,7 @@
 */
 
 
-package simulation.jss.gp.function;
+package solvers.gp.function;
 
 import ec.EvolutionState;
 import ec.Problem;
@@ -13,18 +13,18 @@ import ec.gp.ADFStack;
 import ec.gp.GPData;
 import ec.gp.GPIndividual;
 import ec.gp.GPNode;
-import simulation.jss.gp.data.DoubleData;
+import solvers.gp.data.DoubleData;
 
 /**
- * Functional GPNode: Max. Given two children, it returns the larger one.
+ * Functional GPNode: If. It takes three children x, y and z. If x > 0, then it returns y. Otherwise, it returns z.
  *
  * @author yimei
  */
 
-public class Max extends GPNode {
+public class If extends GPNode {
 
     public String toString() {
-        return "Max";
+        return "if";
     }
 
     /*
@@ -41,7 +41,7 @@ public class Max extends GPNode {
       }
     */
     public int expectedChildren() {
-        return 2;
+        return 3;
     }
 
     public void eval(final EvolutionState state,
@@ -56,10 +56,11 @@ public class Max extends GPNode {
 
         children[0].eval(state, thread, input, stack, individual, problem);
         result = rd.value;
-
-        children[1].eval(state, thread, input, stack, individual, problem);
-        if (rd.value < result)
-            rd.value = result;
+        if (result > 0) {
+            children[1].eval(state, thread, input, stack, individual, problem);
+        } else {
+            children[2].eval(state, thread, input, stack, individual, problem);
+        }
     }
 }
 

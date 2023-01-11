@@ -237,9 +237,7 @@ public class Job implements Comparable<Job> {
         if (Double.compare(job.weight, weight) != 0) return false;
         if (Double.compare(job.totalProcTime, totalProcTime) != 0) return false;
         if (Double.compare(job.avgProcTime, avgProcTime) != 0) return false;
-        if (Double.compare(job.completionTime, completionTime) != 0) return false;
-        if (!Objects.equals(operations, job.operations)) return false;
-        return Objects.equals(processFinishEvents, job.processFinishEvents);
+        return Double.compare(job.completionTime, completionTime) == 0;
     }
 
     @Override

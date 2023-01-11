@@ -3,10 +3,10 @@ package simulation.util.lisp;
 import ec.gp.GPNode;
 import ec.gp.GPTree;
 import org.apache.commons.lang3.math.NumberUtils;
-import simulation.jss.gp.function.*;
-import simulation.jss.gp.terminal.AttributeGPNode;
-import simulation.jss.gp.terminal.ConstantTerminal;
-import simulation.jss.gp.terminal.JobShopAttribute;
+import solvers.gp.function.*;
+import solvers.gp.terminal.AttributeGPNode;
+import solvers.gp.terminal.ConstantTerminal;
+import solvers.gp.terminal.JobShopAttribute;
 
 import java.util.List;
 

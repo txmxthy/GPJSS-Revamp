@@ -1,4 +1,4 @@
-package simulation.jss.gp;
+package solvers.gp;
 
 import ec.EvolutionState;
 import ec.Individual;
@@ -6,8 +6,8 @@ import ec.gp.GPNode;
 import ec.simple.SimpleEvolutionState;
 import ec.util.Checkpoint;
 import ec.util.Parameter;
-import simulation.jss.gp.terminal.AttributeGPNode;
-import simulation.jss.gp.terminal.JobShopAttribute;
+import solvers.gp.terminal.AttributeGPNode;
+import solvers.gp.terminal.JobShopAttribute;
 import simulation.rules.rule.AbstractRuleHelper;
 import simulation.rules.ruleoptimisation.RuleOptimizationProblem;
 

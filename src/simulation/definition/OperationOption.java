@@ -176,12 +176,13 @@ public class OperationOption implements Comparable<OperationOption> {
         return Objects.equals(workCenter, option.workCenter);
     }
 
+
+
     @Override
     public int hashCode() {
         int result;
         long temp;
-        result = operation != null ? operation.hashCode() : 0;
-        result = 31 * result + optionId;
+        result = optionId;
         temp = Double.doubleToLongBits(procTime);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         result = 31 * result + (workCenter != null ? workCenter.hashCode() : 0);

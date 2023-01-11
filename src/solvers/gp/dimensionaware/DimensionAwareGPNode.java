@@ -1,4 +1,4 @@
-package simulation.jss.gp.dimensionaware;
+package solvers.gp.dimensionaware;
 
 import ec.gp.GPNode;
 

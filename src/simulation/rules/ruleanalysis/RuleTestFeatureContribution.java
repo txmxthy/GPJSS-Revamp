@@ -7,8 +7,8 @@ import simulation.definition.Objective;
 import simulation.definition.SchedulingSet;
 import simulation.jss.feature.ignore.Ignorer;
 import simulation.jss.feature.ignore.SimpleIgnorer;
-import simulation.jss.gp.terminal.AttributeGPNode;
-import simulation.jss.gp.terminal.JobShopAttribute;
+import solvers.gp.terminal.AttributeGPNode;
+import solvers.gp.terminal.JobShopAttribute;
 import simulation.rules.rule.operation.evolved.GPRule;
 
 import java.io.BufferedWriter;

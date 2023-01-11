@@ -5,7 +5,7 @@
 */
 
 
-package simulation.jss.gp.function;
+package solvers.gp.function;
 
 import ec.EvolutionState;
 import ec.Problem;
@@ -13,7 +13,7 @@ import ec.gp.ADFStack;
 import ec.gp.GPData;
 import ec.gp.GPIndividual;
 import ec.gp.GPNode;
-import simulation.jss.gp.data.DoubleData;
+import solvers.gp.data.DoubleData;
 
 /**
  * Functional GPNode: Min. Given two children, it returns the smaller one.

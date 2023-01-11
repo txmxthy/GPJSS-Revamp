@@ -1,11 +1,7 @@
-package simulation.jss.gp;
+package solvers.gp;
 
-import java.io.File;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-
-import static simulation.jss.FJSSMain.getFileNames;
 
 /**
  * Created by dyska on 21/05/17.

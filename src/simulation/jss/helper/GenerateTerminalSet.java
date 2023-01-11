@@ -1,7 +1,7 @@
 package simulation.jss.helper;
 
-import simulation.jss.gp.terminal.AttributeGPNode;
-import simulation.jss.gp.terminal.JobShopAttribute;
+import solvers.gp.terminal.AttributeGPNode;
+import solvers.gp.terminal.JobShopAttribute;
 import simulation.rules.rule.RuleType;
 
 import java.io.*;
@@ -14,7 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static simulation.jss.FJSSMain.getFileNames;
-import static simulation.jss.gp.terminal.JobShopAttribute.relativeAttributes;
+import static solvers.gp.terminal.JobShopAttribute.relativeAttributes;
 import static simulation.jss.helper.GridResultCleaner.writeLine;
 
 /**

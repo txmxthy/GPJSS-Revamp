@@ -1,4 +1,4 @@
-package simulation.jss.gp.terminal;
+package solvers.gp.terminal;
 
 import ec.EvolutionState;
 import ec.Problem;
@@ -6,7 +6,7 @@ import ec.app.regression.func.RegERC;
 import ec.gp.ADFStack;
 import ec.gp.GPData;
 import ec.gp.GPIndividual;
-import simulation.jss.gp.data.DoubleData;
+import solvers.gp.data.DoubleData;
 
 /**
  * Created by YiMei on 2/10/16.

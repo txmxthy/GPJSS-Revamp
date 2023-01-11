@@ -3,8 +3,8 @@ package simulation.rules.ruleanalysis;
 import ec.gp.GPNode;
 import org.apache.commons.lang3.math.NumberUtils;
 import simulation.definition.Objective;
-import simulation.jss.gp.terminal.AttributeGPNode;
-import simulation.jss.gp.terminal.JobShopAttribute;
+import solvers.gp.terminal.AttributeGPNode;
+import solvers.gp.terminal.JobShopAttribute;
 import simulation.rules.rule.operation.evolved.GPRule;
 
 import java.io.BufferedWriter;

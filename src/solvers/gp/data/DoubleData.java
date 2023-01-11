@@ -5,7 +5,7 @@
 */
 
 
-package simulation.jss.gp.data;
+package solvers.gp.data;
 
 import ec.gp.GPData;
 

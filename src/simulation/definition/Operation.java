@@ -46,6 +46,17 @@ public class Operation {
         return msg.toString();
     }
 
+    public List<Object> toList() {
+        List<Object> list = new ArrayList<>();
+        for (OperationOption option : operationOptions) {
+            list.add(id);
+            list.add(option.getOptionId());
+            list.add(option.getWorkCenter().getId());
+            list.add(option.getProcTime());
+        }
+        return list;
+    }
+
     public Job getJob() {
         return job;
     }
@@ -216,16 +227,23 @@ public class Operation {
         Operation operation = (Operation) o;
 
         if (id != operation.id) return false;
-        if (!Objects.equals(job, operation.job)) return false;
         if (!Objects.equals(operationOptions, operation.operationOptions))
             return false;
         return Objects.equals(next, operation.next);
     }
 
+//    @Override
+//    public int hashCode() {
+//        int result = job != null ? job.hashCode() : 0;
+//        result = 31 * result + id;
+//        result = 31 * result + (operationOptions != null ? operationOptions.hashCode() : 0);
+//        result = 31 * result + (next != null ? next.hashCode() : 0);
+//        return result;
+//    }
+
     @Override
     public int hashCode() {
-        int result = job != null ? job.hashCode() : 0;
-        result = 31 * result + id;
+        int result = id;
         result = 31 * result + (operationOptions != null ? operationOptions.hashCode() : 0);
         result = 31 * result + (next != null ? next.hashCode() : 0);
         return result;

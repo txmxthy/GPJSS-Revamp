@@ -1,10 +1,10 @@
-package simulation.jss.gp.terminal;
+package solvers.gp.terminal;
 
 import ec.EvolutionState;
 import ec.gp.ERC;
 import ec.gp.GPFunctionSet;
 import ec.util.Parameter;
-import simulation.jss.gp.GPRuleEvolutionState;
+import solvers.gp.GPRuleEvolutionState;
 
 /**
  * The terminal ERC, with uniform selection.

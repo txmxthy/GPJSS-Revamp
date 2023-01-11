@@ -6,7 +6,7 @@ import ec.coevolve.GroupedProblemForm;
 import ec.coevolve.MultiPopCoevolutionaryEvaluator;
 import ec.gp.GPNode;
 import ec.util.Parameter;
-import simulation.jss.gp.GPRuleEvolutionState;
+import solvers.gp.GPRuleEvolutionState;
 import simulation.jss.helper.Weights;
 
 import java.io.BufferedWriter;

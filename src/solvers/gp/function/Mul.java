@@ -5,7 +5,7 @@
 */
 
 
-package simulation.jss.gp.function;
+package solvers.gp.function;
 
 import ec.EvolutionState;
 import ec.Problem;
@@ -13,18 +13,18 @@ import ec.gp.ADFStack;
 import ec.gp.GPData;
 import ec.gp.GPIndividual;
 import ec.gp.GPNode;
-import simulation.jss.gp.data.DoubleData;
+import solvers.gp.data.DoubleData;
 
 /**
- * Functional GPNode: If. It takes three children x, y and z. If x > 0, then it returns y. Otherwise, it returns z.
+ * Functional GPNode: Multiplication.
  *
  * @author yimei
  */
 
-public class If extends GPNode {
+public class Mul extends GPNode {
 
     public String toString() {
-        return "if";
+        return "*";
     }
 
     /*
@@ -41,7 +41,7 @@ public class If extends GPNode {
       }
     */
     public int expectedChildren() {
-        return 3;
+        return 2;
     }
 
     public void eval(final EvolutionState state,
@@ -56,11 +56,9 @@ public class If extends GPNode {
 
         children[0].eval(state, thread, input, stack, individual, problem);
         result = rd.value;
-        if (result > 0) {
-            children[1].eval(state, thread, input, stack, individual, problem);
-        } else {
-            children[2].eval(state, thread, input, stack, individual, problem);
-        }
+
+        children[1].eval(state, thread, input, stack, individual, problem);
+        rd.value = result * rd.value;
     }
 }
 

@@ -5,7 +5,7 @@
 */
 
 
-package simulation.jss.gp.function;
+package solvers.gp.function;
 
 import ec.EvolutionState;
 import ec.Problem;
@@ -13,18 +13,18 @@ import ec.gp.ADFStack;
 import ec.gp.GPData;
 import ec.gp.GPIndividual;
 import ec.gp.GPNode;
-import simulation.jss.gp.data.DoubleData;
+import solvers.gp.data.DoubleData;
 
 /**
- * Functional GPNode: Multiplication.
+ * Functional GPNode: Div (protected). When the demoninator is zero, it returns 1.
  *
  * @author yimei
  */
 
-public class Mul extends GPNode {
+public class Div extends GPNode {
 
     public String toString() {
-        return "*";
+        return "/";
     }
 
     /*
@@ -58,7 +58,23 @@ public class Mul extends GPNode {
         result = rd.value;
 
         children[1].eval(state, thread, input, stack, individual, problem);
-        rd.value = result * rd.value;
+
+        //mofified by fzhang  22.5.2018   in java, we code can automatically control this, so we do not need to do extra action.
+        // when the division is 0, the value will be infinity
+        if (Double.compare(rd.value, 0) == 0) {
+            rd.value = 1;
+            //rd.value = Double.POSITIVE_INFINITY;
+            //rd.value = Double.NEGATIVE_INFINITY;
+            //rd.value = Double.MAX_VALUE; // no big difference with Double.POSITIVE_INFINITY
+            //rd.value = 0;
+        } else {
+            rd.value = result / rd.value;
+        }
+
+        //value will be infinity fzhang 22.9.2018
+//       rd.value = result / rd.value;
+
+        //rd.value = result / Math.sqrt(1 + rd.value*rd.value);
     }
 }
 

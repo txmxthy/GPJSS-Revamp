@@ -1,4 +1,4 @@
-package simulation.jss.gp.terminal;
+package solvers.gp.terminal;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import simulation.definition.OperationOption;

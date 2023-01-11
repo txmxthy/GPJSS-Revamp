@@ -2,7 +2,7 @@ package simulation.jss.feature.ignore;
 
 import ec.gp.GPNode;
 import ec.gp.GPTree;
-import simulation.jss.gp.terminal.ConstantTerminal;
+import solvers.gp.terminal.ConstantTerminal;
 
 /**
  * A simple ignorer: replace the ignored GP node with a constant 1.0.

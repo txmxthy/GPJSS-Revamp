@@ -5,7 +5,7 @@
 */
 
 
-package simulation.jss.gp.function;
+package solvers.gp.function;
 
 import ec.EvolutionState;
 import ec.Problem;
@@ -13,18 +13,18 @@ import ec.gp.ADFStack;
 import ec.gp.GPData;
 import ec.gp.GPIndividual;
 import ec.gp.GPNode;
-import simulation.jss.gp.data.DoubleData;
+import solvers.gp.data.DoubleData;
 
 /**
- * Functional GPNode: Add.
+ * Functional GPNode: Subtraction.
  *
  * @author yimei
  */
 
-public class Add extends GPNode {
+public class Sub extends GPNode {
 
     public String toString() {
-        return "+";
+        return "-";
     }
 
     /*
@@ -58,7 +58,7 @@ public class Add extends GPNode {
         result = rd.value;
 
         children[1].eval(state, thread, input, stack, individual, problem);
-        rd.value = result + rd.value;
+        rd.value = result - rd.value;
     }
 }
 

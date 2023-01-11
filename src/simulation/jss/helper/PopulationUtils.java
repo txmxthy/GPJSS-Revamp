@@ -5,7 +5,7 @@ import ec.Population;
 import ec.Subpopulation;
 import ec.gp.GPIndividual;
 import ec.gp.GPNode;
-import simulation.jss.gp.terminal.TerminalERCUniform;
+import solvers.gp.terminal.TerminalERCUniform;
 
 import java.io.*;
 import java.nio.file.Files;

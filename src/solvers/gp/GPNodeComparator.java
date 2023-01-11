@@ -1,10 +1,10 @@
-package simulation.jss.gp;
+package solvers.gp;
 
 import ec.gp.GPNode;
-import simulation.jss.gp.function.Div;
-import simulation.jss.gp.function.Mul;
-import simulation.jss.gp.terminal.AttributeGPNode;
-import simulation.jss.gp.terminal.JobShopAttribute;
+import solvers.gp.function.Div;
+import solvers.gp.function.Mul;
+import solvers.gp.terminal.AttributeGPNode;
+import solvers.gp.terminal.JobShopAttribute;
 
 /**
  * Compare two GP nodes to see if they are equivalent.

@@ -1,4 +1,4 @@
-package simulation.jss.gp.terminal;
+package solvers.gp.terminal;
 
 import ec.EvolutionState;
 import ec.Problem;

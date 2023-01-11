@@ -1,4 +1,4 @@
-package simulation.jss.gp;
+package solvers.gp;
 
 import ec.EvolutionState;
 import ec.Evolve;
