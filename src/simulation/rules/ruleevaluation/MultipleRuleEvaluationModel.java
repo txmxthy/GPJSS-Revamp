@@ -260,9 +260,6 @@ public class MultipleRuleEvaluationModel extends AbstractEvaluationModel {
     }
 
 
-
-
-
     @Override
     public boolean isRotatable() {
         return rotateSimSeed;
